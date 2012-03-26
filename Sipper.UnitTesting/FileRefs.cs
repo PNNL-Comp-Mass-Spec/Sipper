@@ -10,5 +10,7 @@ namespace Sipper.UnitTesting
 
         public static string OutputFolderPath = "..\\..\\..\\TestFiles";
 
+        public static string TestFilePath = "..\\..\\..\\TestFiles";
+
     }
 }

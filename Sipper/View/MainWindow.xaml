@@ -1,0 +1,13 @@
+﻿<Window x:Class="Sipper.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SIPPER C13 Detector" Height="350" Width="525">
+    <Grid>
+        <Menu Height="25" HorizontalAlignment="Left" Name="menu1" VerticalAlignment="Top" Width="503">
+            <MenuItem Header="File" >
+                <MenuItem Header="Open" />
+            </MenuItem>
+            <MenuItem Header="Auto" Click="AutoMenuItemClick" />
+        </Menu>
+    </Grid>
+</Window>
