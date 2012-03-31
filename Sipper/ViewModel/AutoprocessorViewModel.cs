@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using DeconTools.Backend.Core;
@@ -10,6 +12,11 @@ namespace Sipper.ViewModel
 {
     public class AutoprocessorViewModel : ViewModelBase
     {
+        private SipperWorkflowExecutor _sipperWorkflowExecutor;
+        private SipperTargetedWorkflow _sipperTargetedWorkflow;
+
+        private BackgroundWorker _backgroundWorker;
+
 
         #region Constructors
 
@@ -17,7 +24,12 @@ namespace Sipper.ViewModel
         {
             ExecutorParameters = new SipperWorkflowExecutorParameters();
             SipperWorkflowParameters = new SipperTargetedWorkflowParameters();
+            StatusCollection = new ObservableCollection<string>();
+
+            StatusCollection.Add("This is a tester");
+
             Run = null;
+            
         }
 
         #endregion
@@ -27,6 +39,10 @@ namespace Sipper.ViewModel
         public SipperWorkflowExecutorParameters ExecutorParameters { get; set; }
 
         public SipperTargetedWorkflowParameters SipperWorkflowParameters { get; set; }
+
+
+
+
 
 
         public int NumMSScansSummed
@@ -54,27 +70,77 @@ namespace Sipper.ViewModel
 
         }
 
+        private string _runStatusText;
+        public string RunStatusText
+        {
+            get
+            {
+                if (Run == null)
+                {
+                    return "Not loaded.";
+                }
+                else
+                {
+                    return "LOADED.";
+                }
+            }
+          
+        }
+
+
+        private string _workflowParametersFilePath;
         public string WorkflowParametersFilePath
         {
-            get { return ExecutorParameters.WorkflowParameterFile; }
+            get { return _workflowParametersFilePath; }
             set
             {
-                ExecutorParameters.WorkflowParameterFile = value;
+                _workflowParametersFilePath = value;
                 OnPropertyChanged("WorkflowParametersFilePath");
             }
 
         }
 
+        private string _targetsFilePath;
         public string TargetsFilePath
         {
-            get { return ExecutorParameters.TargetsFilePath; }
+            get { return _targetsFilePath; }
             set
             {
-                ExecutorParameters.TargetsFilePath = value;
+                _targetsFilePath = value;
                 OnPropertyChanged("TargetsFilePath");
             }
 
         }
+
+
+        public ObservableCollection<string> StatusCollection { get; set; }
+
+
+        public bool CanExecutorBeExecuted
+        {
+            get
+            {
+                if (!String.IsNullOrEmpty(DatasetFilePath) && !String.IsNullOrEmpty(WorkflowParametersFilePath) && !String.IsNullOrEmpty(TargetsFilePath))
+                {
+                    if (File.Exists(WorkflowParametersFilePath) && File.Exists(TargetsFilePath))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    StatusCollection.Add(DateTime.Now + "\t" + "Autoprocessor setup not complete. Please check setup.");
+                    return false;
+                }
+
+
+            }
+        }
+
 
         private Run _run;
         public Run Run
@@ -84,12 +150,78 @@ namespace Sipper.ViewModel
             {
                 _run = value;
                 OnPropertyChanged("DatasetFilePath");
+                OnPropertyChanged("RunStatusText");
+            }
+        }
+
+
+        private int _percentProgress;
+        public int PercentProgress
+        {
+            get { return _percentProgress; }
+            set
+            {
+                _percentProgress = value;
+                OnPropertyChanged("PercentProgress");
+
             }
         }
 
         #endregion
 
         #region Public Methods
+
+        public void Execute(BackgroundWorker backgroundWorker)
+        {
+
+            ExecutorParameters = new SipperWorkflowExecutorParameters();
+            ExecutorParameters.TargetsFilePath = TargetsFilePath;
+            ExecutorParameters.WorkflowParameterFile = WorkflowParametersFilePath;
+            ExecutorParameters.LoggingFolder = Run.DataSetPath;
+
+
+            _backgroundWorker = new BackgroundWorker();
+            _backgroundWorker.WorkerSupportsCancellation = true;
+            _backgroundWorker.WorkerReportsProgress = true;
+
+            _backgroundWorker.DoWork += new DoWorkEventHandler(_backgroundWorker_DoWork);
+            _backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(_backgroundWorker_ProgressChanged);
+            _backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_backgroundWorker_RunWorkerCompleted);
+            _backgroundWorker.RunWorkerAsync();
+
+
+        }
+
+        void _backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+            PercentProgress = 100;
+            //do nothing for now
+        }
+
+        void _backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            PercentProgress = e.ProgressPercentage;
+
+            if (e.UserState != null)
+            {
+                if (e.UserState is TargetedWorkflowExecutorProgressInfo)
+                {
+                    var info = (TargetedWorkflowExecutorProgressInfo)e.UserState;
+
+                }
+            }
+
+
+
+        }
+
+        void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            _sipperWorkflowExecutor = new SipperWorkflowExecutor(ExecutorParameters, DatasetFilePath, _backgroundWorker);
+            _sipperWorkflowExecutor.Execute();
+        }
+
 
         public void CreateFileLinkages(IEnumerable<string> fileNames)
         {
@@ -132,6 +264,9 @@ namespace Sipper.ViewModel
                 CreateFileLinkage(fileNames.First());
 
             }
+
+
+
 
 
 
@@ -183,15 +318,16 @@ namespace Sipper.ViewModel
                 }
 
 
-
-
-
             }
+
 
         }
         #endregion
 
         #region Private Methods
+
+
+
         private void AttemptToInitializeRun(string fileOrFolderPath)
         {
             Run = new RunFactory().CreateRun(fileOrFolderPath);
@@ -199,6 +335,6 @@ namespace Sipper.ViewModel
         #endregion
 
 
-      
+
     }
 }

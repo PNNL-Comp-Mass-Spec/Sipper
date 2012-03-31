@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using Sipper.ViewModel;
@@ -10,6 +11,9 @@ namespace Sipper.View
     /// </summary>
     public partial class AutoprocessorWindow : Window
     {
+
+        private BackgroundWorker _backgroundWorker;
+
         public AutoprocessorWindow()
         {
             InitializeComponent();
@@ -38,6 +42,49 @@ namespace Sipper.View
                 
               
             }
+        }
+
+
+
+
+        private void ExecuteProcessing()
+        {
+            if (!ViewModel.CanExecutorBeExecuted)
+            {
+                
+                return;
+            }
+
+
+            ViewModel.Execute(null);
+
+            return;
+            _backgroundWorker=new BackgroundWorker();
+
+            _backgroundWorker.WorkerReportsProgress = true;
+            _backgroundWorker.WorkerSupportsCancellation = true;
+
+            _backgroundWorker.DoWork +=new DoWorkEventHandler(_backgroundWorkerDoProcessingWork);
+
+            _backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(_backgroundWorker_ProgressChanged);
+
+            _backgroundWorker.RunWorkerAsync();
+
+        }
+
+        void _backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBar1.Value = e.ProgressPercentage;
+        }
+
+        private void _backgroundWorkerDoProcessingWork(object sender, DoWorkEventArgs e)
+        {
+            ViewModel.Execute(_backgroundWorker);
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            ExecuteProcessing();
         }
     }
 }
