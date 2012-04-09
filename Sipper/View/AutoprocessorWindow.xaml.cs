@@ -19,7 +19,37 @@ namespace Sipper.View
             InitializeComponent();
 
             ViewModel = new AutoprocessorViewModel();
+
+            ViewModel.CurrentResultUpdated += new CurrentResultChangedHandler(ViewModel_CurrentResultUpdated); 
+
             DataContext = ViewModel;
+        }
+
+        void ViewModel_CurrentResultUpdated(object sender, System.EventArgs e)
+        {
+            var graphUserControl = (GWSGraphLibrary.MSGraphControl)(graphHost.Child);
+
+            var xvals = ViewModel.CurrentResult.MassSpectrumXYData.Xvalues;
+
+            var yvals = ViewModel.CurrentResult.MassSpectrumXYData.Yvalues;
+
+            if (xvals==null || xvals.Length<2)
+            {
+                return;
+            }
+            
+            var min = 0d;
+
+
+            var max = yvals.Max();
+
+
+            string titleString = ViewModel.GetInfoStringOnCurrentResult();
+
+            graphUserControl.zedGraphControl1.GraphPane.Title.Text = titleString;
+            graphUserControl.UpdateGraph(xvals, yvals, xvals.Min(), xvals.Max(), min, max);
+            
+
         }
 
         public AutoprocessorViewModel ViewModel { get; set; }
@@ -56,7 +86,7 @@ namespace Sipper.View
             }
 
 
-            ViewModel.Execute(null);
+            ViewModel.Execute();
 
             return;
             _backgroundWorker=new BackgroundWorker();
@@ -79,12 +109,22 @@ namespace Sipper.View
 
         private void _backgroundWorkerDoProcessingWork(object sender, DoWorkEventArgs e)
         {
-            ViewModel.Execute(_backgroundWorker);
+            ViewModel.Execute();
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
             ExecuteProcessing();
+        }
+
+        private void btnCancelClick(object sender, RoutedEventArgs e)
+        {
+            CancelProcessing();
+        }
+
+        private void CancelProcessing()
+        {
+            ViewModel.CancelProcessing();
         }
     }
 }
