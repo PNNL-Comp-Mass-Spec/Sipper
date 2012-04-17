@@ -71,6 +71,7 @@
     <Compile Include="FileRefs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModelTests\AutoprocessorViewModelTests.cs" />
+    <Compile Include="ViewModelTests\ManualViewingTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FileIO\" />

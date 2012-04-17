@@ -73,6 +73,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\FileInputsInfo.cs" />
+    <Compile Include="ViewModel\FileInputsViewModel.cs" />
+    <Compile Include="View\ManualViewingView.xaml.cs">
+      <DependentUpon>ManualViewingView.xaml</DependentUpon>
+    </Compile>
     <Page Include="View\AutoprocessorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -87,6 +92,8 @@
     </Compile>
     <Compile Include="Model\ResultFilterCriteria.cs" />
     <Compile Include="ViewModel\AutoprocessorViewModel.cs" />
+    <Compile Include="ViewModel\ManualViewingViewModel.cs" />
+    <Compile Include="ViewModel\SipperWorkflowParameterViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="View\AutoprocessorWindow.xaml.cs">
       <DependentUpon>AutoprocessorWindow.xaml</DependentUpon>
@@ -95,6 +102,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\ManualViewingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

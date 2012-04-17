@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Windows;
+using Sipper.Model;
 using Sipper.ViewModel;
 
 namespace Sipper.View
@@ -18,11 +19,13 @@ namespace Sipper.View
         {
             InitializeComponent();
 
-            ViewModel = new AutoprocessorViewModel();
+            ViewModel = new AutoprocessorViewModel(new FileInputsInfo());
 
             ViewModel.CurrentResultUpdated += new CurrentResultChangedHandler(ViewModel_CurrentResultUpdated); 
 
             DataContext = ViewModel;
+
+            
         }
 
         void ViewModel_CurrentResultUpdated(object sender, System.EventArgs e)
@@ -46,8 +49,8 @@ namespace Sipper.View
 
             string titleString = ViewModel.GetInfoStringOnCurrentResult();
 
-            graphUserControl.zedGraphControl1.GraphPane.Title.Text = titleString;
-            graphUserControl.UpdateGraph(xvals, yvals, xvals.Min(), xvals.Max(), min, max);
+            graphUserControl.GraphTitle = titleString;
+            graphUserControl.GenerateGraph(xvals, yvals, xvals.Min(), xvals.Max(), min, max);
             
 
         }
@@ -68,7 +71,7 @@ namespace Sipper.View
 
                 var fileNames = fileNamesStringCollection.Cast<string>().ToList();
 
-                ViewModel.CreateFileLinkages(fileNames);
+                ViewModel.FileInputs.CreateFileLinkages(fileNames);
                 
               
             }
@@ -81,36 +84,16 @@ namespace Sipper.View
         {
             if (!ViewModel.CanExecutorBeExecuted)
             {
-                
                 return;
             }
 
 
             ViewModel.Execute();
 
-            return;
-            _backgroundWorker=new BackgroundWorker();
-
-            _backgroundWorker.WorkerReportsProgress = true;
-            _backgroundWorker.WorkerSupportsCancellation = true;
-
-            _backgroundWorker.DoWork +=new DoWorkEventHandler(_backgroundWorkerDoProcessingWork);
-
-            _backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(_backgroundWorker_ProgressChanged);
-
-            _backgroundWorker.RunWorkerAsync();
 
         }
 
-        void _backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            progressBar1.Value = e.ProgressPercentage;
-        }
-
-        private void _backgroundWorkerDoProcessingWork(object sender, DoWorkEventArgs e)
-        {
-            ViewModel.Execute();
-        }
+    
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {

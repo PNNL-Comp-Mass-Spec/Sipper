@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using System.Text;
 using DeconTools.Backend.Core;
 using DeconTools.Backend.Core.Results;
-using DeconTools.Backend.Runs;
+using DeconTools.Backend.Utilities;
 using DeconTools.Workflows.Backend.Core;
 using Sipper.Model;
 
@@ -21,7 +18,7 @@ namespace Sipper.ViewModel
         private SipperWorkflowExecutor _sipperWorkflowExecutor;
         private SipperTargetedWorkflow _sipperTargetedWorkflow;
 
-        //private BackgroundWorker _backgroundWorker;
+        private BackgroundWorker _backgroundWorker;
 
         private ResultFilterCriteria _filterCriteria;
 
@@ -37,13 +34,27 @@ namespace Sipper.ViewModel
 
             _filterCriteria = ResultFilterCriteria.GetFilterScheme1();
 
-            Run = null;
+            
+            FileInputs = new FileInputsViewModel(new FileInputsInfo());
 
         }
+
+
+        public AutoprocessorViewModel(FileInputsInfo fileInputsInfo)
+            : this()
+        {
+            FileInputs = new FileInputsViewModel(fileInputsInfo);
+
+
+        }
+
 
         #endregion
 
         #region Properties
+
+        public FileInputsViewModel FileInputs { get; private set; }
+
 
         public SipperWorkflowExecutorParameters ExecutorParameters { get; set; }
 
@@ -59,65 +70,6 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("NumMSScansSummed");
             }
         }
-
-        public string DatasetFilePath
-        {
-            get
-            {
-
-                if (Run == null)
-                {
-                    return "[Not selected yet]";
-                }
-
-                return Run.Filename;
-            }
-
-        }
-
-        private string _runStatusText;
-        public string RunStatusText
-        {
-            get
-            {
-                if (Run == null)
-                {
-                    return "Not loaded.";
-                }
-                else
-                {
-                    return "LOADED.";
-                }
-            }
-
-        }
-
-
-        private string _workflowParametersFilePath;
-        public string WorkflowParametersFilePath
-        {
-            get { return _workflowParametersFilePath; }
-            set
-            {
-                _workflowParametersFilePath = value;
-                OnPropertyChanged("WorkflowParametersFilePath");
-            }
-
-        }
-
-        private string _targetsFilePath;
-        public string TargetsFilePath
-        {
-            get { return _targetsFilePath; }
-            set
-            {
-                _targetsFilePath = value;
-                OnPropertyChanged("TargetsFilePath");
-                
-            }
-
-        }
-
 
         public ObservableCollection<string> StatusCollection { get; set; }
 
@@ -140,16 +92,9 @@ namespace Sipper.ViewModel
         {
             get
             {
-                if (!String.IsNullOrEmpty(DatasetFilePath) && !String.IsNullOrEmpty(WorkflowParametersFilePath) && !String.IsNullOrEmpty(TargetsFilePath))
+                if (FileInputs.PathsAreValid())
                 {
-                    if (File.Exists(WorkflowParametersFilePath) && File.Exists(TargetsFilePath))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return true;
                 }
                 else
                 {
@@ -162,23 +107,7 @@ namespace Sipper.ViewModel
         }
 
 
-        private Run _run;
-        public Run Run
-        {
-            get { return _run; }
-            set
-            {
-                _run = value;
-                OnPropertyChanged("DatasetFilePath");
-                OnPropertyChanged("RunStatusText");
-            }
-        }
-
-
         private int _percentProgress;
-        
-        private BackgroundWorker _backgroundWorker;
-
         public int PercentProgress
         {
             get { return _percentProgress; }
@@ -206,13 +135,6 @@ namespace Sipper.ViewModel
         }
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnCurrentResultChanged()
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
 
 
@@ -232,14 +154,23 @@ namespace Sipper.ViewModel
             if (_backgroundWorker != null && _backgroundWorker.IsBusy)
             {
                 StatusMessageGeneral = "Already processing.... please wait or click 'Cancel'";
+                return;
             }
+
+            if (!FileInputs.PathsAreValid())
+            {
+                StatusMessageGeneral = "Failed to execute. There is a problem with the file inputs. Check paths.";
+                return;
+            }
+
 
             ProgressInfos.Clear();
 
-            ExecutorParameters.TargetsFilePath = TargetsFilePath;
-            ExecutorParameters.WorkflowParameterFile = WorkflowParametersFilePath;
-            ExecutorParameters.LoggingFolder = Run.DataSetPath;
-            ExecutorParameters.ResultsFolder = Run.DataSetPath;
+            ExecutorParameters.TargetsFilePath = FileInputs.TargetsFilePath;
+            ExecutorParameters.WorkflowParameterFile = FileInputs.ParameterFilePath;
+            ExecutorParameters.LoggingFolder = GetOutputFolderPath();
+            ExecutorParameters.ResultsFolder = GetOutputFolderPath();
+
 
 
 
@@ -256,12 +187,24 @@ namespace Sipper.ViewModel
 
         }
 
+        private string GetOutputFolderPath()
+        {
+            if (!String.IsNullOrEmpty(FileInputs.DatasetPath))
+            {
+                return RunUtilities.GetDatasetParentFolder(FileInputs.DatasetPath);
+
+            }
+
+            return String.Empty;
+        }
+
         void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = (BackgroundWorker)sender;
-            _sipperWorkflowExecutor = new SipperWorkflowExecutor(ExecutorParameters, DatasetFilePath, worker);
-            _sipperWorkflowExecutor.Execute();
+            
 
+            _sipperWorkflowExecutor = new SipperWorkflowExecutor(ExecutorParameters, FileInputs.DatasetPath, worker);
+            _sipperWorkflowExecutor.Execute();
 
             if (worker.CancellationPending)
             {
@@ -300,7 +243,7 @@ namespace Sipper.ViewModel
                     if (info.IsGeneralProgress)
                     {
 
-                        var infostrings = info.ProgressInfoString.Split(new string[] {Environment.NewLine},
+                        var infostrings = info.ProgressInfoString.Split(new string[] { Environment.NewLine },
                                                                         StringSplitOptions.RemoveEmptyEntries);
 
                         foreach (var infostring in infostrings)
@@ -312,8 +255,8 @@ namespace Sipper.ViewModel
                             }
                         }
 
-                        
-                        
+
+
                     }
                     else
                     {
@@ -333,7 +276,7 @@ namespace Sipper.ViewModel
                 }
             }
 
-          
+
 
 
 
@@ -356,23 +299,23 @@ namespace Sipper.ViewModel
         }
 
 
-    
+
         public string GetInfoStringOnCurrentResult()
         {
-            if (CurrentResult==null || CurrentResult.Result==null)
+            if (CurrentResult == null || CurrentResult.Result == null)
             {
                 return String.Empty;
             }
 
-            var sipperResult = (SipperLcmsTargetedResult) CurrentResult.Result;
+            var sipperResult = (SipperLcmsTargetedResult)CurrentResult.Result;
 
-            StringBuilder stringBuilder=new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
 
             stringBuilder.Append("Target= ");
             stringBuilder.Append(sipperResult.Target.ID);
 
             stringBuilder.Append("; massTag= ");
-            stringBuilder.Append(((LcmsFeatureTarget) sipperResult.Target).FeatureToMassTagID);
+            stringBuilder.Append(((LcmsFeatureTarget)sipperResult.Target).FeatureToMassTagID);
 
 
             stringBuilder.Append("; m/z= ");
@@ -390,115 +333,19 @@ namespace Sipper.ViewModel
         }
 
 
-        public void CreateFileLinkages(IEnumerable<string> fileNames)
-        {
 
-
-            if (fileNames == null || !fileNames.Any())
-            {
-                return;
-            }
-
-            //pull out .xml file first
-            var xmlFileNames = (from n in fileNames where Path.GetExtension(n) != null && Path.GetExtension(n).ToLower() == ".xml" select n);
-
-            if (xmlFileNames.Any())
-            {
-
-                CreateFileLinkage(xmlFileNames.First());
-
-                //remove all xml files from inputs
-                if (fileNames != null) fileNames = fileNames.Except(xmlFileNames);
-
-
-            }
-
-            var txtFileNames = (from n in fileNames where Path.GetExtension(n) != null && Path.GetExtension(n) == ".txt" select n);
-
-            if (txtFileNames.Any())
-            {
-                CreateFileLinkage(txtFileNames.First());
-
-                //remove all text files from inputs
-                if (fileNames != null) fileNames = fileNames.Except(txtFileNames);
-
-
-            }
-
-
-            if (fileNames.Any())
-            {
-                CreateFileLinkage(fileNames.First());
-
-            }
-
-        }
-
-        public void CreateFileLinkage(string fileOrFolderPath)
-        {
-
-            bool isDir;
-            try
-            {
-
-                isDir = (File.GetAttributes(fileOrFolderPath) & FileAttributes.Directory)
-                        == FileAttributes.Directory;
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-
-
-            if (isDir)
-            {
-                AttemptToInitializeRun(fileOrFolderPath);
-            }
-            else
-            {
-                string fileExtension = Path.GetExtension(fileOrFolderPath);
-
-                if (fileExtension != null)
-                {
-                    fileExtension = fileExtension.ToLower();
-
-                    if (fileExtension == ".xml")
-                    {
-                        WorkflowParametersFilePath = fileOrFolderPath;
-                    }
-                    else if (fileExtension == ".txt")
-                    {
-                        TargetsFilePath = fileOrFolderPath;
-                    }
-                    else
-                    {
-                        AttemptToInitializeRun(fileOrFolderPath);
-                    }
-
-
-                }
-
-
-            }
-
-
-        }
         #endregion
 
         #region Private Methods
 
 
 
-        private void AttemptToInitializeRun(string fileOrFolderPath)
-        {
-            Run = new RunFactory().CreateRun(fileOrFolderPath);
-        }
+
         #endregion
 
         public void CancelProcessing()
         {
-            if (_backgroundWorker!=null)
+            if (_backgroundWorker != null)
             {
                 _backgroundWorker.CancelAsync();
                 StatusMessageGeneral = "Cancelled processing.";

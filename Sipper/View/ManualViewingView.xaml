@@ -1,0 +1,288 @@
+﻿<Window
+   x:Class="Sipper.View.ManualViewingView"
+   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+   xmlns:graphLib="clr-namespace:GWSGraphLibrary;assembly=GWSGraphLibrary"  Title="Sipper - Manual Annotation Mode"
+   Name="window" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+   xmlns:System="clr-namespace:System;assembly=mscorlib"
+   xmlns:backend="clr-namespace:DeconTools.Workflows.Backend;assembly=DeconTools.Workflows" 
+    d:DesignHeight="600" d:DesignWidth="800" SizeToContent="WidthAndHeight"  >
+
+    <Window.Resources>
+        <ObjectDataProvider MethodName="GetValues"
+                        ObjectType="{x:Type System:Enum}"
+                        x:Key="ValidationCodeValues">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="backend:ValidationCode"  />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        
+        <Style TargetType="Border">
+            <Setter Property="Control.BorderBrush" Value="SlateGray"/>
+            <Setter Property="Control.BorderThickness" Value="3" />
+            <Setter Property="Control.VerticalAlignment" Value="Stretch" />
+            <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Control.Margin" Value="3,3,3,3" />
+            <Setter Property="Border.CornerRadius" Value="5" />
+            
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Control.BorderBrush" Value="SlateGray"/>
+            <Setter Property="Control.VerticalAlignment" Value="Stretch" />
+            <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Control.Margin" Value="3,3,3,3" />
+            
+
+        </Style>
+
+        <DataTemplate x:Key="ItemTemplate">
+            <Border Margin="3,3,3,3" BorderBrush="SteelBlue" BorderThickness="1" >
+                <TextBlock Background="White" Foreground="Black" Margin="6,3,3,3" TextAlignment="Center"  Width="100" Text="{Binding}"  />
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SelectedTemplate">
+            <Border Margin="3,3,3,3" BorderBrush="SteelBlue" BorderThickness="1" >
+                <TextBlock Background="Blue" Foreground="WhiteSmoke" Margin="6,3,3,3" TextAlignment="Center"  Width="100" Text="{Binding}"  />
+            </Border>
+            
+        </DataTemplate>
+
+        <Style TargetType="{x:Type ListBoxItem}" x:Key="ContainerStyle">
+            <Setter Property="ContentTemplate" Value="{StaticResource ItemTemplate}" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="ContentTemplate" Value="{StaticResource SelectedTemplate}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+    </Window.Resources>
+
+    <DockPanel Name="dockPanel1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" LastChildFill="True"
+                 >
+        <!--<Border 
+         Name="TopBorder"
+         
+         DockPanel.Dock="Top">
+        </Border>-->
+        <Border Name="BottomBorder" DockPanel.Dock="Bottom">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                
+                
+                <WrapPanel Grid.Column="0"  Margin="6,6,6,6"  >
+                    <TextBlock FontSize="15" VerticalAlignment="Top" HorizontalAlignment="Left">Status info:</TextBlock>
+                    <TextBlock FontSize="12"  Foreground= "#FFA77171" Margin="6,3,3,3" VerticalAlignment="Top" TextWrapping="Wrap" Text="{Binding Path=DataContext.GeneralStatusMessage, ElementName=window, Mode=OneWay}"  ></TextBlock>
+                </WrapPanel>
+
+                <WrapPanel Grid.Column="1"   Margin="6,6,6,6">
+               
+                <Button Name="btnSaveResults" Click="btnSaveResultsClick">Save results</Button>
+                <Button Name="btnCopyMSToClipboard" Width="100" Height="Auto" Click="btnCopyMSToClipboard_Click">
+                    <TextBlock Height="Auto" TextWrapping="Wrap">
+                        Copy MS data to clipboard
+                    </TextBlock>
+                </Button>
+
+                    <Button Name="btnCopyChromatogramToClipboard" Width="125" Height="Auto" Click="btnCopyChromatogramToClipboard_Click">
+                        <TextBlock Height="Auto" TextWrapping="Wrap">
+                        Copy chromatogram data to clipboard
+                        </TextBlock>
+                    </Button>
+
+                    <Button Name="btnCopyTheorMSToClipboard" Width="100" Height="Auto"  Click="btnCopyTheorMSToClipboard_Click" >
+                    <TextBlock Height="Auto" TextWrapping="Wrap">
+                        Copy Theor. MS data to clipboard
+                    </TextBlock> </Button>
+                </WrapPanel>
+            </Grid>
+        </Border>
+        <Border Name="leftBorder" DockPanel.Dock="Left">
+            <TabControl MaxWidth="500" Margin="6">
+                <TabItem AllowDrop="True" Drop="FileDropHandler" Name="setupTab" Header="Setup">
+                    <StackPanel AllowDrop="True" Drop="FileDropHandler" >
+                        
+                        <StackPanel.Resources>
+                            <Style
+                                TargetType="TextBox">
+                                <Setter Property="Control.BorderBrush" Value="SlateGray"/>
+                                <Setter Property="Control.VerticalAlignment" Value="Stretch" />
+                                <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+                                <Setter Property="Control.Margin" Value="3,3,3,3" />
+                                <Setter Property="Control.Height" Value="60" />
+                                <Setter Property="Control.AllowDrop" Value="True" />
+                                <Setter Property="TextBox.TextWrapping" Value="Wrap" />
+                                
+                            </Style>
+                        </StackPanel.Resources>
+                        
+                        
+                        <StackPanel Orientation="Horizontal">
+                            <Label
+                        Name="label1"
+                        HorizontalAlignment="Left"
+                        Margin="6,10,0,0"
+                        VerticalAlignment="Center"
+                        Content="Raw data file"
+                        Padding="0"/>
+                            <TextBlock
+                        Name="runStatusLabel"
+                        HorizontalAlignment="Left"
+                        Margin="25,10,0,0"
+                        VerticalAlignment="Center"
+                        Foreground="#FFA77171"
+                        Padding="0"
+                        Text="{Binding Path=DataContext.RunStatusText, ElementName=window, Mode=OneWay}"/>
+                        </StackPanel>
+                        <TextBox Drop="FileDropHandler" PreviewDragOver="TextBox_PreviewDragOver" 
+                                 Text="{Binding Path=DataContext.DatasetFilePath, ElementName=window, Mode=OneWay}"                     >
+                        </TextBox>
+
+                        <StackPanel Orientation="Horizontal">
+                        <Label
+                     Name="label2"
+                     HorizontalAlignment="Left"
+                     Margin="6,10,0,0"
+                     VerticalAlignment="Center"
+                     Content="Parameter file"
+                     Padding="0"/>
+                            <TextBlock
+                        Name="parameterFileStatusLabel"
+                        HorizontalAlignment="Left"
+                        Margin="6,10,0,0"
+                        VerticalAlignment="Center"
+                        Foreground="#FFA77171"
+                        Padding="0"
+                        Text="{Binding Path=DataContext.ParameterFileStatusText, ElementName=window, Mode=OneWay}"/>
+                        </StackPanel>
+                        <TextBox Drop="FileDropHandler" PreviewDragOver="TextBox_PreviewDragOver" Name="txtWorkflowParameterFilepath"
+                     Text="{Binding Path=DataContext.FileInputs.ParameterFilePath, ElementName=window, Mode=OneWay}" TextChanged="txtWorkflowParameterFilepath_TextChanged" />
+                      
+                        <StackPanel Orientation="Horizontal">
+                        <Label
+                     Name="label3"
+                     HorizontalAlignment="Left"
+                     Margin="6,10,0,0"
+                     VerticalAlignment="Center"
+                     Content="Results source file"
+                     Padding="0"/>
+                            <TextBlock
+                        Name="TargetsFileStatusLabel"
+                        HorizontalAlignment="Left"
+                        Margin="6,10,0,0"
+                        VerticalAlignment="Center"
+                        Foreground="#FFA77171"
+                        Padding="0"
+                        Text="{Binding Path=DataContext.TargetsFileStatusText, ElementName=window, Mode=OneWay}"/>
+                        </StackPanel>
+                        <TextBox Name="txtResultsFilePath" Drop="FileDropHandler" DragOver="txtResultsFilePath_DragOver" PreviewDragOver="TextBox_PreviewDragOver"
+                    Text="{Binding Path=DataContext.FileInputs.TargetsFilePath, ElementName=window, Mode=OneWay}" />
+
+                        <Label
+                     Name="label4"
+                     HorizontalAlignment="Left"
+                     Margin="6,10,0,0"
+                     VerticalAlignment="Center"
+                     Content="Results save path"
+                     Padding="0"/>
+                        <TextBox
+                     Name="txtResultsSavePath" Drop="FileDropHandler" DragOver="txtResultsFilePath_DragOver" PreviewDragOver="TextBox_PreviewDragOver"
+                     Text="{Binding Path=DataContext.FileInputs.ResultsSaveFilePath, ElementName=window, Mode=TwoWay}"/>
+
+                    </StackPanel>
+                </TabItem>
+                <TabItem Name="resultsTab" Header="Results">
+                    
+                    <Grid>
+                        <ListView 
+                        Margin="6,6,6,0" ItemsSource="{Binding Path=DataContext.Results, ElementName=window, Mode= TwoWay}" 
+                        SelectionMode="Single" SelectionChanged="ListView_SelectionChanged">
+                            <ListView.View>
+
+                                <GridView>
+                                    <GridViewColumn  Header="TargetID" DisplayMemberBinding="{Binding Path=TargetID}"/>
+                                    <GridViewColumn  Header="MassTagID" DisplayMemberBinding="{Binding Path=MatchedMassTagID}"/>
+                                    <GridViewColumn Header="z" DisplayMemberBinding="{Binding Path=ChargeState}"/>
+                                    <GridViewColumn Header="MonoMZ" DisplayMemberBinding="{Binding Path=MonoMZ, StringFormat=0.0000}"/>
+                                    <GridViewColumn Header="Intensity" DisplayMemberBinding="{Binding Path=Intensity}"/>
+                                    <!--<GridViewColumn Header="AreaMetric" DisplayMemberBinding="{Binding Path=Result.AreaUnderRatioCurveRevised, StringFormat=0.0}"/>
+                                    <GridViewColumn Header="Corr_Avg" DisplayMemberBinding="{Binding Path=Result.ChromCorrelationAverage, StringFormat=0.000}"/>
+                                    <GridViewColumn Header="Corr_Median" DisplayMemberBinding="{Binding Path=Result.ChromCorrelationMedian, StringFormat=0.000}"/>
+                                    <GridViewColumn Header="R_val" DisplayMemberBinding="{Binding Path=Result.RSquaredValForRatioCurve, StringFormat=0.000}"/>-->
+
+
+                                </GridView>
+                            </ListView.View>
+
+                        </ListView>
+
+
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Border>
+        <Border Name="RightBorder"
+         DockPanel.Dock="Right">
+            <StackPanel>
+                <TextBox></TextBox>
+                <Border Margin="15" >
+                    <StackPanel Margin="6,6,6,6">
+                        <TextBlock Margin="6,6,6,0"  FontSize="15"  TextTrimming="None">Acceptance Code:</TextBlock>
+                        <ListBox Margin="6,3,6,6" FontSize="15"  ItemsSource="{Binding Source={StaticResource ResourceKey=ValidationCodeValues }}"
+                                  SelectedValue="{Binding Path=DataContext.CurrentResult.ValidationCode, ElementName=window, Mode= TwoWay}" BorderBrush="{x:Null}" 
+                                 ItemContainerStyle="{StaticResource ResourceKey=ContainerStyle}">
+                           
+
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+            
+            
+        </Border>
+        <Border
+         
+            Name="CenterBorder"
+         
+         DockPanel.Dock="Top">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+              
+
+                <WindowsFormsHost Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="1" Margin="6,10,0,0"  Name="msGraphHost" HorizontalAlignment="Stretch" >
+                    <graphLib:MSGraphControl Name="msGraph">
+
+                    </graphLib:MSGraphControl>
+                </WindowsFormsHost>
+
+                <WindowsFormsHost Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="1" Margin="6,0,0,0"  Name="theorMSGraphHost" HorizontalAlignment="Stretch" >
+                    <graphLib:MSGraphControl Name="theorMSGraph">
+
+                    </graphLib:MSGraphControl>
+                </WindowsFormsHost>
+
+                <WindowsFormsHost  Margin="0,10,6,0" Name="chromGraphHost" HorizontalAlignment="Stretch"
+                                   Grid.Row="0"  Grid.Column="1" Grid.ColumnSpan="1">
+                    <graphLib:ChromGraphControl Name="chromGraph" >
+
+                    </graphLib:ChromGraphControl>
+                </WindowsFormsHost>
+
+            </Grid>
+        </Border>
+    </DockPanel>
+</Window>
