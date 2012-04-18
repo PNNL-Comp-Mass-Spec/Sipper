@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Sipper.ViewModel;
 
 namespace Sipper.View
 {
@@ -10,11 +11,29 @@ namespace Sipper.View
         public MainWindow()
         {
             InitializeComponent();
+
+            ViewModel = new MainWindowViewModel();
         }
+
+        protected MainWindowViewModel ViewModel { get; set; }
 
         private void AutoMenuItemClick(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void btnBrowseAndAnnotate_Click(object sender, RoutedEventArgs e)
+        {
+
+            var childWindow = new View.ManualViewingView();
+            childWindow.Show();
+
+        }
+
+        private void btnAutoprocess_Click(object sender, RoutedEventArgs e)
+        {
+            var childWindow = new View.AutoprocessorWindow();
+            childWindow.Show();
         }
     }
 }

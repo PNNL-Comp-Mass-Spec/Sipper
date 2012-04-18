@@ -75,6 +75,7 @@
     </ApplicationDefinition>
     <Compile Include="Model\FileInputsInfo.cs" />
     <Compile Include="ViewModel\FileInputsViewModel.cs" />
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="View\ManualViewingView.xaml.cs">
       <DependentUpon>ManualViewingView.xaml</DependentUpon>
     </Compile>
@@ -136,6 +137,9 @@
     <Resource Include="PNNLOmicsElementData.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Images\SIPPER_logo.png" />
+    <Resource Include="Images\Coffee cup.png" />
+    <Resource Include="Images\C13EnrichedProfile1.png" />
     <Content Include="xerces-c_2_7.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

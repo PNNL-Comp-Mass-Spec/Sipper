@@ -29,6 +29,15 @@ namespace Sipper.ViewModel
 
 
         #region Constructors
+
+        public ManualViewingViewModel(TargetedResultRepository resultRepository):this()
+        {
+            _resultRepositorySource = resultRepository;
+
+        }
+        
+        
+        
         public ManualViewingViewModel()
         {
             Results = new ObservableCollection<SipperLcmsFeatureTargetedResultDTO>();
