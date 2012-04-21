@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using DeconTools.Backend.Core;
@@ -24,6 +25,15 @@ namespace Sipper.ViewModel
 
         #region Properties
 
+        public ObservableCollection<string> DatasetPathCollection
+        {
+            get
+            {
+                return _fileInputsInfo.DatasetPathsList as ObservableCollection<string>;
+            }
+        }
+
+
 
         public string DatasetPath
         {
@@ -39,7 +49,7 @@ namespace Sipper.ViewModel
             }
         }
 
-     
+
         public string TargetsFilePath
         {
             get { return _fileInputsInfo.TargetsFilePath; }
@@ -56,7 +66,7 @@ namespace Sipper.ViewModel
             }
         }
 
-   
+
 
 
         public string ResultsSaveFilePath
@@ -69,7 +79,7 @@ namespace Sipper.ViewModel
 
                 _fileInputsInfo.ResultsSaveFilePath = value;
 
-                
+
 
                 OnPropertyChanged("ResultsSaveFilePath");
             }
@@ -228,8 +238,8 @@ namespace Sipper.ViewModel
 
         public void SaveResults()
         {
-             
-            
+
+
         }
 
 
@@ -244,7 +254,7 @@ namespace Sipper.ViewModel
             string path = Path.GetDirectoryName(_fileInputsInfo.TargetsFilePath);
 
             string resultsSaveFileName = path + Path.DirectorySeparatorChar + sourceResultsFileName + "_validated.txt";
-            ResultsSaveFilePath =  resultsSaveFileName;
+            ResultsSaveFilePath = resultsSaveFileName;
 
         }
         #endregion

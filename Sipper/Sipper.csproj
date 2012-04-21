@@ -74,8 +74,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\FileInputsInfo.cs" />
+    <Compile Include="Model\ResultImageOutputter.cs" />
+    <Compile Include="Model\ResultWithImageInfo.cs" />
     <Compile Include="ViewModel\FileInputsViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="ViewModel\ManualViewingWithoutRawDataViewModel.cs" />
+    <Compile Include="View\ManualAnnotationResultImageView.xaml.cs">
+      <DependentUpon>ManualAnnotationResultImageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ManualViewingView.xaml.cs">
       <DependentUpon>ManualViewingView.xaml</DependentUpon>
     </Compile>
@@ -103,6 +109,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\ManualAnnotationResultImageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ManualViewingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

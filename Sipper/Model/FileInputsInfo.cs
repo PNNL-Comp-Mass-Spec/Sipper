@@ -25,6 +25,10 @@ namespace Sipper.Model
 
         #region Properties
 
+
+        public string DatasetDirectory { get; set; }
+
+
         public IList<string> DatasetPathsList { get; set; }
 
         public string DatasetPath { get; set; }
