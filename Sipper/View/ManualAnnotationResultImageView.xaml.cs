@@ -113,5 +113,15 @@ namespace Sipper.View
         {
             
         }
+
+        private void btnOpenHtmlReport_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.OpenHTMLReport();
+        }
+
+        private void btnGenerateHtmlReport_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.GenerateHTMLReport();
+        }
     }
 }

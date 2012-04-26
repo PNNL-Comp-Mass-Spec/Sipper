@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="FileRefs.cs" />
+    <Compile Include="ModelTests\HtmlGeneratorTests.cs" />
     <Compile Include="ModelTests\ResultImageOutputterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModelTests\AutoprocessorViewModelTests.cs" />

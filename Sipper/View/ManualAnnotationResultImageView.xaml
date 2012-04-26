@@ -68,6 +68,8 @@
                 <TextBlock FontSize="12"  Foreground= "#764F4F" Margin="6,3,3,3" VerticalAlignment="Top" 
                            TextWrapping="Wrap" Text="{Binding Path=DataContext.GeneralStatusMessage, ElementName=window, Mode=OneWay}"  ></TextBlock>
                 <Button Name="btnSaveResults" Click="btnSaveResultsClick">Save results</Button>
+                <Button Name="btnGenerateHtmlReport" Click="btnGenerateHtmlReport_Click">Generate HTML report</Button>
+                <Button Name="btnOpenHtmlReport" Click="btnOpenHtmlReport_Click">Open HTML report</Button>
             </WrapPanel>
 
           

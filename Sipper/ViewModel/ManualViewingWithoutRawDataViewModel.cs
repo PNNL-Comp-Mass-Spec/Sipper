@@ -15,16 +15,19 @@ namespace Sipper.ViewModel
 
         private TargetedResultRepository _resultRepositorySource;
         private List<string> _imageFilePaths;
+        private FileInputsInfo _fileInputsInfo;
 
         #region Constructors
 
         public ManualViewingWithoutRawDataViewModel(FileInputsInfo fileInputs = null)
         {
             Results = new ObservableCollection<ResultWithImageInfo>();
+
+            _fileInputsInfo = fileInputs;
             FileInputs = new FileInputsViewModel(fileInputs);
 
             FileInputs.PropertyChanged += FileInputsPropertyChanged;
-
+            _resultRepositorySource = new TargetedResultRepository();
 
         }
 
@@ -165,12 +168,64 @@ namespace Sipper.ViewModel
 
         #region Public Methods
 
+        public void OpenHTMLReport()
+        {
+            if (IsImageFilesLoaded && _resultRepositorySource.Results.Count > 0)
+            {
+                string expectedHtmlFilepath = FileInputs.ResultImagesFolderPath + Path.DirectorySeparatorChar +
+                                              "0_index.html";
 
+                if (File.Exists(expectedHtmlFilepath))
+                {
+                    try
+                    {
+                        System.Diagnostics.Process.Start(expectedHtmlFilepath);
+                    }
+                    catch (Exception ex)
+                    {
+                        GeneralStatusMessage = ex.Message;
+                    }
+                    
+                }
+
+            }
+
+
+        }
+
+
+        public void GenerateHTMLReport()
+        {
+            if (IsImageFilesLoaded && _resultRepositorySource.Results.Count>0)
+            {
+                
+                HTMLReportGenerator reportGenerator = new HTMLReportGenerator(_resultRepositorySource, _fileInputsInfo);
+
+                try
+                {
+                    reportGenerator.GenerateHTMLReport();
+                    GeneralStatusMessage = "HTML report was generated! See output folder.";
+
+                }
+                catch (Exception ex)
+                {
+                    GeneralStatusMessage = ex.Message;
+
+                }
+
+            }
+            else
+            {
+                GeneralStatusMessage=  "Results not ready yet. Check results and file/folder paths.";
+            }
+        }
 
 
         //TODO: code duplication here
         public void LoadResults(string resultFile)
         {
+            GeneralStatusMessage = "";
+
             _resultRepositorySource.Results.Clear();
 
             FileInfo fileInfo = new FileInfo(resultFile);
@@ -189,6 +244,8 @@ namespace Sipper.ViewModel
 
         public void SetResults()
         {
+            GeneralStatusMessage = "";
+
             if (_resultRepositorySource == null) return;
 
             var query = (from n in _resultRepositorySource.Results select (SipperLcmsFeatureTargetedResultDTO)n);
@@ -206,6 +263,10 @@ namespace Sipper.ViewModel
             TargetsFileStatusText = Results.Count + " loaded.";
 
             MapResultsToImages();
+
+            GenerateHTMLReport();
+
+            
 
 
         }
