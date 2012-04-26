@@ -37,6 +37,8 @@ namespace Sipper.Model
 
         public string ParameterFilePath { get; set; }
 
+        public string ResultImagesFolderPath { get; set; }
+
         public string ResultsSaveFilePath { get; set; }
 
         #endregion

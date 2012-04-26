@@ -16,6 +16,8 @@ using Sipper.Model;
 
 namespace Sipper.ViewModel
 {
+    public delegate void AllDataLoadedAndReadyEventHandler(object sender, EventArgs e);
+
     public class ManualViewingViewModel : ViewModelBase
     {
         private const double DefaultMSPeakWidth = 0.01;
@@ -30,37 +32,62 @@ namespace Sipper.ViewModel
 
         #region Constructors
 
-        public ManualViewingViewModel(TargetedResultRepository resultRepository):this()
-        {
-            _resultRepositorySource = resultRepository;
 
-        }
-        
-        
-        
-        public ManualViewingViewModel()
+        public ManualViewingViewModel(FileInputsInfo fileInputs = null)
         {
             Results = new ObservableCollection<SipperLcmsFeatureTargetedResultDTO>();
             WorkflowParameters = new SipperTargetedWorkflowParameters();
 
             Workflow = new SipperTargetedWorkflow(WorkflowParameters);
-            FileInputs = new FileInputsViewModel(new FileInputsInfo());
+            FileInputs = new FileInputsViewModel(fileInputs);
 
             FileInputs.PropertyChanged += FileInputsPropertyChanged;
+
+
+            LoadParameters();
+
+
+
+            UpdateGraphRelatedProperties();
 
             ChromGraphXWindowWidth = 600;
         }
 
+        public ManualViewingViewModel(TargetedResultRepository resultRepository, FileInputsInfo fileInputs = null)
+            : this(fileInputs)
+        {
+            _resultRepositorySource = resultRepository;
+            SetResults();
+
+            if (IsAllDataReady)
+            {
+                OnAllDataLoadedAndReady(new EventArgs());
+            }
+
+        }
+
+
+
+
         #endregion
 
         #region Event-related
+
+        public event AllDataLoadedAndReadyEventHandler AllDataLoadedAndReadyEvent;
+
+        public void OnAllDataLoadedAndReady(EventArgs e)
+        {
+            AllDataLoadedAndReadyEventHandler handler = AllDataLoadedAndReadyEvent;
+            if (handler != null) handler(this, e);
+        }
+
 
         void FileInputsPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
                 case "ParameterFilePath":
-                    LoadParameters(FileInputs.ParameterFilePath);
+                    LoadParameters();
                     break;
                 case "DatasetPath":
                     LoadRun(FileInputs.DatasetPath);
@@ -69,6 +96,15 @@ namespace Sipper.ViewModel
                     LoadResults(FileInputs.TargetsFilePath);
                     break;
             }
+
+            if (IsAllDataReady)
+            {
+                OnAllDataLoadedAndReady(new EventArgs());
+            }
+
+
+
+
         }
 
 
@@ -86,6 +122,11 @@ namespace Sipper.ViewModel
                 Workflow.Run = _run;
                 OnPropertyChanged("DatasetFilePath");
                 OnPropertyChanged("RunStatusText");
+
+                if (IsAllDataReady)
+                {
+                    OnAllDataLoadedAndReady(new EventArgs());
+                }
             }
         }
 
@@ -114,10 +155,12 @@ namespace Sipper.ViewModel
         {
             get
             {
-
                 return FileInputs.DatasetPath;
+            }
 
-                return Run.Filename;
+            set
+            {
+                FileInputs.DatasetPath = value;
             }
 
         }
@@ -135,6 +178,20 @@ namespace Sipper.ViewModel
 
             }
         }
+
+
+        public string ChromTitleText
+        {
+            get
+            {
+                if (CurrentResult == null) return String.Empty;
+
+                return "XIC m/z " + CurrentResult.MonoMZ.ToString("0.0000");
+
+            }
+        }
+
+
 
 
         private string _targetsFileStatusText;
@@ -195,6 +252,25 @@ namespace Sipper.ViewModel
         }
 
 
+        private string _peptideSequence;
+        public string PeptideSequence
+        {
+            get
+            {
+                if (Workflow != null && Workflow.Result != null)
+                {
+                    return Workflow.Result.Target.Code;
+                }
+                return String.Empty;
+
+            }
+
+
+
+
+        }
+
+
         private XYData _chromXYData;
         public XYData ChromXYData
         {
@@ -216,6 +292,16 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("MassSpecXYData");
             }
         }
+
+
+        private XYData _chromCorrXYData;
+        public XYData ChromCorrXYData
+        {
+            get { return _chromCorrXYData; }
+            set { _chromCorrXYData = value; }
+        }
+
+
         public double ChromGraphMaxX { get; set; }
 
         public double ChromGraphMinX { get; set; }
@@ -253,7 +339,7 @@ namespace Sipper.ViewModel
         public void ExecuteWorkflow()
         {
             GeneralStatusMessage = ".......";
-            
+
             SetCurrentWorkflowTarget(CurrentResult);
 
             Workflow.Execute();
@@ -273,12 +359,55 @@ namespace Sipper.ViewModel
             TheorProfileXYData = TheorXYDataCalculationUtilities.GetTheoreticalIsotopicProfileXYData(Workflow.Result.Target.IsotopicProfile, fwhm);
 
             GeneralStatusMessage = "Updated.";
+
+            OnPropertyChanged("PeptideSequence");
         }
 
         public void LoadRun(string fileOrFolderPath)
         {
+            if (Run != null)
+            {
+                Run.Close();
+                Run = null;
+                GC.Collect();
+            }
 
-            Run = new RunFactory().CreateRun(fileOrFolderPath);
+            try
+            {
+
+                Run = new RunFactory().CreateRun(fileOrFolderPath);
+            }
+            catch (Exception ex)
+            {
+
+
+                GeneralStatusMessage = ex.Message;
+            }
+
+            OnPropertyChanged("RunStatusText");
+            OnPropertyChanged("DatasetFilePath");
+
+            if (Run != null)
+            {
+                try
+                {
+                    LoadPeaks();
+                }
+                catch (Exception ex)
+                {
+                    GeneralStatusMessage = ex.Message;
+
+                }
+
+            }
+
+
+        }
+
+        private void LoadPeaks()
+        {
+            if (Run == null) return;
+
             string expectedPeaksFilename = this.Run.DataSetPath + "\\" + this.Run.DatasetName + "_peaks.txt";
 
             if (!File.Exists(expectedPeaksFilename))
@@ -289,8 +418,8 @@ namespace Sipper.ViewModel
             PeakImporterFromText peakImporter = new PeakImporterFromText(expectedPeaksFilename, _backgroundWorker);
             peakImporter.ImportPeaks(this.Run.ResultCollection.MSPeakResultList);
 
-
         }
+
 
         private bool checkForPeaksFile()
         {
@@ -309,28 +438,81 @@ namespace Sipper.ViewModel
             }
         }
 
-        public void LoadParameters(string parameterFile)
+        public void LoadParameters()
         {
+            IsParametersLoaded = false;
 
-            FileInputs.ParameterFilePath = parameterFile;
-            WorkflowParameters.LoadParameters(parameterFile);
+            if (String.IsNullOrEmpty(FileInputs.ParameterFilePath))
+            {
+                ParameterFileStatusText = "None loaded; using defaults";
+            }
+            else
+            {
+                FileInfo fileInfo = new FileInfo(FileInputs.ParameterFilePath);
 
-            ParameterFileStatusText = "Loaded.";
+                if (fileInfo.Exists)
+                {
+                    WorkflowParameters.LoadParameters(FileInputs.ParameterFilePath);
+                    ParameterFileStatusText = fileInfo.Name + " LOADED";
+
+                    IsParametersLoaded = true;
+                }
+                else
+                {
+                    WorkflowParameters = new SipperTargetedWorkflowParameters();
+                    ParameterFileStatusText = "None loaded; using defaults";
+                }
+
+               
+            }
+
+
+
 
         }
 
+
+        protected bool IsParametersLoaded { get; set; }
+        protected bool IsRunLoaded
+        {
+            get { return Run != null; }
+        }
+
+        protected bool IsResultsLoaded
+        {
+            get { return Results != null && Results.Count > 0; }
+        }
+
+        public bool IsAllDataReady
+        {
+            get { return (IsParametersLoaded && IsResultsLoaded && IsRunLoaded); }
+        }
+
+
         public void LoadResults(string resultFile)
         {
-            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(resultFile);
-            _resultRepositorySource = importer.Import();
+
+            _resultRepositorySource.Results.Clear();
+
+            FileInfo fileInfo = new FileInfo(resultFile);
+
+            if (fileInfo.Exists)
+            {
+                SipperResultFromTextImporter importer = new SipperResultFromTextImporter(resultFile);
+                var tempResults = importer.Import();
+
+                _resultRepositorySource.Results.AddRange(tempResults.Results);
+            }
 
             SetResults();
-            TargetsFileStatusText = Results.Count + " loaded.";
+
 
         }
 
         public void SetResults()
         {
+
+
             var query = (from n in _resultRepositorySource.Results select (SipperLcmsFeatureTargetedResultDTO)n);
 
             Results.Clear();
@@ -338,6 +520,9 @@ namespace Sipper.ViewModel
             {
                 Results.Add(resultDto);
             }
+
+            TargetsFileStatusText = Results.Count + " loaded.";
+
 
         }
 
@@ -359,8 +544,8 @@ namespace Sipper.ViewModel
 
         }
 
-        
-        
+
+
         public void CopyMSDataToClipboard()
         {
             if (MassSpecXYData == null || MassSpecXYData.Xvalues == null || MassSpecXYData.Xvalues.Length == 0) return;
@@ -388,19 +573,22 @@ namespace Sipper.ViewModel
         private void UpdateGraphRelatedProperties()
         {
             ChromXYData = new XYData();
-            ChromXYData.Xvalues = Workflow.ChromatogramXYData==null? new double[] { 0, 1, 2, 3, 4 }: Workflow.ChromatogramXYData.Xvalues;
-            ChromXYData.Yvalues = Workflow.ChromatogramXYData==null? new double[] { 0, 1, 2, 3, 4 }:  Workflow.ChromatogramXYData.Yvalues;
+            ChromXYData.Xvalues = Workflow.ChromatogramXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.ChromatogramXYData.Xvalues;
+            ChromXYData.Yvalues = Workflow.ChromatogramXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.ChromatogramXYData.Yvalues;
 
             MassSpecXYData = new XYData();
             MassSpecXYData.Xvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Xvalues;
             MassSpecXYData.Yvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Yvalues;
 
+            ChromCorrXYData = new XYData();
+            ChromCorrXYData.Xvalues = Workflow.ChromCorrelationRSquaredVals == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.ChromCorrelationRSquaredVals.Xvalues;
+            ChromCorrXYData.Yvalues = Workflow.ChromCorrelationRSquaredVals == null ? new double[] { 0, 0, 0, 0, 0 } : Workflow.ChromCorrelationRSquaredVals.Yvalues;
 
 
             if (CurrentResult != null)
             {
-                MSGraphMinX = CurrentResult.MonoMZ - 2;
-                MSGraphMaxX = CurrentResult.MonoMZ + 10;
+                MSGraphMinX = CurrentResult.MonoMZ - 1.75;
+                MSGraphMaxX = CurrentResult.MonoMZ + 7;
             }
             else
             {
@@ -451,7 +639,7 @@ namespace Sipper.ViewModel
 
 
 
-        private void  CopyXYDataToClipboard(double[]xvals, double[]yvals)
+        private void CopyXYDataToClipboard(double[] xvals, double[] yvals)
         {
             System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
 

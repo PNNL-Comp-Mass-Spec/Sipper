@@ -1,5 +1,5 @@
 ﻿
-using DeconTools.Workflows.Backend.Results;
+using Sipper.Model;
 
 namespace Sipper.ViewModel
 {
@@ -7,6 +7,12 @@ namespace Sipper.ViewModel
     {
 
         #region Constructors
+
+        public MainWindowViewModel()
+        {
+            SipperProject = new Project();
+        }
+
         #endregion
 
         #region Properties
@@ -15,14 +21,12 @@ namespace Sipper.ViewModel
 
         #region Public Methods
 
-        public TargetedResultRepository ResultRepository { get; set; }
+        public Project SipperProject { get; set; }
 
 
         #endregion
 
-        #region Private Methods
-
-        #endregion
+    
 
     }
 }

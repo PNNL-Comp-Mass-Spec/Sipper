@@ -74,6 +74,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\FileInputsInfo.cs" />
+    <Compile Include="Model\Project.cs" />
     <Compile Include="Model\ResultImageOutputter.cs" />
     <Compile Include="Model\ResultWithImageInfo.cs" />
     <Compile Include="ViewModel\FileInputsViewModel.cs" />
@@ -84,6 +85,9 @@
     </Compile>
     <Compile Include="View\ManualViewingView.xaml.cs">
       <DependentUpon>ManualViewingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Window1.xaml.cs">
+      <DependentUpon>Window1.xaml</DependentUpon>
     </Compile>
     <Page Include="View\AutoprocessorWindow.xaml">
       <SubType>Designer</SubType>
@@ -114,6 +118,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ManualViewingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Window1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

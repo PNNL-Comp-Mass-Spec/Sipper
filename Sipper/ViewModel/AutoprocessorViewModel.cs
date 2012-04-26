@@ -6,6 +6,7 @@ using DeconTools.Backend.Core;
 using DeconTools.Backend.Core.Results;
 using DeconTools.Backend.Utilities;
 using DeconTools.Workflows.Backend.Core;
+using DeconTools.Workflows.Backend.Results;
 using Sipper.Model;
 
 namespace Sipper.ViewModel
@@ -22,10 +23,12 @@ namespace Sipper.ViewModel
 
         private ResultFilterCriteria _filterCriteria;
 
+        private TargetedResultRepository _resultRepository;
+
 
         #region Constructors
 
-        public AutoprocessorViewModel()
+        public AutoprocessorViewModel(FileInputsInfo fileInputs = null)
         {
             ExecutorParameters = new SipperWorkflowExecutorParameters();
             SipperWorkflowParameters = new SipperTargetedWorkflowParameters();
@@ -33,19 +36,14 @@ namespace Sipper.ViewModel
             ProgressInfos = new ObservableCollection<TargetedWorkflowExecutorProgressInfo>();
 
             _filterCriteria = ResultFilterCriteria.GetFilterScheme1();
-
-            
-            FileInputs = new FileInputsViewModel(new FileInputsInfo());
-
+            FileInputs = new FileInputsViewModel(fileInputs);
         }
 
 
-        public AutoprocessorViewModel(FileInputsInfo fileInputsInfo)
-            : this()
+        public AutoprocessorViewModel(TargetedResultRepository resultRepository, FileInputsInfo fileInputs = null)
+            : this(fileInputs)
         {
-            FileInputs = new FileInputsViewModel(fileInputsInfo);
-
-
+            _resultRepository = resultRepository;
         }
 
 
@@ -55,6 +53,7 @@ namespace Sipper.ViewModel
 
         public FileInputsViewModel FileInputs { get; private set; }
 
+        public Run Run { get; set; }
 
         public SipperWorkflowExecutorParameters ExecutorParameters { get; set; }
 
@@ -120,6 +119,8 @@ namespace Sipper.ViewModel
         }
 
         private TargetedWorkflowExecutorProgressInfo _currentResult;
+        
+
         public TargetedWorkflowExecutorProgressInfo CurrentResult
         {
             get
@@ -201,10 +202,12 @@ namespace Sipper.ViewModel
         void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = (BackgroundWorker)sender;
-            
-
             _sipperWorkflowExecutor = new SipperWorkflowExecutor(ExecutorParameters, FileInputs.DatasetPath, worker);
             _sipperWorkflowExecutor.Execute();
+
+            _resultRepository.Results.Clear();
+            _resultRepository.Results.AddRange(_sipperWorkflowExecutor.GetResults());
+
 
             if (worker.CancellationPending)
             {

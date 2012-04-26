@@ -47,7 +47,8 @@ namespace Sipper.Scripts
 
         public static TargetedResultRepository LoadAllResults()
         {
-            string resultFileName = @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\_mergedResults.txt";
+            string resultFileName =
+                @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\Iteration05_Sum05_newColumns\_mergedResults.txt";
             SipperResultFromTextImporter importer = new SipperResultFromTextImporter(resultFileName);
             var resultRepo = importer.Import();
             return resultRepo;
@@ -56,7 +57,7 @@ namespace Sipper.Scripts
         public static TargetedResultRepository LoadC12Results()
         {
             string resultFileName =
-                @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\Iteration03_Sum05\_Yellow_C12_MergedResults.txt";
+                @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\Iteration05_Sum05_newColumns\Yellow_C12\_Yellow_C12_MergedResults.txt";
             SipperResultFromTextImporter importer = new SipperResultFromTextImporter(resultFileName);
             var resultRepo = importer.Import();
             return resultRepo;
@@ -65,7 +66,7 @@ namespace Sipper.Scripts
         public static TargetedResultRepository LoadC13Results()
         {
             string resultFileName =
-                @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\Iteration03_Sum05\_Yellow_C13_MergedResults.txt";
+                @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\Iteration05_Sum05_newColumns\Yellow_C13\_Yellow_C13_MergedResults.txt";
             SipperResultFromTextImporter importer = new SipperResultFromTextImporter(resultFileName);
             var resultRepo = importer.Import();
             return resultRepo;

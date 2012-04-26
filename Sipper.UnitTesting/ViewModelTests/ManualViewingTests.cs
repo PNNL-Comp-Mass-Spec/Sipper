@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
+using Sipper.Model;
 using Sipper.ViewModel;
 
 namespace Sipper.UnitTesting.ViewModelTests
@@ -10,10 +11,22 @@ namespace Sipper.UnitTesting.ViewModelTests
         [Test]
         public void loadResultsTest()
         {
+            string testParameterFile =
+                @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
+
+
             string testResultFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt";
 
-            ManualViewingViewModel viewModel = new ManualViewingViewModel();
+            
+
+
+            FileInputsInfo fileInputs = new FileInputsInfo();
+            fileInputs.ParameterFilePath = testParameterFile;
+            fileInputs.TargetsFilePath = testResultFile;
+
+            ManualViewingViewModel viewModel = new ManualViewingViewModel(fileInputs);
+
 
             viewModel.LoadResults(testResultFile);
             Assert.IsNotEmpty(viewModel.Results);
@@ -27,11 +40,13 @@ namespace Sipper.UnitTesting.ViewModelTests
             string testParameterFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
 
-            ManualViewingViewModel viewModel = new ManualViewingViewModel();
+            FileInputsInfo fileInputs = new FileInputsInfo();
+            fileInputs.ParameterFilePath = testParameterFile;
 
-            viewModel.LoadParameters(testParameterFile);
+            ManualViewingViewModel viewModel = new ManualViewingViewModel(fileInputs);
+
             Assert.IsNotNull(viewModel.WorkflowParameters);
-
+            Assert.AreEqual(2, viewModel.WorkflowParameters.MSPeakDetectorPeakBR);
 
         }
 

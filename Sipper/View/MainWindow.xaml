@@ -44,10 +44,18 @@
         </Border>
 
       <Border Width="Auto" Height="auto"  Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Button Name="btnBrowseAndAnnotate" Click="btnBrowseAndAnnotate_Click"  Width="Auto" Height="Auto"  BorderBrush="{x:Null}" Background="{x:Null}" FontSize="15" >
-                <TextBlock Foreground="#FF343C55">
-                    Browse and Annotate
-                </TextBlock>
+            <Button Name="btnBrowseAndAnnotate"  Width="Auto" Height="Auto"  BorderBrush="{x:Null}" Background="{x:Null}" FontSize="15" >
+                <StackPanel>
+                    <TextBlock Foreground="#FF343C55" Text="Browse and Annotate" />
+                    <StackPanel Margin="5" Orientation="Horizontal">
+                        <Button Click="btnBrowseAndAnnotate_Click"   Name="btnDynamicModeAnnotation"  FontSize="10" BorderBrush="{x:Null}" Background="{x:Null}"  Margin="5" Content="Dynamic mode" 
+                                ToolTip="Each selected result is re-processed through workflow. Can only view one result at a time" />
+                        <Button Click="btnStaticModeAnnotation_Click"   Name="btnStaticModeAnnotation"  FontSize="10" BorderBrush="{x:Null}" Background="{x:Null}" Margin="5" Content="Static mode" 
+                                ToolTip="Annotate static result images. Many results viewed at a time." />
+                    </StackPanel>
+                    
+                </StackPanel>
+               
             </Button>
 
 

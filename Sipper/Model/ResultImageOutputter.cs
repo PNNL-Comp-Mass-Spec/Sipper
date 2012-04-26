@@ -11,6 +11,7 @@ using DeconTools.Workflows.Backend.Core;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 using GWSGraphLibrary;
+using ZedGraph;
 
 namespace Sipper.Model
 {
@@ -198,14 +199,50 @@ namespace Sipper.Model
 
             UpdateGraphRelatedProperties();
 
+
+
             _chromGraph.zedGraphControl1.GraphPane.GraphObjList.Clear();
             _chromGraph.GenerateGraph(ChromXYData.Xvalues, ChromXYData.Yvalues, ChromGraphMinX, ChromGraphMaxX);
 
+            string chromTitleText = "XIC m/z " + (CurrentResult == null ? "" : CurrentResult.MonoMZ.ToString("0.000"));
+            //_chromGraph.AddAnnotationRelativeAxis(chromTitleText, 0.5, 0, 8f);
+
+            
+            
             _msGraph.zedGraphControl1.GraphPane.GraphObjList.Clear();
             _msGraph.GenerateGraph(MassSpecXYData.Xvalues, MassSpecXYData.Yvalues, MSGraphMinX, MSGraphMaxX);
 
+            var curve = _msGraph.GraphPane.CurveList.FirstOrDefault();
+
+            if (curve != null)
+            {
+                if (curve is LineItem)
+                {
+                    ((LineItem)curve).Line.Width = 2;
+                }
+            }
+
+            string graphTitle = "Scan " + (CurrentResult == null ? "" : CurrentResult.ScanLC.ToString("0"));
+            _msGraph.AddAnnotationRelativeAxis(graphTitle, 0.3, 0, 8f);
+
+
             _theorMSGraph.zedGraphControl1.GraphPane.GraphObjList.Clear();
             _theorMSGraph.GenerateGraph(TheorProfileXYData.Xvalues, TheorProfileXYData.Yvalues, MSGraphMinX, MSGraphMaxX);
+
+            curve = _theorMSGraph.GraphPane.CurveList.FirstOrDefault();
+
+            if (curve != null)
+            {
+                if (curve is LineItem)
+                {
+                    ((LineItem)curve).Line.Width = 2;
+                }
+            }
+
+
+            string theorGraphTitle = "Formula " + (CurrentResult == null ? "" : CurrentResult.EmpiricalFormula);
+            _theorMSGraph.AddAnnotationRelativeAxis(theorGraphTitle, 0.3, 0, 8);
+
 
 
             _msGraph.SaveGraph(msfilename);

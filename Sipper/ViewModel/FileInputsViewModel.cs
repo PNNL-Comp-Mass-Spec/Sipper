@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using DeconTools.Backend.Core;
 using Sipper.Model;
 
 namespace Sipper.ViewModel
@@ -11,13 +10,12 @@ namespace Sipper.ViewModel
     public class FileInputsViewModel : ViewModelBase
     {
         private FileInputsInfo _fileInputsInfo;
-        private Run _run;
+
 
         #region Constructors
         public FileInputsViewModel(FileInputsInfo fileInputsInfo)
         {
-            _fileInputsInfo = fileInputsInfo;
-            _run = null;
+            _fileInputsInfo = fileInputsInfo ?? new FileInputsInfo();
 
         }
         #endregion
@@ -66,7 +64,21 @@ namespace Sipper.ViewModel
             }
         }
 
+        public string ResultImagesFolderPath
+        {
+            get
+            {
+                return _fileInputsInfo.ResultImagesFolderPath;
+            }
+            set
+            {
+                if (value == _fileInputsInfo.ResultImagesFolderPath)
+                    return;
 
+                _fileInputsInfo.ResultImagesFolderPath = value;
+                OnPropertyChanged("ResultImagesFolderPath");
+            }
+        }
 
 
         public string ResultsSaveFilePath

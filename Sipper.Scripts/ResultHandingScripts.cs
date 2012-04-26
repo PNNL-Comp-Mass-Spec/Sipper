@@ -14,8 +14,8 @@ namespace Sipper.Scripts
         [Test]
         public void mergeResults1()
         {
-            string resultFolder = @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\Iteration03_Sum05\Yellow_C13_edited";
-            string outputFile = @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\Iteration03_Sum05\_Yellow_C13_MergedResults.txt";
+            string resultFolder = @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\Iteration05_Sum05_newColumns\Yellow_C12";
+            string outputFile = @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\Iteration05_Sum05_newColumns\Yellow_C12\_Yellow_C12_MergedResults.txt";
             ResultUtilities.MergeResultFiles(resultFolder, outputFile);
 
         }

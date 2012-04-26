@@ -17,23 +17,30 @@ namespace Sipper.View
 
         protected MainWindowViewModel ViewModel { get; set; }
 
-        private void AutoMenuItemClick(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void btnBrowseAndAnnotate_Click(object sender, RoutedEventArgs e)
         {
 
-            var childWindow = new View.ManualViewingView();
-            childWindow.Show();
+            var childWindow = new View.ManualViewingView(ViewModel.SipperProject);
+
+            childWindow.ShowDialog();
+
+            ViewModel.SipperProject.Run = childWindow.ViewModel.Run;
+
 
         }
 
         private void btnAutoprocess_Click(object sender, RoutedEventArgs e)
         {
-            var childWindow = new View.AutoprocessorWindow();
+            var childWindow = new View.AutoprocessorWindow(ViewModel.SipperProject);
             childWindow.Show();
+
+            
+        }
+
+        private void btnStaticModeAnnotation_Click(object sender, RoutedEventArgs e)
+        {
+            var childWindow = new View.ManualAnnotationResultImageView(ViewModel.SipperProject);
+            childWindow.ShowDialog();
         }
     }
 }

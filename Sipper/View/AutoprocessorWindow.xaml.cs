@@ -15,11 +15,17 @@ namespace Sipper.View
 
         private BackgroundWorker _backgroundWorker;
 
-        public AutoprocessorWindow()
+        public AutoprocessorWindow(Project sipperProject = null)
         {
             InitializeComponent();
 
-            ViewModel = new AutoprocessorViewModel(new FileInputsInfo());
+            if (sipperProject==null)
+            {
+                sipperProject = new Project();
+            }
+
+
+            ViewModel = new AutoprocessorViewModel(sipperProject.ResultRepository, sipperProject.FileInputs);
 
             ViewModel.CurrentResultUpdated += new CurrentResultChangedHandler(ViewModel_CurrentResultUpdated); 
 

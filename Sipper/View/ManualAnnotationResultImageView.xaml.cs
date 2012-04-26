@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Text;
+using System.Windows;
+using Sipper.Model;
 using Sipper.ViewModel;
 
 namespace Sipper.View
@@ -8,22 +11,107 @@ namespace Sipper.View
     /// </summary>
     public partial class ManualAnnotationResultImageView : Window
     {
-        public ManualAnnotationResultImageView()
+        public ManualAnnotationResultImageView(Project project =null)
         {
             InitializeComponent();
 
-            ViewModel = new ManualViewingWithoutRawDataViewModel();
+            if (project==null)
+            {
+                project = new Project();
+            }
+                
+            ViewModel = new ManualViewingWithoutRawDataViewModel(project.ResultRepository, project.FileInputs);
 
             DataContext = ViewModel;
 
-            ViewModel.ResultImagesFolderPath = @"D:\Data\Temp\Results\Visuals";
+          
 
-            ViewModel.LoadResults(
-                @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt");
 
         }
 
 
-        public ManualViewingWithoutRawDataViewModel ViewModel { get; set; }   
+        public ManualViewingWithoutRawDataViewModel ViewModel { get; set; }
+
+
+        private void FileDropHandler(object sender, DragEventArgs e)
+        {
+            DataObject dataObject = e.Data as DataObject;
+
+            if (dataObject.ContainsFileDropList())
+            {
+
+
+                var fileNamesStringCollection = dataObject.GetFileDropList();
+                StringBuilder bd = new StringBuilder();
+
+
+                var fileNames = fileNamesStringCollection.Cast<string>().ToList();
+
+                ViewModel.FileInputs.CreateFileLinkages(fileNames);
+
+
+            }
+        }
+
+
+        private void txtResultsFilePath_DragOver(object sender, DragEventArgs e)
+        {
+            bool dropEnabled = true;
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
+            {
+                string[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+
+                foreach (string filename in filenames)
+                {
+                    if (System.IO.Path.GetExtension(filename).ToUpperInvariant() != ".TXT")
+                    {
+                        dropEnabled = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                dropEnabled = false;
+            }
+
+
+            if (!dropEnabled)
+            {
+                e.Effects = DragDropEffects.None;
+                e.Handled = true;
+            }
+        }
+
+        private void TextBox_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+
+        private void ListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count == 0) return;
+
+
+            var firstAddedItem = e.AddedItems[0];
+
+            if (firstAddedItem is ResultWithImageInfo)
+            {
+                ViewModel.CurrentResult = (ResultWithImageInfo)e.AddedItems[0];
+            }
+            
+        }
+
+        private void btnSaveResultsClick(object sender, RoutedEventArgs e)
+        {
+            ViewModel.SaveResults();
+        }
+
+        private void ValidationCodeListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            
+        }
     }
 }

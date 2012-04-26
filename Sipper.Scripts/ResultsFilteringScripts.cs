@@ -37,7 +37,7 @@ namespace Sipper.Scripts
             var filteredResults = SipperResultUtilities.ApplyFilteringScheme1(allResults);
 
             string exportFileName =
-                @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\Iteration03_Sum05\Yellow_C13_Enriched_results.txt";
+                @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\Iteration05_Sum05_newColumns\_Yellow_C13_Enriched_results.txt";
 
             SipperResultToLcmsFeatureExporter exporter = new SipperResultToLcmsFeatureExporter(exportFileName);
             exporter.ExportResults(filteredResults);
