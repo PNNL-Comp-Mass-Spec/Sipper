@@ -70,6 +70,11 @@
                 <Button Name="btnSaveResults" Click="btnSaveResultsClick">Save results</Button>
                 <Button Name="btnGenerateHtmlReport" Click="btnGenerateHtmlReport_Click">Generate HTML report</Button>
                 <Button Name="btnOpenHtmlReport" Click="btnOpenHtmlReport_Click">Open HTML report</Button>
+                <Button Name="btnUpdateAnnotationsWithAutomaticFilters" Click="btnUpdateAnnotationsWithAutomaticFilters_Click">
+                    <TextBlock Width="110" Margin="6" TextWrapping="Wrap" Text="Erase annotations and apply automatic C13 detection filters">
+                        
+                    </TextBlock>
+                </Button>
             </WrapPanel>
 
           
@@ -222,8 +227,13 @@
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
                                         </Grid.RowDefinitions>
-                                        
+
+                                        <TextBlock Margin="0,0,6,6" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Path=Result.DatasetName}"  ></TextBlock>
                                         <TextBlock Grid.Column="0" Grid.Row="1" Text="ID" ></TextBlock>
                                         <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Path=Result.TargetID}" />
                                         <TextBlock Grid.Column="0" Grid.Row="2" Text="MassTag" ></TextBlock>
@@ -234,12 +244,18 @@
                                         <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Path=Result.MonoMZ, StringFormat=0.0000}" />
                                         <TextBlock Grid.Column="0" Grid.Row="5" Text="z" ></TextBlock>
                                         <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Path=Result.ChargeState}" />
-                                        <TextBlock Grid.Column="0" Grid.Row="6" Text="AreaMetric" ></TextBlock>
-                                        <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding Path=Result.AreaUnderRatioCurveRevised, StringFormat=0.00}" />
-                                        <TextBlock Grid.Column="0" Grid.Row="7" Text="RS_Metric" ></TextBlock>
-                                        <TextBlock Grid.Column="1" Grid.Row="7" Text="{Binding Path=Result.RSquaredValForRatioCurve, StringFormat=0.000}" />
-                                        <TextBlock Grid.Column="0" Grid.Row="8" Text="ChromCorr" ></TextBlock>
-                                        <TextBlock Grid.Column="1" Grid.Row="8" Text="{Binding Path=Result.ChromCorrelationMedian, StringFormat=0.000}" />
+                                        <TextBlock Grid.Column="0" Grid.Row="6" Text="fit score" ></TextBlock>
+                                        <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding Path=Result.FitScore, StringFormat=0.000}" />
+                                        <TextBlock Grid.Column="0" Grid.Row="7" Text="i_score" ></TextBlock>
+                                        <TextBlock Grid.Column="1" Grid.Row="7" Text="{Binding Path=Result.IScore, StringFormat=0.000}" />
+                                        <TextBlock Grid.Column="0" Grid.Row="8" Text="AreaMetric" ></TextBlock>
+                                        <TextBlock Grid.Column="1" Grid.Row="8" Text="{Binding Path=Result.AreaUnderRatioCurveRevised, StringFormat=0.00}" />
+                                        <TextBlock Grid.Column="0" Grid.Row="9" Text="RS_Metric" ></TextBlock>
+                                        <TextBlock Grid.Column="1" Grid.Row="9" Text="{Binding Path=Result.RSquaredValForRatioCurve, StringFormat=0.000}" />
+                                        <TextBlock Grid.Column="0" Grid.Row="10" Text="ChromCorr" ></TextBlock>
+                                        <TextBlock Grid.Column="1" Grid.Row="10" Text="{Binding Path=Result.ChromCorrelationMedian, StringFormat=0.000}" />
+                                        <TextBlock Grid.Column="0" Grid.Row="11" Text="ChromCorrSD" ></TextBlock>
+                                        <TextBlock Grid.Column="1" Grid.Row="11" Text="{Binding Path=Result.ChromCorrelationStdev, StringFormat=0.0000}" />
 
                                     </Grid>
                                 </DataTemplate>

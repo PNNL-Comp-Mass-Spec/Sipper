@@ -58,7 +58,8 @@
 
                         </StackPanel>
 
-                        <TextBox Height="44" Margin="6,0" Text="{Binding Path=DataContext.FileInputs.DatasetPath, ElementName=window, Mode=OneWay}" TextWrapping="Wrap">
+                        <TextBox Drop="FileDropHandler" DragOver="txtResultsFilePath_DragOver" PreviewDragOver="TextBox_PreviewDragOver" 
+                                 Height="44" Margin="6,0" Text="{Binding Path=DataContext.FileInputs.DatasetPath, ElementName=window, Mode=OneWay}" TextWrapping="Wrap">
                         </TextBox>
                         <Label
                   Name="label2"
@@ -67,7 +68,9 @@
                   VerticalAlignment="Center"
                   Content="Parameter file"
                   Padding="0"/>
-                        <TextBox Name="txtWorkflowParameterFilepath" Height="44" Margin="6,0" Text="{Binding Path=DataContext.FileInputs.ParameterFilePath, ElementName=window, Mode=OneWay}" TextWrapping="Wrap" />
+                        <TextBox Drop="FileDropHandler" DragOver="txtResultsFilePath_DragOver" PreviewDragOver="TextBox_PreviewDragOver" 
+                                 Name="txtWorkflowParameterFilepath" Height="44" Margin="6,0" 
+                                 Text="{Binding Path=DataContext.FileInputs.ParameterFilePath, ElementName=window, Mode=OneWay}" TextWrapping="Wrap" />
                         <Label
                   Name="label3"
                   HorizontalAlignment="Left"
@@ -75,7 +78,9 @@
                   VerticalAlignment="Center"
                   Content="Targets"
                   Padding="0"/>
-                        <TextBox Name="txtTargetsFilePath" Height="44" Margin="6,0" Text="{Binding Path=DataContext.FileInputs.TargetsFilePath, ElementName=window, Mode=OneWay}" TextWrapping="Wrap" />
+                        <TextBox Drop="FileDropHandler" DragOver="txtResultsFilePath_DragOver" PreviewDragOver="TextBox_PreviewDragOver" Name="txtTargetsFilePath" Height="44" Margin="6,0" 
+                                 Text="{Binding Path=DataContext.FileInputs.TargetsFilePath, ElementName=window, Mode=OneWay}" 
+                                 TextWrapping="Wrap" />
 
                     </StackPanel>
                 </TabItem>
@@ -101,7 +106,7 @@
                             </graphLib:MSGraphControl>
                         </WindowsFormsHost>
  
-                        <TextBlock Margin="6,6,6,0" Text="All results:" ></TextBlock>
+                        <TextBlock Margin="6,6,6,0" Text="C13-enriched peptides found:" ></TextBlock>
                         <ListView 
                         Margin="6,6,6,0" ItemsSource="{Binding Path=DataContext.ProgressInfos, ElementName=window, Mode=OneWay}"
                         SelectionMode="Extended" MaxHeight="300"  >

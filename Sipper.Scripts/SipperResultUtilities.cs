@@ -29,19 +29,75 @@ namespace Sipper.Scripts
         }
 
 
-        public static List<SipperLcmsFeatureTargetedResultDTO>ApplyFilteringScheme1(List<SipperLcmsFeatureTargetedResultDTO> allResults)
+        public static List<int>LoadMassTagIDs(string fileContainingMassTagIDs)
         {
-            var filter1 = allResults.Where(p => p.AreaUnderRatioCurveRevised > 0).ToList();
 
-            var filter2 =
-                filter1.Where(p => p.ChromCorrelationAverage > 0.9 && p.ChromCorrelationMedian > 0.95).ToList();
+            List<int> masstagIDs = new List<int>();
 
-            var filter3 = filter2.Where(p => p.IScore <= 0.15).ToList();
+            using (StreamReader reader = new StreamReader(fileContainingMassTagIDs))
+            {
+                while (reader.Peek()!=-1)
+                {
+                    string line = reader.ReadLine();
 
-            var filter4 = filter3.Where(p => p.RSquaredValForRatioCurve >= 0.925).ToList();
+                    int id = Convert.ToInt32(line);
 
-            return filter4;
+                    masstagIDs.Add(id);
+
+                }
+            }
+
+            return masstagIDs;
+
         }
+
+
+
+        //public static void ApplyFilteringScheme1(List<SipperLcmsFeatureTargetedResultDTO> allResults)
+        //{
+        //    //var filter1 = allResults.Where(p => p.AreaUnderRatioCurveRevised > 0).ToList();
+
+        //    //var filter2 =
+        //    //    filter1.Where(p => p.ChromCorrelationAverage > 0.9 && p.ChromCorrelationMedian > 0.95).ToList();
+
+        //    //var filter3 = filter2.Where(p => p.IScore <= 0.15).ToList();
+
+        //    //var filter4 = filter3.Where(p => p.RSquaredValForRatioCurve >= 0.925).ToList();
+
+
+        //    foreach (var sipperLcmsFeatureTargetedResultDto in allResults)
+        //    {
+                
+        //        if (sipperLcmsFeatureTargetedResultDto.AreaUnderRatioCurveRevised>0)
+        //        {
+                    
+        //            if (sipperLcmsFeatureTargetedResultDto.ChromCorrelationAverage>0.9 && sipperLcmsFeatureTargetedResultDto.ChromCorrelationMedian>0.95)
+        //            {
+                        
+        //                if (sipperLcmsFeatureTargetedResultDto.RSquaredValForRatioCurve>0.925)
+        //                {
+                            
+        //                    if (sipperLcmsFeatureTargetedResultDto.IScore<=0.15)
+        //                    {
+        //                        sipperLcmsFeatureTargetedResultDto.PassesFilter = true;
+        //                    }
+
+        //                }
+
+
+
+        //            }
+
+
+
+
+        //        }
+
+
+        //    }
+
+            
+        //}
 
 
 

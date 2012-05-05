@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 using Sipper.Model;
@@ -296,7 +297,7 @@ namespace Sipper.ViewModel
         public void SaveResults()
         {
 
-
+            if (FileInputs.ResultsSaveFilePath == null) return;
 
             try
             {
@@ -306,13 +307,30 @@ namespace Sipper.ViewModel
             catch (Exception ex)
             {
                 GeneralStatusMessage = "Error saving results. Error message: " + ex.Message;
-                throw;
+                return;
             }
 
             GeneralStatusMessage = "Results saved to: " + Path.GetFileName(FileInputs.ResultsSaveFilePath);
 
 
         }
+
+        
+        public void UpdateAnnotationsUsingAutomaticFilter()
+        {
+            foreach (SipperLcmsFeatureTargetedResultDTO result in _resultRepositorySource.Results)
+            {
+                ResultFilteringUtilities.ApplyFilteringScheme2(result);
+
+                result.ValidationCode = ValidationCode.None;
+
+                if (result.PassesFilter)
+                {
+                    result.ValidationCode = ValidationCode.Yes;
+                }
+            }
+        }
+
 
 
 

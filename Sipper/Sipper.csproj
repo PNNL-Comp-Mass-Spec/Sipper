@@ -78,6 +78,7 @@
     <Compile Include="Model\FileInputsInfo.cs" />
     <Compile Include="Model\HTMLReportGenerator.cs" />
     <Compile Include="Model\Project.cs" />
+    <Compile Include="Model\ResultFilteringUtilities.cs" />
     <Compile Include="Model\ResultImageOutputter.cs" />
     <Compile Include="Model\ResultWithImageInfo.cs" />
     <Compile Include="ViewModel\FileInputsViewModel.cs" />

@@ -299,13 +299,28 @@ namespace Sipper.Model
             writer.Write("Linearity");
             writer.RenderEndTag();
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
-            writer.Write(resultWithImageInfo.Result.RSquaredValForRatioCurve.ToString("0.0"));
+            writer.Write(resultWithImageInfo.Result.RSquaredValForRatioCurve.ToString("0.000"));
             writer.RenderEndTag();
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.Write("ChromCorr_Med");
             writer.RenderEndTag();
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.Write(resultWithImageInfo.Result.ChromCorrelationMedian.ToString("0.000"));
+            writer.RenderEndTag();
+            writer.RenderEndTag();
+
+            writer.RenderBeginTag(HtmlTextWriterTag.Tr);
+            writer.RenderBeginTag(HtmlTextWriterTag.Td);
+            writer.Write("ChromCorr_Avg");
+            writer.RenderEndTag();
+            writer.RenderBeginTag(HtmlTextWriterTag.Td);
+            writer.Write(resultWithImageInfo.Result.ChromCorrelationAverage.ToString("0.000"));
+            writer.RenderEndTag();
+            writer.RenderBeginTag(HtmlTextWriterTag.Td);
+            writer.Write("ChromCorr_StDev");
+            writer.RenderEndTag();
+            writer.RenderBeginTag(HtmlTextWriterTag.Td);
+            writer.Write(resultWithImageInfo.Result.ChromCorrelationStdev.ToString("0.0000"));
             writer.RenderEndTag();
             writer.RenderEndTag();
             

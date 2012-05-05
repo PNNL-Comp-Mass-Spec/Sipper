@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ASMS2012Scripts.cs" />
     <Compile Include="ChromatogramDisplayScripts.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,6 +61,12 @@
     <Compile Include="ResultsFilteringScripts.cs" />
     <Compile Include="SipperDatasetUtilities.cs" />
     <Compile Include="SipperResultUtilities.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sipper\Sipper.csproj">
+      <Project>{E9434349-AFE0-4A13-B3D0-1453B6C50978}</Project>
+      <Name>Sipper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

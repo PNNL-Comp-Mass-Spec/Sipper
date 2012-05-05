@@ -249,6 +249,43 @@
                         </ListBox>
                     </StackPanel>
                 </Border>
+
+
+
+                <Border Margin="6">
+                    <WindowsFormsHost  Height="150" Width="225" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6"  Name="chromCorrGraphHost" 
+                                  VerticalAlignment="Top" HorizontalAlignment="Right" >
+                        <graphLib:BasicGraphControl Name="chromCorrGraph">
+
+                        </graphLib:BasicGraphControl>
+                    </WindowsFormsHost>
+
+                </Border>
+
+               
+
+
+
+                <Border Margin="6">
+                    <WindowsFormsHost  Height="150" Width="225" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6"  Name="ratioGraphHost" 
+                                  VerticalAlignment="Top" HorizontalAlignment="Right" >
+                        <graphLib:BasicGraphControl Name="ratioGraph">
+
+                        </graphLib:BasicGraphControl>
+                    </WindowsFormsHost>
+
+                </Border>
+
+                <Border Margin="6">
+                    <WindowsFormsHost  Height="150" Width="225" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6"  Name="logRatioGraphHost" 
+                                  VerticalAlignment="Top" HorizontalAlignment="Right" >
+                        <graphLib:BasicGraphControl Name="logRatioGraph">
+
+                        </graphLib:BasicGraphControl>
+                    </WindowsFormsHost>
+
+                </Border>
+
             </StackPanel>
             
             
@@ -420,13 +457,7 @@
 
                 </WrapPanel>
 
-                <WindowsFormsHost  Height="130" Width="200" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6,50,0,0"  Name="chromCorrGraphHost" 
-                                  VerticalAlignment="Top" HorizontalAlignment="Right" >
-                    <graphLib:BasicGraphControl Name="chromCorrGraph">
-
-                    </graphLib:BasicGraphControl>
-                </WindowsFormsHost>
-
+              
 
 
                 <WindowsFormsHost Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1" Margin="6,0,0,0"  Name="theorMSGraphHost" HorizontalAlignment="Stretch" >

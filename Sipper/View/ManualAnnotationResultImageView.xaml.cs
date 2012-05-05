@@ -123,5 +123,11 @@ namespace Sipper.View
         {
             ViewModel.GenerateHTMLReport();
         }
+
+        private void btnUpdateAnnotationsWithAutomaticFilters_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.SaveResults();
+            ViewModel.UpdateAnnotationsUsingAutomaticFilter();
+        }
     }
 }

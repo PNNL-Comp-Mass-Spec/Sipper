@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 using NUnit.Framework;
+using Sipper.Model;
 
 namespace Sipper.Scripts
 {
@@ -15,7 +17,7 @@ namespace Sipper.Scripts
         {
             var allResults = SipperResultUtilities.LoadC12Results().Results.Select(p => (SipperLcmsFeatureTargetedResultDTO)p).ToList();
 
-            OutputFilteringStats(allResults);
+            OutputFilteringStats2(allResults);
         }
 
 
@@ -24,7 +26,73 @@ namespace Sipper.Scripts
         {
             var allResults = SipperResultUtilities.LoadC13Results().Results.Select(p=>(SipperLcmsFeatureTargetedResultDTO)p).ToList();
 
-            OutputFilteringStats(allResults);
+            OutputFilteringStats2(allResults);
+        }
+
+
+        [Test]
+        public void showC12andC13ResultStats()
+        {
+            var allResults = SipperResultUtilities.LoadC12Results().Results.Select(p => (SipperLcmsFeatureTargetedResultDTO)p).ToList();
+
+            OutputFilteringStats2(allResults);
+
+            allResults = SipperResultUtilities.LoadC13Results().Results.Select(p => (SipperLcmsFeatureTargetedResultDTO)p).ToList();
+
+            OutputFilteringStats2(allResults);
+        }
+
+
+        [Test]
+        public void filterOutRedundantResults()
+        {
+            string resultFileName =
+                @"C:\Users\d3x720\Documents\PNNL\My_DataAnalysis\2012\C12C13YellowStone\2012_04_27_ASMS_Data\Yellow_C13_070_23Mar10_Griffin_10-01-28_results.txt";
+            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(resultFileName);
+
+           var repo=  importer.Import();
+
+            var nonRedundant = repo.Results.GroupBy(x => x.TargetID).Select(g => g.First()).ToList();
+
+            string exportFileName = resultFileName.Replace("_results.txt", "_nonRedundant_results.txt");
+
+            SipperResultToLcmsFeatureExporter exporter = new SipperResultToLcmsFeatureExporter(exportFileName);
+            exporter.ExportResults(nonRedundant);
+
+
+
+        }
+
+
+        [Test]
+        public void filterResults()
+        {
+            string resultFileName =
+                @"C:\Users\d3x720\Documents\PNNL\My_DataAnalysis\2012\C12C13YellowStone\2012_04_27_ASMS_Data\Yellow_C13_070_23Mar10_Griffin_10-01-28_nonRedundant\Yellow_C13_070_23Mar10_Griffin_10-01-28_nonRedundant_results.txt";
+
+            //string resultFileName =
+            //    @"C:\Users\d3x720\Documents\PNNL\My_DataAnalysis\2012\C12C13YellowStone\2012_04_27_ASMS_Data\Yellow_C13_070_23Mar10_Griffin_10-01-28_nonRedundant\Yellow_C13_070_23Mar10_Griffin_10-01-28_NR_NoFormula_results.txt";
+            
+            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(resultFileName);
+
+            var repo = importer.Import();
+
+            var sipperResults = repo.Results.Select(p => (SipperLcmsFeatureTargetedResultDTO) p).ToList();
+            ResultFilteringUtilities.ApplyFilteringScheme2(sipperResults);
+
+            var filteredResults = sipperResults.Where(p => p.PassesFilter).ToList();
+
+            Console.WriteLine("total results = " + sipperResults.Count);
+            Console.WriteLine("Num filtered results = " + filteredResults.Count);
+
+
+
+            string exportFileName = resultFileName.Replace("_results.txt", "_enriched_results.txt");
+            SipperResultToLcmsFeatureExporter exporter = new SipperResultToLcmsFeatureExporter(exportFileName);
+            exporter.ExportResults(filteredResults);
+
+
+
         }
 
 
@@ -34,7 +102,10 @@ namespace Sipper.Scripts
         {
             var allResults = SipperResultUtilities.LoadC13Results().Results.Select(p => (SipperLcmsFeatureTargetedResultDTO)p).ToList();
 
-            var filteredResults = SipperResultUtilities.ApplyFilteringScheme1(allResults);
+            ResultFilteringUtilities.ApplyFilteringScheme1(allResults);
+
+            var filteredResults = allResults.Where(p => p.PassesFilter).ToList();
+
 
             string exportFileName =
                 @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\Results\Iteration05_Sum05_newColumns\_Yellow_C13_Enriched_results.txt";
@@ -138,6 +209,61 @@ namespace Sipper.Scripts
         }
 
         
+
+        [Test]
+        public void FilterAndExportResultsForSelectedMassTags()
+        {
+
+            string massTagIDFile =
+                @"C:\Users\d3x720\Documents\PNNL\My_DataAnalysis\2012\C12C13YellowStone\2012_04_27_ASMS_Data\300SamplePeptides_2012_01_23_IDsOnly.txt";
+            
+            var allResults = SipperResultUtilities.LoadC13Results().Results.Select(p => (SipperLcmsFeatureTargetedResultDTO)p).ToList();
+
+            var massTagIDs=   SipperResultUtilities.LoadMassTagIDs(massTagIDFile);
+
+            var filteredResults =  (from n in allResults where massTagIDs.Contains(n.MatchedMassTagID) select n).ToList();
+
+            //a mass tag is often found in multiple datasets. Will choose the most abundant one
+
+            filteredResults = (from n in filteredResults
+                               group n by new {n.MatchedMassTagID}
+                               into grp
+                               select grp.OrderByDescending(p => p.Intensity).First()).ToList();
+
+
+            foreach (var sipperLcmsFeatureTargetedResultDto in filteredResults)
+            {
+                
+            }
+
+
+
+            string exportFileName =
+                @"C:\Users\d3x720\Documents\PNNL\My_DataAnalysis\2012\C12C13YellowStone\2012_04_27_ASMS_Data\Yellow_C13_withSelected300MassTags_results.txt";
+
+
+
+
+            SipperResultToLcmsFeatureExporter exporter = new SipperResultToLcmsFeatureExporter(exportFileName);
+            exporter.ExportResults(filteredResults);
+
+        }
+
+
+
+        private void OutputFilteringStats2(List<SipperLcmsFeatureTargetedResultDTO>allResults)
+        {
+            ResultFilteringUtilities.ApplyFilteringScheme1(allResults);
+
+            Console.WriteLine("All results = \t" + allResults.Count);
+            Console.WriteLine("C13Enriched = \t" + allResults.Count(p => p.PassesFilter));
+
+            ResultFilteringUtilities.ApplyFilteringScheme2(allResults);
+            Console.WriteLine("All results = \t" + allResults.Count);
+            Console.WriteLine("C13Enriched = \t" + allResults.Count(p => p.PassesFilter));
+
+        }
+
 
 
         private List<SipperLcmsFeatureTargetedResultDTO> OutputFilteringStats(List<SipperLcmsFeatureTargetedResultDTO> allResults)

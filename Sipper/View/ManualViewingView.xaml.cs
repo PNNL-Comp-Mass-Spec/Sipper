@@ -130,6 +130,9 @@ namespace Sipper.View
             var chromUserControl = (GWSGraphLibrary.ChromGraphControl)(chromGraphHost.Child);
             var msgraphUserControl = (GWSGraphLibrary.MSGraphControl)(msGraphHost.Child);
             var theorMSUserControl = (GWSGraphLibrary.MSGraphControl)(theorMSGraphHost.Child);
+            var ratioGraphUserControl = (GWSGraphLibrary.BasicGraphControl) (ratioGraphHost.Child);
+            var logRatioGraphUserControl = (GWSGraphLibrary.BasicGraphControl) (logRatioGraphHost.Child);
+
 
             chromCorrUserControl.GraphPane.GraphObjList.Clear();
             chromUserControl.GraphPane.GraphObjList.Clear();
@@ -138,23 +141,19 @@ namespace Sipper.View
 
 
 
-            chromCorrUserControl.GraphPane.XAxis.Title.FontSpec.Size = 7;
-            chromCorrUserControl.GraphPane.YAxis.Title.FontSpec.Size = 7;
-            chromCorrUserControl.GraphPane.XAxis.Scale.FontSpec.Size = 7;
-            chromCorrUserControl.GraphPane.YAxis.Scale.FontSpec.Size = 7;
+            chromCorrUserControl.GraphPane.XAxis.Title.FontSpec.Size = 9;
+            chromCorrUserControl.GraphPane.YAxis.Title.FontSpec.Size = 9;
+            chromCorrUserControl.GraphPane.XAxis.Scale.FontSpec.Size = 9;
+            chromCorrUserControl.GraphPane.YAxis.Scale.FontSpec.Size = 9;
 
             chromCorrUserControl.GraphPane.XAxis.MinorTic.Size = 0;
-
-
-
-
 
             chromCorrUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Format = "0.#";
             chromCorrUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Min = 0.5;
             chromCorrUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Max = 1.1;
             chromCorrUserControl.zedGraphControl1.GraphPane.XAxis.Title.Text = "peak num";
             chromCorrUserControl.zedGraphControl1.GraphPane.YAxis.Title.Text = "r2";
-            chromCorrUserControl.zedGraphControl1.GraphPane.Title.FontSpec.Size = 8;
+            chromCorrUserControl.zedGraphControl1.GraphPane.Title.FontSpec.Size = 9;
             chromCorrUserControl.zedGraphControl1.GraphPane.Title.Text = "Chrom correlation data";
 
 
@@ -174,9 +173,38 @@ namespace Sipper.View
 
 
 
+            ratioGraphUserControl.GraphPane.XAxis.Title.FontSpec.Size = 9;
+            ratioGraphUserControl.GraphPane.YAxis.Title.FontSpec.Size = 9;
+            ratioGraphUserControl.GraphPane.XAxis.Scale.FontSpec.Size = 9;
+            ratioGraphUserControl.GraphPane.YAxis.Scale.FontSpec.Size = 9;
+
+            ratioGraphUserControl.GraphPane.XAxis.MinorTic.Size = 0;
+
+            ratioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Scale.MaxAuto = true;
+            ratioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Scale.MinAuto = true;
+
+            ratioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Format = "0.#";
+           ratioGraphUserControl.zedGraphControl1.GraphPane.XAxis.Title.Text = "peak num";
+            ratioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Title.Text = "(obs-theor)/(theor) ";
+            ratioGraphUserControl.zedGraphControl1.GraphPane.Title.FontSpec.Size = 9;
+            ratioGraphUserControl.zedGraphControl1.GraphPane.Title.Text = "Obs/Theor ratio data";
 
 
 
+            logRatioGraphUserControl.GraphPane.XAxis.Title.FontSpec.Size = 9;
+            logRatioGraphUserControl.GraphPane.YAxis.Title.FontSpec.Size = 9;
+            logRatioGraphUserControl.GraphPane.XAxis.Scale.FontSpec.Size = 9;
+            logRatioGraphUserControl.GraphPane.YAxis.Scale.FontSpec.Size = 9;
+
+            logRatioGraphUserControl.GraphPane.XAxis.MinorTic.Size = 0;
+
+            logRatioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Format = "0.#";
+            logRatioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Scale.MaxAuto = true;
+            logRatioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Scale.MinAuto = true;
+            logRatioGraphUserControl.zedGraphControl1.GraphPane.XAxis.Title.Text = "peak num";
+            logRatioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Title.Text = "log (obs-theor)/(theor) ";
+            logRatioGraphUserControl.zedGraphControl1.GraphPane.Title.FontSpec.Size = 9;
+            logRatioGraphUserControl.zedGraphControl1.GraphPane.Title.Text = "Log(Obs/Theor) ratio data";
 
 
 
@@ -256,11 +284,30 @@ namespace Sipper.View
 
             }
 
+            var ratioGraphUserControl = (GWSGraphLibrary.BasicGraphControl)(ratioGraphHost.Child);
+            if (ViewModel.RatioXYData != null)
+            {
+                ratioGraphUserControl.GenerateGraph(ViewModel.RatioXYData.Xvalues, ViewModel.RatioXYData.Yvalues);
+                
+
+            }
+
+            var logRatioGraph = (GWSGraphLibrary.BasicGraphControl)(logRatioGraphHost.Child);
+            if (ViewModel.RatioLogsXYData != null)
+            {
+                logRatioGraph.GenerateGraph(ViewModel.RatioLogsXYData.Xvalues, ViewModel.RatioLogsXYData.Yvalues);
+                
+
+            }
+
+
+
             msgraphUserControl.Refresh();
             chromUserControl.Refresh();
             theorMSUserControl.Refresh();
             chromCorrUserControl.Refresh();
-
+            logRatioGraph.Refresh();
+            ratioGraphUserControl.Refresh();
         }
 
         private void btnSaveResultsClick(object sender, RoutedEventArgs e)

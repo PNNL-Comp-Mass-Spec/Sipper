@@ -301,6 +301,11 @@ namespace Sipper.ViewModel
             set { _chromCorrXYData = value; }
         }
 
+        public XYData RatioLogsXYData { get; set; }
+
+        public XYData RatioXYData { get; set; }
+
+
 
         public double ChromGraphMaxX { get; set; }
 
@@ -584,7 +589,16 @@ namespace Sipper.ViewModel
             ChromCorrXYData.Xvalues = Workflow.ChromCorrelationRSquaredVals == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.ChromCorrelationRSquaredVals.Xvalues;
             ChromCorrXYData.Yvalues = Workflow.ChromCorrelationRSquaredVals == null ? new double[] { 0, 0, 0, 0, 0 } : Workflow.ChromCorrelationRSquaredVals.Yvalues;
 
+            RatioXYData = new XYData();
+            RatioXYData.Xvalues = Workflow.RatioVals == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.RatioVals.Xvalues;
+            RatioXYData.Yvalues = Workflow.RatioVals == null ? new double[] { 0, 0, 0, 0, 0 } : Workflow.RatioVals.Yvalues;
 
+
+            RatioLogsXYData = new XYData();
+            RatioLogsXYData.Xvalues = Workflow.RatioLogVals == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.RatioLogVals.Xvalues;
+            RatioLogsXYData.Yvalues = Workflow.RatioLogVals == null ? new double[] { 0, 0, 0, 0, 0 } : Workflow.RatioLogVals.Yvalues;
+
+            
             if (CurrentResult != null)
             {
                 MSGraphMinX = CurrentResult.MonoMZ - 1.75;
@@ -612,7 +626,7 @@ namespace Sipper.ViewModel
 
         }
 
-
+       
 
 
         private void SetCurrentWorkflowTarget(SipperLcmsFeatureTargetedResultDTO result)
