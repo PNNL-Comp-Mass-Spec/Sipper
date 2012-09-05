@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DeconTools.Backend.Core;
 using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
+using GwsDMSUtilities;
 using NUnit.Framework;
 using Sipper.Model;
 
@@ -216,19 +218,38 @@ namespace Sipper.Scripts
 
             string massTagIDFile =
                 @"C:\Users\d3x720\Documents\PNNL\My_DataAnalysis\2012\C12C13YellowStone\2012_04_27_ASMS_Data\300SamplePeptides_2012_01_23_IDsOnly.txt";
+
+            massTagIDFile =
+                @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Targets\refID22508_massTags_IDsOnly.txt";
             
             var allResults = SipperResultUtilities.LoadC13Results().Results.Select(p => (SipperLcmsFeatureTargetedResultDTO)p).ToList();
 
             var massTagIDs=   SipperResultUtilities.LoadMassTagIDs(massTagIDFile);
 
+
+            int refID1 = 38803;
+            //int refID2 = 39890;
+
+            string dbname = "MT_Yellowstone_Communities_P627";
+            string serverName = "pogo";
+            var infoExtractor = new PeptideInfoExtractor(serverName, dbname);
+
+
+           
+
+            var peptideList = infoExtractor.GetMassTagIDsForGivenProtein(refID1);
+            massTagIDs = peptideList.Select(p => p.ID).ToList();
+
+
+
             var filteredResults =  (from n in allResults where massTagIDs.Contains(n.MatchedMassTagID) select n).ToList();
 
             //a mass tag is often found in multiple datasets. Will choose the most abundant one
 
-            filteredResults = (from n in filteredResults
-                               group n by new {n.MatchedMassTagID}
-                               into grp
-                               select grp.OrderByDescending(p => p.Intensity).First()).ToList();
+            //filteredResults = (from n in filteredResults
+            //                   group n by new {n.MatchedMassTagID}
+            //                   into grp
+            //                   select grp.OrderByDescending(p => p.Intensity).First()).ToList();
 
 
             foreach (var sipperLcmsFeatureTargetedResultDto in filteredResults)
@@ -241,6 +262,8 @@ namespace Sipper.Scripts
             string exportFileName =
                 @"C:\Users\d3x720\Documents\PNNL\My_DataAnalysis\2012\C12C13YellowStone\2012_04_27_ASMS_Data\Yellow_C13_withSelected300MassTags_results.txt";
 
+            exportFileName =
+                @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Targets\exportedMassTags.txt";
 
 
 

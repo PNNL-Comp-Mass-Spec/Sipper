@@ -32,6 +32,18 @@ namespace Sipper.ViewModel
         }
 
 
+        public string DatasetParentFolder
+        {
+            get { return _fileInputsInfo.DatasetDirectory; }
+            set
+            {
+                if (value == _fileInputsInfo.DatasetDirectory) return;
+                _fileInputsInfo.DatasetDirectory = value;
+
+                OnPropertyChanged("DatasetParentFolder");
+            }
+        }
+
 
         public string DatasetPath
         {

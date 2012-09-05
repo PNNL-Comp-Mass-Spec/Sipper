@@ -13,36 +13,48 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\x86\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DeconTools.Backend, Version=1.0.4455.29575, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="DeconTools.Backend, Version=1.0.4598.28967, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DeconTools\DeconTools.Backend\bin\x86\Release\DeconTools.Backend.dll</HintPath>
     </Reference>
+    <Reference Include="DeconTools.UnitTesting2">
+      <HintPath>..\..\DeconTools\DeconTools.UnitTesting2\bin\x86\Release\DeconTools.UnitTesting2.dll</HintPath>
+    </Reference>
     <Reference Include="DeconTools.Workflows, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DeconTools\DeconTools.Workflows\DeconTools.Workflows\bin\x86\Debug\DeconTools.Workflows.dll</HintPath>
+      <HintPath>..\..\DeconTools\DeconTools.Workflows\DeconTools.Workflows\bin\x86\Release\DeconTools.Workflows.dll</HintPath>
+    </Reference>
+    <Reference Include="GwsDMSUtilities">
+      <HintPath>..\..\GwsDMSUtilities\GwsDMSUtilities\bin\Debug\GwsDMSUtilities.dll</HintPath>
     </Reference>
     <Reference Include="GWSGraphLibrary">
       <HintPath>..\..\GWSGraphLibrary\GWSGraphLibrary\bin\Release\GWSGraphLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.5.7.10213, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />
+    <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Library\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
@@ -56,11 +68,17 @@
     <Compile Include="ASMS2012Scripts.cs" />
     <Compile Include="ChromatogramDisplayScripts.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="GordPaperScripts.cs" />
+    <Compile Include="LCMSFeaturesHandlingScripts.cs" />
+    <Compile Include="MassTagUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResultHandingScripts.cs" />
     <Compile Include="ResultsFilteringScripts.cs" />
     <Compile Include="SipperDatasetUtilities.cs" />
+    <Compile Include="SipperDemos.cs" />
+    <Compile Include="SipperPaperScripts.cs" />
     <Compile Include="SipperResultUtilities.cs" />
+    <Compile Include="SteinkePaperScripts.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sipper\Sipper.csproj">
@@ -69,6 +87,9 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /C  /Y "$(SolutionDir)Library\DLLsToBeCopied" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

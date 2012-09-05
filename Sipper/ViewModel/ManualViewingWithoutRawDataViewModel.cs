@@ -139,7 +139,7 @@ namespace Sipper.ViewModel
 
                 if (directoryInfo.Exists)
                 {
-                    _imageFilePaths = directoryInfo.GetFiles("*.png").Select(p => p.FullName).ToList();
+                    _imageFilePaths = directoryInfo.GetFiles("*.png", SearchOption.AllDirectories).Select(p => p.FullName).ToList();
                     ResultImagesStatusText = _imageFilePaths.Count + " images loaded";
                     
                     if (_imageFilePaths.Count>0)
@@ -200,7 +200,7 @@ namespace Sipper.ViewModel
             if (IsImageFilesLoaded && _resultRepositorySource.Results.Count>0)
             {
                 
-                HTMLReportGenerator reportGenerator = new HTMLReportGenerator(_resultRepositorySource, _fileInputsInfo);
+                HTMLReportGenerator reportGenerator = new HTMLReportGenerator(Results, _fileInputsInfo);
 
                 try
                 {
@@ -278,17 +278,24 @@ namespace Sipper.ViewModel
 
             foreach (var result in Results)
             {
-                string baseFileName = FileInputs.ResultImagesFolderPath + Path.DirectorySeparatorChar +
-                                 result.Result.DatasetName + "_ID" + result.Result.TargetID;
-
-                string expectedMSImageFilename = baseFileName + "_MS.png";
-                string expectedChromImageFilename = baseFileName + "_chrom.png";
-                string expectedTheorMSImageFilename = baseFileName + "_theorMS.png";
+                //string baseFileName = FileInputs.ResultImagesFolderPath + Path.DirectorySeparatorChar +
+                //                 result.Result.DatasetName + "_ID" + result.Result.TargetID;
 
 
-                result.MSImageFilePath = expectedMSImageFilename;
-                result.ChromImageFilePath = expectedChromImageFilename;
-                result.TheorMSImageFilePath = expectedTheorMSImageFilename;
+                string baseFileName = result.Result.DatasetName + "_ID" + result.Result.TargetID;
+
+
+                var targetImages = (from n in _imageFilePaths where n.Contains(baseFileName) select n).ToList();
+
+
+                string expectedMSImage = targetImages.FirstOrDefault(p => p.Contains("_MS.png"));
+                string expectedChromImageFilename = targetImages.FirstOrDefault(p => p.Contains("_chrom.png"));
+                string expectedTheorMSImageFilename = targetImages.FirstOrDefault(p => p.Contains("_theorMS.png"));
+
+
+                result.MSImageFilePath = expectedMSImage??"";
+                result.ChromImageFilePath = expectedChromImageFilename??"";
+                result.TheorMSImageFilePath = expectedTheorMSImageFilename??"";
             }
 
 

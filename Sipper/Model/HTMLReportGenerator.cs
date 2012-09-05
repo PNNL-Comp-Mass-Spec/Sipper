@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,7 @@ namespace Sipper.Model
         private FileInputsInfo _fileInputsInfo;
         private List<string> _imageFilePaths;
 
-        private List<ResultWithImageInfo> _resultsWithImageInfo = new List<ResultWithImageInfo>();
+        private ICollection<ResultWithImageInfo> _resultsWithImageInfo;
         private const int MSImageWidth = 400;
         private const int MSImageHeight = 350;
 
@@ -29,17 +30,39 @@ namespace Sipper.Model
 
         #region Constructors
 
-        public HTMLReportGenerator(TargetedResultRepository resultRepository, FileInputsInfo fileInputs)
+        public HTMLReportGenerator(ICollection<ResultWithImageInfo> resultImages, FileInputsInfo fileInputs)
         {
-            _resultRepository = resultRepository;
+            _resultsWithImageInfo = resultImages;
             _fileInputsInfo = fileInputs;
 
             Check.Require(_fileInputsInfo != null, "FileInputs object is null");
-            Check.Require(_resultRepository != null, "Results repository object is null");
 
+
+
+        }
+
+
+        public HTMLReportGenerator(TargetedResultRepository repo, FileInputsInfo fileInputs)
+        {
+            _resultRepository = repo;
+
+            _fileInputsInfo = fileInputs;
+
+            _resultsWithImageInfo = new List<ResultWithImageInfo>();
+
+            foreach (var targetedResultDto in repo.Results)
+            {
+                ResultWithImageInfo r = new ResultWithImageInfo((SipperLcmsFeatureTargetedResultDTO)targetedResultDto);
+
+                _resultsWithImageInfo.Add(r);
+            }
+
+
+            GetImageFileReferences(_fileInputsInfo.ResultImagesFolderPath);
             MapResultsToImages();
 
         }
+
 
 
         #endregion
@@ -52,10 +75,10 @@ namespace Sipper.Model
 
         public void GenerateHTMLReport()
         {
-            StringBuilder stringBuilder=new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
 
             stringBuilder.Append(CreateHeaderHTML());
-            
+
 
             foreach (var resultWithImageInfo in _resultsWithImageInfo)
             {
@@ -65,7 +88,7 @@ namespace Sipper.Model
             stringBuilder.Append(CloseHTMLTags());
 
             string outputHTMLFilename = _fileInputsInfo.ResultImagesFolderPath + Path.DirectorySeparatorChar + "0_index.html";
-            
+
             using (StreamWriter sw = new StreamWriter(outputHTMLFilename))
             {
                 sw.Write(stringBuilder.ToString());
@@ -78,6 +101,44 @@ namespace Sipper.Model
         #endregion
 
         #region Private Methods
+
+        private void GetImageFileReferences(string resultImagesFolderPath)
+        {
+
+            DirectoryInfo directoryInfo = new DirectoryInfo(resultImagesFolderPath);
+
+            if (directoryInfo.Exists)
+            {
+                _imageFilePaths = directoryInfo.GetFiles("*.png", SearchOption.AllDirectories).Select(p => p.FullName).ToList();
+            }
+
+        }
+
+
+
+        private void MapResultsToImages()
+        {
+
+            foreach (var result in _resultsWithImageInfo)
+            {
+
+                string baseFileName = result.Result.DatasetName + "_ID" + result.Result.TargetID;
+
+                var targetImages = (from n in _imageFilePaths where n.Contains(baseFileName) select n).ToList();
+
+                string expectedMSImage = targetImages.First(p => p.Contains("_MS.png"));
+                string expectedChromImageFilename = targetImages.First(p => p.Contains("_chrom.png"));
+                string expectedTheorMSImageFilename = targetImages.First(p => p.Contains("_theorMS.png"));
+
+                result.MSImageFilePath = expectedMSImage ?? "";
+                result.ChromImageFilePath = expectedChromImageFilename ?? "";
+                result.TheorMSImageFilePath = expectedTheorMSImageFilename ?? "";
+            }
+
+
+        }
+
+
         private string CreateHeaderHTML()
         {
             StringBuilder sb = new StringBuilder();
@@ -118,7 +179,7 @@ namespace Sipper.Model
 
                 addHTMLForTheorMSImage(writer, resultWithImageInfo);
 
-                addHTMLForMSImage(writer,resultWithImageInfo);
+                addHTMLForMSImage(writer, resultWithImageInfo);
 
                 writer.RenderBeginTag(HtmlTextWriterTag.Td);
                 addAnnotationTable(writer, resultWithImageInfo);
@@ -139,7 +200,7 @@ namespace Sipper.Model
             writer.RenderBeginTag(HtmlTextWriterTag.Table);
 
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
-            if (resultWithImageInfo.Result.ValidationCode== ValidationCode.None)
+            if (resultWithImageInfo.Result.ValidationCode == ValidationCode.None)
             {
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BorderWidth, "2");
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BorderColor, "Black");
@@ -209,10 +270,10 @@ namespace Sipper.Model
             writer.AddAttribute(HtmlTextWriterAttribute.Width, "200");
             writer.RenderBeginTag(HtmlTextWriterTag.Table);
 
-            
+
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
 
-            
+
 
 
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
@@ -229,7 +290,7 @@ namespace Sipper.Model
             writer.RenderEndTag();
             writer.RenderEndTag();
 
-   
+
 
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
@@ -262,7 +323,7 @@ namespace Sipper.Model
             writer.RenderEndTag();
             writer.RenderEndTag();
 
-           
+
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.Write("z");
@@ -323,17 +384,22 @@ namespace Sipper.Model
             writer.Write(resultWithImageInfo.Result.ChromCorrelationStdev.ToString("0.0000"));
             writer.RenderEndTag();
             writer.RenderEndTag();
-            
+
             writer.RenderEndTag();
         }
 
 
         protected void addHTMLForMSImage(HtmlTextWriter writer, ResultWithImageInfo resultWithImageInfo)
         {
+
+            string relFilePath = GetRelativeFilePath(resultWithImageInfo.MSImageFilePath);
+
+
+
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
-            writer.AddAttribute(HtmlTextWriterAttribute.Href, Path.GetFileName(resultWithImageInfo.MSImageFilePath));
+            writer.AddAttribute(HtmlTextWriterAttribute.Href, resultWithImageInfo.MSImageFilePath);
             writer.RenderBeginTag(HtmlTextWriterTag.A);
-            writer.AddAttribute(HtmlTextWriterAttribute.Src, Path.GetFileName(resultWithImageInfo.MSImageFilePath));
+            writer.AddAttribute(HtmlTextWriterAttribute.Src, relFilePath);
             writer.AddAttribute(HtmlTextWriterAttribute.Width, MSImageWidth.ToString("0"));
             writer.AddAttribute(HtmlTextWriterAttribute.Height, MSImageHeight.ToString("0"));
             writer.RenderBeginTag(HtmlTextWriterTag.Img);
@@ -342,13 +408,33 @@ namespace Sipper.Model
             writer.RenderEndTag();
         }
 
+        private string GetRelativeFilePath(string filePath)
+        {
+            FileInfo fileInfo = new FileInfo(filePath);
+
+            if (fileInfo != null)
+            {
+                var dir = fileInfo.Directory != null ? fileInfo.Directory.Name : String.Empty;
+
+                return  dir + "/" + fileInfo.Name;
+            }
+
+            return String.Empty;
+
+
+        }
+
 
         protected void addHTMLForChromImage(HtmlTextWriter writer, ResultWithImageInfo resultWithImageInfo)
         {
+
+            string relFilePath = GetRelativeFilePath(resultWithImageInfo.ChromImageFilePath);
+
+
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
-            writer.AddAttribute(HtmlTextWriterAttribute.Href, Path.GetFileName(resultWithImageInfo.ChromImageFilePath));
+            writer.AddAttribute(HtmlTextWriterAttribute.Href, relFilePath);
             writer.RenderBeginTag(HtmlTextWriterTag.A);
-            writer.AddAttribute(HtmlTextWriterAttribute.Src, Path.GetFileName(resultWithImageInfo.ChromImageFilePath));
+            writer.AddAttribute(HtmlTextWriterAttribute.Src, relFilePath);
             writer.AddAttribute(HtmlTextWriterAttribute.Width, ChromImageWidth.ToString("0"));
             writer.AddAttribute(HtmlTextWriterAttribute.Height, ChromImageHeight.ToString("0"));
             writer.RenderBeginTag(HtmlTextWriterTag.Img);
@@ -360,10 +446,13 @@ namespace Sipper.Model
 
         protected void addHTMLForTheorMSImage(HtmlTextWriter writer, ResultWithImageInfo resultWithImageInfo)
         {
+            string relFilePath = GetRelativeFilePath(resultWithImageInfo.TheorMSImageFilePath);
+
+
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
-            writer.AddAttribute(HtmlTextWriterAttribute.Href, Path.GetFileName(resultWithImageInfo.TheorMSImageFilePath));
+            writer.AddAttribute(HtmlTextWriterAttribute.Href, relFilePath);
             writer.RenderBeginTag(HtmlTextWriterTag.A);
-            writer.AddAttribute(HtmlTextWriterAttribute.Src, Path.GetFileName(resultWithImageInfo.TheorMSImageFilePath));
+            writer.AddAttribute(HtmlTextWriterAttribute.Src, relFilePath);
             writer.AddAttribute(HtmlTextWriterAttribute.Width, TheorMSImageWidth.ToString("0"));
             writer.AddAttribute(HtmlTextWriterAttribute.Height, TheorMSImageHeight.ToString("0"));
             writer.RenderBeginTag(HtmlTextWriterTag.Img);
@@ -375,60 +464,8 @@ namespace Sipper.Model
 
 
 
-        private void MapResultsToImages()
-        {
-            var query = (from n in _resultRepository.Results select (SipperLcmsFeatureTargetedResultDTO)n);
-
-            _resultsWithImageInfo.Clear();
-            foreach (var resultDto in query)
-            {
-                ResultWithImageInfo resultWithImageInfo = new ResultWithImageInfo(resultDto);
-                _resultsWithImageInfo.Add(resultWithImageInfo);
-            }
-
-            foreach (var result in _resultsWithImageInfo)
-            {
-                string baseFileName = _fileInputsInfo.ResultImagesFolderPath + Path.DirectorySeparatorChar +
-                                 result.Result.DatasetName + "_ID" + result.Result.TargetID;
-
-                string expectedMSImageFilename = baseFileName + "_MS.png";
-                string expectedChromImageFilename = baseFileName + "_chrom.png";
-                string expectedTheorMSImageFilename = baseFileName + "_theorMS.png";
-
-                result.MSImageFilePath = expectedMSImageFilename;
-                result.ChromImageFilePath = expectedChromImageFilename;
-                result.TheorMSImageFilePath = expectedTheorMSImageFilename;
-            }
 
 
-        }
-
-
-        private void GetImageFileReferences()
-        {
-            Check.Require(!string.IsNullOrEmpty(_fileInputsInfo.ResultImagesFolderPath),
-                          "Result images folder path is null");
-
-
-            DirectoryInfo directoryInfo = new DirectoryInfo(_fileInputsInfo.ResultImagesFolderPath);
-
-            if (directoryInfo.Exists)
-            {
-                _imageFilePaths = directoryInfo.GetFiles("*.png").Select(p => p.FullName).ToList();
-            }
-            else
-            {
-                throw new DirectoryNotFoundException("ResultImages folder not found.");
-            }
-
-
-
-
-
-
-
-
-        }
 
         #endregion
 

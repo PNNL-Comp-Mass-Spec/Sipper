@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
+using DeconTools.Workflows.Backend;
 using Sipper.Model;
 using Sipper.ViewModel;
 
@@ -11,20 +13,20 @@ namespace Sipper.View
     /// </summary>
     public partial class ManualAnnotationResultImageView : Window
     {
-        public ManualAnnotationResultImageView(Project project =null)
+        public ManualAnnotationResultImageView(Project project = null)
         {
             InitializeComponent();
 
-            if (project==null)
+            if (project == null)
             {
                 project = new Project();
             }
-                
+
             ViewModel = new ManualViewingWithoutRawDataViewModel(project.ResultRepository, project.FileInputs);
 
             DataContext = ViewModel;
 
-          
+
 
 
         }
@@ -101,7 +103,7 @@ namespace Sipper.View
             {
                 ViewModel.CurrentResult = (ResultWithImageInfo)e.AddedItems[0];
             }
-            
+
         }
 
         private void btnSaveResultsClick(object sender, RoutedEventArgs e)
@@ -111,7 +113,7 @@ namespace Sipper.View
 
         private void ValidationCodeListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            
+
         }
 
         private void btnOpenHtmlReport_Click(object sender, RoutedEventArgs e)
@@ -129,5 +131,32 @@ namespace Sipper.View
             ViewModel.SaveResults();
             ViewModel.UpdateAnnotationsUsingAutomaticFilter();
         }
+
+        private void ExecuteSetAnnotationToYesCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (ViewModel.CurrentResult!=null)
+            {
+                ViewModel.CurrentResult.Result.ValidationCode = ValidationCode.Yes;
+                
+                   
+                listViewMain.SelectedItem = ViewModel.CurrentResult;
+
+                listViewMain.Items.Refresh();
+
+                
+
+
+
+            }
+            
+
+        }
+
+        public void CanExecuteCustomCommand(object sender, 
+            CanExecuteRoutedEventArgs e) 
+        { 
+            e.CanExecute = true; 
+        } 
+        
     }
 }

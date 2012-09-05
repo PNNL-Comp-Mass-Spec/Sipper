@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Sipper.Model
 {
@@ -46,6 +47,8 @@ namespace Sipper.Model
         #region Public Methods
         public void AddDatasetPath(string fileOrFolderPath)
         {
+
+           
             DatasetPathsList.Add(fileOrFolderPath);
         }
 

@@ -102,5 +102,25 @@ namespace Sipper.UnitTesting.ModelTests
             imageOutputter.Execute();
         }
 
+
+        [Test]
+        public void ViewProteinResultsAcrossAllDatasets()
+        {
+            FileInputsInfo fileInputs = new FileInputsInfo();
+
+            fileInputs.DatasetDirectory = @"F:\Yellowstone\RawData";
+            fileInputs.ResultsSaveFilePath = @"C:\Users\d3x720\Documents\PNNL\My_DataAnalysis\2012\C12C13YellowStone\2012_06_25_SipperQuant_testing\ProteinCentricResults\Visuals";
+            fileInputs.TargetsFilePath =
+                @"C:\Users\d3x720\Documents\PNNL\My_DataAnalysis\2012\C12C13YellowStone\2012_06_25_SipperQuant_testing\ProteinCentricResults\Targets\ref38803_results.txt";
+
+            fileInputs.ParameterFilePath =
+                @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\SipperTargetedWorkflowParameters_Sum5.xml";
+
+
+            ResultImageOutputter imageOutputter = new ResultImageOutputter(fileInputs);
+            imageOutputter.Execute();
+        }
+
+
     }
 }

@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Backend="clr-namespace:DeconTools.Workflows.Backend;assembly=DeconTools.Workflows"
         xmlns:System="clr-namespace:System;assembly=mscorlib" Title="ManualAnnotationResultImageView" Name="window"
+        xmlns:model="clr-namespace:Sipper.Model"
         SizeToContent="Width"
         
         >
@@ -193,8 +194,24 @@
        
 
         <Border>
-            <ListView BorderThickness="0" BorderBrush="White"  Margin="6,6,6,0" ItemsSource="{Binding Path=DataContext.Results, ElementName=window, Mode= TwoWay}"
+            <ListView Name="listViewMain" BorderThickness="0" BorderBrush="White"  Margin="6,6,6,0" ItemsSource="{Binding Path=DataContext.Results, ElementName=window, Mode= TwoWay}"
                       SelectionChanged="ListView_SelectionChanged">
+                
+                <ListView.CommandBindings>
+                    <CommandBinding Command="{x:Static Member=model:CommandBase.SetAnnotationToYes}"
+                                    Executed="ExecuteSetAnnotationToYesCommand"
+                                    CanExecute="CanExecuteCustomCommand" >
+                        
+                    </CommandBinding>
+                </ListView.CommandBindings>
+                
+                <ListView.InputBindings>
+                    <KeyBinding Command="{x:Static Member=model:CommandBase.SetAnnotationToYes}"
+                                Key="Y">
+                        
+                    </KeyBinding>
+                    
+                </ListView.InputBindings>
                 
                 <ListView.View>
                     <GridView>

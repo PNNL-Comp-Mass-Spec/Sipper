@@ -8,6 +8,7 @@ using DeconTools.Backend;
 using DeconTools.Backend.Core;
 using DeconTools.Backend.Data;
 using DeconTools.Backend.Runs;
+using DeconTools.Backend.Utilities;
 using DeconTools.Backend.Utilities.IsotopeDistributionCalculation;
 using DeconTools.Workflows.Backend.Core;
 using DeconTools.Workflows.Backend.FileIO;
@@ -35,6 +36,8 @@ namespace Sipper.ViewModel
 
         public ManualViewingViewModel(FileInputsInfo fileInputs = null)
         {
+            _resultRepositorySource = new TargetedResultRepository();
+
             Results = new ObservableCollection<SipperLcmsFeatureTargetedResultDTO>();
             WorkflowParameters = new SipperTargetedWorkflowParameters();
 
@@ -45,6 +48,7 @@ namespace Sipper.ViewModel
 
 
             LoadParameters();
+
 
 
 
@@ -173,6 +177,8 @@ namespace Sipper.ViewModel
             get { return _currentResult; }
             set
             {
+                //check if we moved on to a different dataset
+
                 _currentResult = value;
                 OnPropertyChanged("CurrentResult");
 
@@ -191,8 +197,7 @@ namespace Sipper.ViewModel
             }
         }
 
-
-
+     
 
         private string _targetsFileStatusText;
         public string TargetsFileStatusText
@@ -252,7 +257,6 @@ namespace Sipper.ViewModel
         }
 
 
-        private string _peptideSequence;
         public string PeptideSequence
         {
             get
@@ -294,6 +298,14 @@ namespace Sipper.ViewModel
         }
 
 
+        private XYData _subtractedMassSpecXYData;
+        public XYData SubtractedMassSpecXYData
+        {
+            get { return _subtractedMassSpecXYData; }
+            set { _subtractedMassSpecXYData = value; }
+        }
+
+
         private XYData _chromCorrXYData;
         public XYData ChromCorrXYData
         {
@@ -319,6 +331,7 @@ namespace Sipper.ViewModel
 
         public double MSGraphMinX { get; set; }
 
+        public XYData LabelDistributionXYData { get; set; }
 
 
 
@@ -351,17 +364,44 @@ namespace Sipper.ViewModel
 
             UpdateGraphRelatedProperties();
 
+            var theorProfileAligned = Workflow.Result.Target.IsotopicProfile.CloneIsotopicProfile();
+
             double fwhm;
             if (Workflow.Result.IsotopicProfile != null)
             {
+
                 fwhm = Workflow.Result.IsotopicProfile.GetFWHM();
+                IsotopicProfileUtilities.AlignTwoIsotopicProfiles(Workflow.Result.IsotopicProfile, theorProfileAligned);
+
+                if (Workflow.SubtractedIso!=null && Workflow.SubtractedIso.Peaklist.Count>0)
+                {
+                    SubtractedMassSpecXYData = TheorXYDataCalculationUtilities.GetTheoreticalIsotopicProfileXYData(Workflow.SubtractedIso, fwhm);
+                }
+                else
+                {
+                    SubtractedMassSpecXYData = new XYData
+                                                   {
+                                                       Xvalues = new double[] {400, 500, 600},
+                                                       Yvalues = new double[] {0, 0, 0}
+                                                   };
+                }
+                
+
+
             }
             else
             {
                 fwhm = DefaultMSPeakWidth;
             }
 
+
             TheorProfileXYData = TheorXYDataCalculationUtilities.GetTheoreticalIsotopicProfileXYData(Workflow.Result.Target.IsotopicProfile, fwhm);
+
+
+
+
+
+
 
             GeneralStatusMessage = "Updated.";
 
@@ -404,7 +444,10 @@ namespace Sipper.ViewModel
 
                 }
 
+                FileInputs.DatasetParentFolder = Run.DataSetPath;
             }
+
+
 
 
         }
@@ -468,7 +511,7 @@ namespace Sipper.ViewModel
                     ParameterFileStatusText = "None loaded; using defaults";
                 }
 
-               
+
             }
 
 
@@ -598,7 +641,23 @@ namespace Sipper.ViewModel
             RatioLogsXYData.Xvalues = Workflow.RatioLogVals == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.RatioLogVals.Xvalues;
             RatioLogsXYData.Yvalues = Workflow.RatioLogVals == null ? new double[] { 0, 0, 0, 0, 0 } : Workflow.RatioLogVals.Yvalues;
 
-            
+
+            LabelDistributionXYData = new XYData();
+            if (CurrentResult != null && CurrentResult.LabelDistributionVals != null && CurrentResult.LabelDistributionVals.Length > 0)
+            {
+                //var xvals = ratioData.Peaklist.Select((p, i) => new { peak = p, index = i }).Select(n => (double)n.index).ToList();
+
+                LabelDistributionXYData.Xvalues = CurrentResult.LabelDistributionVals.Select((value, index) => new { index }).Select(n=>(double)n.index).ToArray();
+                LabelDistributionXYData.Yvalues = CurrentResult.LabelDistributionVals;
+            }
+            else
+            {
+                LabelDistributionXYData.Xvalues = new double[] { 0, 1, 2, 3 };
+                LabelDistributionXYData.Yvalues = new double[] { 0, 0, 0, 0 };
+            }
+
+
+
             if (CurrentResult != null)
             {
                 MSGraphMinX = CurrentResult.MonoMZ - 1.75;
@@ -681,5 +740,36 @@ namespace Sipper.ViewModel
 
         #endregion
 
+        public double GetMaxY(XYData xyData, double xMin, double xMax)
+        {
+            if (xyData == null || xyData.Xvalues.Length == 0) return 0;
+
+            int indexStart = MathUtils.GetClosest(xyData.Xvalues, xMin, WorkflowParameters.MSToleranceInPPM * 3);
+
+            if (indexStart < 0)
+            {
+                indexStart = 0;
+            }
+
+            double ymax = 0;
+            for (int i = indexStart; i < xyData.Xvalues.Length; i++)
+            {
+                if (xyData.Yvalues[i] > ymax)
+                {
+                    ymax = xyData.Yvalues[i];
+                }
+
+                if (xyData.Xvalues[i] > xMax)
+                {
+                    break;
+                }
+
+            }
+
+            return ymax;
+
+
+
+        }
     }
 }

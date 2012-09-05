@@ -23,6 +23,9 @@ namespace Sipper.Model
         private TargetedWorkflowExecutorProgressInfo _progressInfo = new TargetedWorkflowExecutorProgressInfo();
         private const double DefaultMSPeakWidth = 0.01;
 
+       
+        private int _subFolderCounter;   //keeps track of which folder images are being written to
+
 
         private MSGraphControl _msGraph = new MSGraphControl();
         private ChromGraphControl _chromGraph = new ChromGraphControl();
@@ -41,6 +44,8 @@ namespace Sipper.Model
 
             ChromGraphXWindowWidth = 400;
 
+            NumResultsPerFolder = 200;
+
             InitializeGraphs();
 
 
@@ -50,6 +55,12 @@ namespace Sipper.Model
         private void InitializeGraphs()
         {
             UpdateGraphRelatedProperties();
+
+            
+            //something not working with the size - it's not being affected by this...
+            _msGraph.zedGraphControl1.Width = 600;
+            _msGraph.zedGraphControl1.Height = 400;
+
 
 
             //For some reason, in the first drawing of the graph, the graph ranges aren't updated. So we
@@ -118,6 +129,12 @@ namespace Sipper.Model
             }
         }
 
+        /// <summary>
+        /// Result images are split up across folders to prevent too many from being in one folder.
+        /// </summary>
+        public int NumResultsPerFolder { get; set; }   //
+
+
 
         #endregion
 
@@ -142,8 +159,12 @@ namespace Sipper.Model
 
 
             //iterate over results
+
+            int resultCounter = 0;
+
             foreach (SipperLcmsFeatureTargetedResultDTO result in sortedDatasets)
             {
+                resultCounter++;
                 CurrentResult = result;
 
 
@@ -175,6 +196,12 @@ namespace Sipper.Model
 
                 TheorProfileXYData = TheorXYDataCalculationUtilities.GetTheoreticalIsotopicProfileXYData(Workflow.Result.Target.IsotopicProfile, fwhm);
 
+
+                if (resultCounter % NumResultsPerFolder == 0)
+                {
+                    _subFolderCounter++;
+                }
+
                 OutputImages();
 
             }
@@ -191,24 +218,28 @@ namespace Sipper.Model
             if (!Directory.Exists(_fileInputs.ResultsSaveFilePath))
                 Directory.CreateDirectory(_fileInputs.ResultsSaveFilePath);
 
-            string baseFilename = _fileInputs.ResultsSaveFilePath + Path.DirectorySeparatorChar +  CurrentResult.DatasetName + "_ID" + CurrentResult.TargetID;
+            string subfolderPath = _fileInputs.ResultsSaveFilePath + Path.DirectorySeparatorChar+ "dir" +
+                                   _subFolderCounter.ToString().PadLeft(2, '0');
 
+            if (!Directory.Exists(subfolderPath)) Directory.CreateDirectory(subfolderPath);
+
+
+            string baseFilename = subfolderPath + Path.DirectorySeparatorChar + CurrentResult.DatasetName + "_ID" + CurrentResult.TargetID;
+            
             string msfilename = baseFilename + "_MS.png";
             string theorMSFilename = baseFilename + "_theorMS.png";
             string chromFilename = baseFilename + "_chrom.png";
 
             UpdateGraphRelatedProperties();
-
-
-
+            
             _chromGraph.zedGraphControl1.GraphPane.GraphObjList.Clear();
             _chromGraph.GenerateGraph(ChromXYData.Xvalues, ChromXYData.Yvalues, ChromGraphMinX, ChromGraphMaxX);
 
             string chromTitleText = "XIC m/z " + (CurrentResult == null ? "" : CurrentResult.MonoMZ.ToString("0.000"));
             //_chromGraph.AddAnnotationRelativeAxis(chromTitleText, 0.5, 0, 8f);
 
-            
-            
+
+
             _msGraph.zedGraphControl1.GraphPane.GraphObjList.Clear();
             _msGraph.GenerateGraph(MassSpecXYData.Xvalues, MassSpecXYData.Yvalues, MSGraphMinX, MSGraphMaxX);
 
@@ -243,13 +274,9 @@ namespace Sipper.Model
             string theorGraphTitle = "Formula " + (CurrentResult == null ? "" : CurrentResult.EmpiricalFormula);
             _theorMSGraph.AddAnnotationRelativeAxis(theorGraphTitle, 0.3, 0, 8);
 
-
-
             _msGraph.SaveGraph(msfilename);
             _chromGraph.SaveGraph(chromFilename);
             _theorMSGraph.SaveGraph(theorMSFilename);
-
-
 
         }
 

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Windows;
 using Sipper.Model;
@@ -12,9 +11,6 @@ namespace Sipper.View
     /// </summary>
     public partial class AutoprocessorWindow : Window
     {
-
-        private BackgroundWorker _backgroundWorker;
-
         public AutoprocessorWindow(Project sipperProject = null)
         {
             InitializeComponent();
