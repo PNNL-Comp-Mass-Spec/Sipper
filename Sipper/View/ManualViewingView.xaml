@@ -107,8 +107,8 @@
                 </Border>
                 <Border Name="leftBorder" DockPanel.Dock="Left">
                     <TabControl MaxWidth="500" Margin="6">
-                        <TabItem AllowDrop="True" Drop="FileDropHandler" Name="setupTab" Header="Setup">
-                            <StackPanel AllowDrop="True" Drop="FileDropHandler" >
+                <TabItem  AllowDrop="True" Drop="FileDropHandler" Name="setupTab" Header="Setup">
+                            <StackPanel  >
                         
                                 <StackPanel.Resources>
                                     <Style
@@ -142,7 +142,7 @@
                                         Padding="0"
                                         Text="{Binding Path=DataContext.RunStatusText, ElementName=window, Mode=OneWay}"/>
                                 </StackPanel>
-                                <TextBox Drop="FileDropHandler" PreviewDragOver="TextBox_PreviewDragOver" 
+                                <TextBox PreviewDragOver="TextBox_PreviewDragOver" 
                                          Text="{Binding Path=DataContext.DatasetFilePath, ElementName=window, Mode=TwoWay}"                     >
                                 </TextBox>
 
@@ -163,7 +163,7 @@
                                         Padding="0"
                                         Text="{Binding Path=DataContext.ParameterFileStatusText, ElementName=window, Mode=OneWay}"/>
                                 </StackPanel>
-                                <TextBox Drop="FileDropHandler" PreviewDragOver="TextBox_PreviewDragOver" Name="txtWorkflowParameterFilepath"
+                                <TextBox PreviewDragOver="TextBox_PreviewDragOver" Name="txtWorkflowParameterFilepath"
                                          Text="{Binding Path=DataContext.FileInputs.ParameterFilePath, ElementName=window, Mode=TwoWay}" TextChanged="txtWorkflowParameterFilepath_TextChanged" />
                       
                                 <StackPanel Orientation="Horizontal">
@@ -183,7 +183,7 @@
                                         Padding="0"
                                         Text="{Binding Path=DataContext.TargetsFileStatusText, ElementName=window, Mode=OneWay}"/>
                                 </StackPanel>
-                                <TextBox Name="txtResultsFilePath" Drop="FileDropHandler" DragOver="txtResultsFilePath_DragOver" PreviewDragOver="TextBox_PreviewDragOver"
+                                <TextBox Name="txtResultsFilePath" DragOver="txtResultsFilePath_DragOver" PreviewDragOver="TextBox_PreviewDragOver"
                                          Text="{Binding Path=DataContext.FileInputs.TargetsFilePath, ElementName=window, Mode=TwoWay}" />
 
                                 <Label
@@ -194,7 +194,7 @@
                                     Content="Results save path"
                                     Padding="0"/>
                                 <TextBox
-                                    Name="txtResultsSavePath" Drop="FileDropHandler" DragOver="txtResultsFilePath_DragOver" PreviewDragOver="TextBox_PreviewDragOver"
+                                    Name="txtResultsSavePath" DragOver="txtResultsFilePath_DragOver" PreviewDragOver="TextBox_PreviewDragOver"
                                     Text="{Binding Path=DataContext.FileInputs.ResultsSaveFilePath, ElementName=window, Mode=TwoWay}"/>
 
                             </StackPanel>

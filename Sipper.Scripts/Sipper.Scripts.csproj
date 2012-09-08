@@ -71,6 +71,7 @@
     <Compile Include="GordPaperScripts.cs" />
     <Compile Include="LCMSFeaturesHandlingScripts.cs" />
     <Compile Include="MassTagUtilities.cs" />
+    <Compile Include="OMCDA_0267_PrelimTimeCourseStudy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResultHandingScripts.cs" />
     <Compile Include="ResultsFilteringScripts.cs" />
