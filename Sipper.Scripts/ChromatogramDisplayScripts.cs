@@ -47,8 +47,8 @@ namespace Sipper.Scripts
                 //generate chromatogram
 
                 int LCElutionWindowWidth = 300;
-                int startScan = Math.Max(run.MinScan, r.ScanLC - LCElutionWindowWidth / 2);
-                int stopScan = Math.Min(run.MaxScan, r.ScanLC + LCElutionWindowWidth / 2);
+                int startScan = Math.Max(run.MinLCScan, r.ScanLC - LCElutionWindowWidth / 2);
+                int stopScan = Math.Min(run.MaxLCScan, r.ScanLC + LCElutionWindowWidth / 2);
 
                 run.XYData = peakChromGen.GenerateChromatogram(run.ResultCollection.MSPeakResultList, startScan, stopScan, r.MonoMZ, 20);
 

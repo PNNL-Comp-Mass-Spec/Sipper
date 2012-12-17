@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Sipper.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SIPPER C13 Detector" Height="229" Width="467" WindowStyle="ToolWindow">
+        Title="SIPPER C13 Detector" Height="229" Width="467" WindowStyle="ToolWindow" Closing="Window_Closing">
     
     <Window.Resources>
 

@@ -7,7 +7,7 @@
     Name="window" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:backend="clr-namespace:DeconTools.Workflows.Backend;assembly=DeconTools.Workflows"
-    xmlns:GraphGenerator="clr-namespace:GWSGraphLibrary.GraphGenerator;assembly=GWSGraphLibrary" d:DesignHeight="800" d:DesignWidth="1200">
+    xmlns:GraphGenerator="clr-namespace:GWSGraphLibrary.GraphGenerator;assembly=GWSGraphLibrary" d:DesignHeight="800" d:DesignWidth="1200" Closing="window_Closing">
 
     <Window.Resources>
         <ObjectDataProvider MethodName="GetValues"
@@ -62,8 +62,7 @@
 
     </Window.Resources>
 
-    <DockPanel Name="dockPanel1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" LastChildFill="True"
-               >
+    <DockPanel Name="dockPanel1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" LastChildFill="True" Background="White">
         <!--<Border 
              Name="TopBorder"
              
@@ -105,10 +104,10 @@
                         </WrapPanel>
                     </Grid>
                 </Border>
-                <Border Name="leftBorder" DockPanel.Dock="Left">
-                    <TabControl MaxWidth="500" Margin="6">
-                <TabItem  AllowDrop="True" Drop="FileDropHandler" Name="setupTab" Header="Setup">
-                            <StackPanel  >
+                <Border Name="leftBorder" DockPanel.Dock="Left" Background="White">
+                    <TabControl MaxWidth="500" Margin="6" Background="White" BorderBrush="SlateGray">
+                <TabItem  AllowDrop="True" Drop="FileDropHandler" Name="setupTab" Header="Setup" Background="#A9C8D8E5" BorderBrush="SlateGray" BorderThickness="20">
+                            <StackPanel   >
                         
                                 <StackPanel.Resources>
                                     <Style
@@ -145,8 +144,12 @@
                                 <TextBox PreviewDragOver="TextBox_PreviewDragOver" 
                                          Text="{Binding Path=DataContext.DatasetFilePath, ElementName=window, Mode=TwoWay}"                     >
                                 </TextBox>
+                        <ProgressBar Margin="5,0" Height="8" Foreground="#FF4DB146" Background="#FFE5EDFC" BorderBrush="#FF436396"
+                                     Value="{Binding Path=DataContext.PercentProgress, ElementName=window, Mode=OneWay}">
+                            
+                        </ProgressBar>
 
-                                <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal">
                                     <Label
                                         Name="label2"
                                         HorizontalAlignment="Left"
@@ -196,54 +199,76 @@
                                 <TextBox
                                     Name="txtResultsSavePath" DragOver="txtResultsFilePath_DragOver" PreviewDragOver="TextBox_PreviewDragOver"
                                     Text="{Binding Path=DataContext.FileInputs.ResultsSaveFilePath, ElementName=window, Mode=TwoWay}"/>
-
-                            </StackPanel>
+                    </StackPanel>
                         </TabItem>
-                        <TabItem Name="resultsTab" Header="Results">
-                    
-                            <Grid ShowGridLines="True">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="3*"></RowDefinition>
-                           
-                                </Grid.RowDefinitions>
-                        
-                                <ListView Name="resultsListView"
-                                          Margin="6,6,6,0" ItemsSource="{Binding Path=DataContext.Results, ElementName=window, Mode= TwoWay}" 
-                                          SelectionMode="Single" SelectionChanged="ListView_SelectionChanged">
-                                    <ListView.View>
+                        <TabItem Name="resultsTab" Header="Results" Background="#819CAAC1">
+                    <DockPanel>
+                        <Border BorderThickness="1" DockPanel.Dock="Bottom">
+                            <StackPanel>
+                                <TextBlock Margin="5,3,5,0">Targets to filter on</TextBlock>
+                                <DockPanel >
+                                    <StackPanel DockPanel.Dock="Right">
+                                        <Button Margin="0,0,5,0"  VerticalAlignment="Top" HorizontalAlignment="Stretch" Name="btnClearTargetFilter" Click="btnClearTargetFilterClick">Clear</Button>
+                                    </StackPanel>
+                                    
+                                <TextBox Name="txtTargetFilterString"   Margin="5,0,5,0" Height="100" 
+                                         Text="{Binding Path=DataContext.TargetFilterString, ElementName=window, Mode=TwoWay  }" 
+                                         HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" FontSize="9" TextChanged="TxtTargetFilterStringChanged" DataContext="{Binding}">
+                                    
+                                </TextBox>
+                                    
+                                </DockPanel>
+                            </StackPanel>
+                        </Border>
 
-                                        <GridView>
-                                            <GridViewColumn  Header="TargetID" DisplayMemberBinding="{Binding Path=TargetID}"/>
-                                            <GridViewColumn  Header="MassTagID" DisplayMemberBinding="{Binding Path=MatchedMassTagID}"/>
-                                            <GridViewColumn Header="z" DisplayMemberBinding="{Binding Path=ChargeState}"/>
-                                            <GridViewColumn Header="MonoMZ" DisplayMemberBinding="{Binding Path=MonoMZ, StringFormat=0.0000}"/>
-                                            <GridViewColumn Header="Intensity" DisplayMemberBinding="{Binding Path=Intensity}"/>
-                                            <!--<GridViewColumn Header="AreaMetric" DisplayMemberBinding="{Binding Path=Result.AreaUnderRatioCurveRevised, StringFormat=0.0}"/>
+                        <ListView DockPanel.Dock="Top" Name="resultsListView" MinHeight="200" 
+                                          Margin="6,6,6,0" ItemsSource="{Binding Path=DataContext.Results, ElementName=window, Mode= TwoWay}" 
+                                          SelectionMode="Single" SelectionChanged="ListView_SelectionChanged" KeyDown="StackPanel_KeyDown">
+                            <ListView.View>
+
+                                <GridView>
+                                    <GridViewColumn  Header="TargetID" DisplayMemberBinding="{Binding Path=TargetID}"/>
+                                    <GridViewColumn  Header="MassTagID" DisplayMemberBinding="{Binding Path=MatchedMassTagID}"/>
+                                    <GridViewColumn Header="z" DisplayMemberBinding="{Binding Path=ChargeState}"/>
+                                    <GridViewColumn Header="MonoMZ" DisplayMemberBinding="{Binding Path=MonoMZ, StringFormat=0.0000}"/>
+                                    <GridViewColumn Header="Sequence" DisplayMemberBinding="{Binding Path=Code}"/>
+                                    <GridViewColumn Header="Intensity" DisplayMemberBinding="{Binding Path=Intensity}"/>
+                                    <!--<GridViewColumn Header="AreaMetric" DisplayMemberBinding="{Binding Path=Result.AreaUnderRatioCurveRevised, StringFormat=0.0}"/>
                                                  <GridViewColumn Header="Corr_Avg" DisplayMemberBinding="{Binding Path=Result.ChromCorrelationAverage, StringFormat=0.000}"/>
                                                  <GridViewColumn Header="Corr_Median" DisplayMemberBinding="{Binding Path=Result.ChromCorrelationMedian, StringFormat=0.000}"/>
                                                  <GridViewColumn Header="R_val" DisplayMemberBinding="{Binding Path=Result.RSquaredValForRatioCurve, StringFormat=0.000}"/>-->
 
 
-                                        </GridView>
-                                    </ListView.View>
+                                </GridView>
+                            </ListView.View>
 
-                                </ListView>
+                        </ListView>
+                       
+
+                    </DockPanel>
 
 
 
-                            </Grid>
-                        </TabItem>
-                    </TabControl>
+                </TabItem>
+                <TabItem Header="Options" Name="tabItem1" Background="#FFB6C1D3">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>Mass Spec viewing width</TextBlock>
+                            <TextBox Text="{Binding Path=DataContext.MassSpecVisibleWindowWidth, ElementName=window, Mode= TwoWay}" Margin="10,0,0,0" MinWidth="25"></TextBox>
+                        </StackPanel>
+                    </StackPanel> 
+                </TabItem>
+            </TabControl>
                 </Border>
                 <Border Name="RightBorder"
                         DockPanel.Dock="Right">
-                    <StackPanel>
+                    <StackPanel Background="White">
                 
                         <Border Margin="11" >
-                            <StackPanel Margin="5">
+                            <StackPanel Margin="5" Background="White">
                                 <TextBlock Margin="6,6,6,0"  FontSize="13"  TextTrimming="None">Annotation:</TextBlock>
                                 <ListBox Margin="9,3,9,6" FontSize="13"  ItemsSource="{Binding Source={StaticResource ResourceKey=ValidationCodeValues }}"
-                                         SelectedValue="{Binding Path=DataContext.CurrentResult.ValidationCode, ElementName=window, Mode= TwoWay}" BorderBrush="{x:Null}" 
+                                         SelectedValue="{Binding Path=DataContext.CurrentResultValidationCode, ElementName=window, Mode= TwoWay}" BorderBrush="{x:Null}" 
                                          ItemContainerStyle="{StaticResource ResourceKey=ContainerStyle}">
                            
 
@@ -255,7 +280,7 @@
 
                         <Border Margin="6">
                             <WindowsFormsHost  Height="150" Width="225" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6"  Name="chromCorrGraphHost" 
-                                               VerticalAlignment="Top" HorizontalAlignment="Right" >
+                                               VerticalAlignment="Top" HorizontalAlignment="Right" Background="White">
                                 <graphLib:BasicGraphControl Name="chromCorrGraph">
 
                                 </graphLib:BasicGraphControl>
@@ -269,7 +294,7 @@
 
                         <Border Margin="6">
                             <WindowsFormsHost  Height="150" Width="225" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6"  Name="ratioGraphHost" 
-                                               VerticalAlignment="Top" HorizontalAlignment="Right" >
+                                               VerticalAlignment="Top" HorizontalAlignment="Right" Background="White">
                                 <graphLib:BasicGraphControl Name="ratioGraph">
 
                                 </graphLib:BasicGraphControl>
@@ -278,7 +303,7 @@
                         </Border>
 
                         <Border Margin="6">
-                            <WindowsFormsHost  Height="150" Width="225" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6"  Name="logRatioGraphHost" 
+                            <WindowsFormsHost  Height="112" Width="215" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6"  Name="logRatioGraphHost" 
                                                VerticalAlignment="Top" HorizontalAlignment="Right" >
                                 <graphLib:BasicGraphControl Name="logRatioGraph">
 
@@ -309,7 +334,7 @@
 
 
              
-                        <WindowsFormsHost Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6,10,0,0"  Name="msGraphHost" HorizontalAlignment="Stretch" >
+                        <WindowsFormsHost Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6,10,0,0"  Name="msGraphHost" HorizontalAlignment="Stretch" Background="White">
                             <graphLib:MSGraphControl Name="msGraph">
 
                             </graphLib:MSGraphControl>
@@ -398,8 +423,40 @@
                                     </Grid>
                                 </StackPanel>
                             </Border>
+                    <Border >
+                        <StackPanel Margin="3">
+                            <TextBlock Style="{StaticResource ResourceKey= catagoryHeaderStyle }" >Quality metrics</TextBlock>
+                            <Rectangle   />
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
 
-                            <Border >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Column="0" Grid.Row="0" Text="FitScore" ></TextBlock>
+                                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Path=CurrentResult.FitScore, StringFormat=0.000}" />
+                                <TextBlock Grid.Column="0" Grid.Row="1" Text="I_score" ></TextBlock>
+                                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Path=CurrentResult.IScore, StringFormat=0.00}" />
+                                <TextBlock Grid.Column="0" Grid.Row="2" Text="ChromCorr_Avg" ></TextBlock>
+                                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Path=CurrentResult.ChromCorrelationAverage, StringFormat=0.000}" />
+                                <TextBlock Grid.Column="0" Grid.Row="3" Text="ChromCorr_Median" ></TextBlock>
+                                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding Path=CurrentResult.ChromCorrelationMedian, StringFormat=0.000}" />
+                                <TextBlock Grid.Column="0" Grid.Row="4" Text="ChromCorr_StDev" ></TextBlock>
+                                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Path=CurrentResult.ChromCorrelationStdev, StringFormat=0.0000}" />
+
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    <Border >
                                 <StackPanel Margin="3">
                                     <TextBlock Style="{StaticResource ResourceKey= catagoryHeaderStyle }" >C13-enrichment info</TextBlock>
                                     <Rectangle   />
@@ -436,51 +493,19 @@
                                 </StackPanel>
                             </Border>
 
-                            <Border >
-                                <StackPanel Margin="3">
-                                    <TextBlock Style="{StaticResource ResourceKey= catagoryHeaderStyle }" >Quality metrics</TextBlock>
-                                    <Rectangle   />
-                                    <Grid >
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition></ColumnDefinition>
-                                            <ColumnDefinition></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition />
-                                            <RowDefinition />
-                                            <RowDefinition />
-                                            <RowDefinition />
-                                            <RowDefinition />
-
-                                        </Grid.RowDefinitions>
-
-                                        <TextBlock Grid.Column="0" Grid.Row="0" Text="FitScore" ></TextBlock>
-                                        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Path=CurrentResult.FitScore, StringFormat=0.000}" />
-                                        <TextBlock Grid.Column="0" Grid.Row="1" Text="I_score" ></TextBlock>
-                                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Path=CurrentResult.IScore, StringFormat=0.00}" />
-                                        <TextBlock Grid.Column="0" Grid.Row="2" Text="ChromCorr_Avg" ></TextBlock>
-                                        <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Path=CurrentResult.ChromCorrelationAverage, StringFormat=0.000}" />
-                                        <TextBlock Grid.Column="0" Grid.Row="3" Text="ChromCorr_Median" ></TextBlock>
-                                        <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding Path=CurrentResult.ChromCorrelationMedian, StringFormat=0.000}" />
-                                        <TextBlock Grid.Column="0" Grid.Row="4" Text="ChromCorr_StDev" ></TextBlock>
-                                        <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Path=CurrentResult.ChromCorrelationStdev, StringFormat=0.0000}" />
-
-                                    </Grid>
-                                </StackPanel>
-                            </Border>
+                          
 
                         </WrapPanel>
             
 
-                        <WindowsFormsHost Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1" Margin="15,0,0,0"  Name="theorMSGraphHost" HorizontalAlignment="Stretch" >
+                        <WindowsFormsHost Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1" Margin="15,0,0,0"  Name="theorMSGraphHost" HorizontalAlignment="Stretch" Background="White">
                             <graphLib:MSGraphControl Name="theorMSGraph">
 
                             </graphLib:MSGraphControl>
                         </WindowsFormsHost>
 
 
-                        <WindowsFormsHost Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="1" Margin="6,0,0,0" Name="labelDistributionGraphHost" HorizontalAlignment="Stretch" >
+                        <WindowsFormsHost Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="1" Margin="6,0,0,0" Name="labelDistributionGraphHost" HorizontalAlignment="Stretch" Background="White">
                             <graphLib:BasicGraphControl Name="labelDistributionGraph" >
 
                     </graphLib:BasicGraphControl>
@@ -488,7 +513,7 @@
 
 
                         <WindowsFormsHost  Margin="6,10,6,0" Name="chromGraphHost" HorizontalAlignment="Stretch"
-                                           Grid.Row="2"  Grid.Column="0" Grid.ColumnSpan="1">
+                                           Grid.Row="2"  Grid.Column="0" Grid.ColumnSpan="1" Background="White">
                             <graphLib:ChromGraphControl Name="chromGraph" >
 
                             </graphLib:ChromGraphControl>

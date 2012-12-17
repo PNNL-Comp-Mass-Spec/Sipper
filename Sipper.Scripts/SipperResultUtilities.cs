@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using DeconTools.Backend.Core;
+using DeconTools.Backend.Core.Results;
+using DeconTools.UnitTesting2;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 
@@ -172,5 +175,120 @@ namespace Sipper.Scripts
             Console.WriteLine(sb.ToString());
 
         }
+
+
+        public static string ResultDetailsToString(SipperLcmsTargetedResult result, bool showTheorUnlabelledData = true, bool showObsIso=true, bool showChromData=true, bool showLabelDist=true)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            LcmsFeatureTarget target = (LcmsFeatureTarget) result.Target;
+            char delim = '\n';
+
+            sb.Append("FeatureID= \t" + result.Target.ID);
+            sb.Append(delim);
+            sb.Append("MassTagID= \t" +  target.FeatureToMassTagID);
+            sb.Append(delim);
+            sb.Append("Sequence= \t"+  target.Code);
+            sb.Append(delim);
+
+            sb.Append("NumQualityChromPeaks= \t" + result.NumQualityChromPeaks);
+            sb.Append(delim);
+
+            sb.Append("ChromCorrMedian= \t" + result.ChromCorrelationMedian);
+            sb.Append(delim);
+
+            sb.Append("ChromCorrAverage= \t" + result.ChromCorrelationAverage);
+            sb.Append(delim);
+
+            
+            sb.Append("AreaRevised= \t" + result.AreaUnderRatioCurveRevised);
+            sb.Append(delim);
+
+            sb.Append("AreaDifferenceCurve= \t" + result.AreaUnderDifferenceCurve);
+            sb.Append(delim);
+
+            sb.Append("NumCarbonsLabelled= \t" + result.NumCarbonsLabelled);
+            sb.Append(delim);
+
+            sb.Append("PercentCarbonsLabelled= \t" + result.PercentCarbonsLabelled);
+            sb.Append(delim);
+
+            sb.Append("PercentPeptideLabelled= \t" + result.PercentPeptideLabelled);
+            sb.Append(delim);
+
+            sb.Append("RSquaredForRatioCurve= \t" + result.RSquaredValForRatioCurve);
+            sb.Append(delim);
+
+            if (showTheorUnlabelledData)
+            {
+                sb.Append(Environment.NewLine);
+                sb.Append("------Theor isotopic profile data----\n");
+                TestUtilities.IsotopicProfileDataToStringBuilder(sb, result.Target.IsotopicProfile);
+            }
+
+            if (showObsIso)
+            {
+                sb.Append(Environment.NewLine);
+                sb.Append("------Observed isotopic profile data----\n");
+                TestUtilities.IsotopicProfileDataToStringBuilder(sb, result.IsotopicProfile);
+            }
+            //sb.Append(Environment.NewLine);
+            //sb.Append("------Subtracted isotopic profile data----\n");
+            //TestUtilities.IsotopicProfileDataToStringBuilder(sb,);
+
+
+
+            if (showChromData)
+            {
+                sb.Append(Environment.NewLine);
+                sb.Append("------Chrom correlation data----\n");
+                sb.Append(ResultChromCorrValuesToString(result));
+            }
+
+
+            if (showLabelDist)
+            {
+                sb.Append(Environment.NewLine);
+                sb.Append("------Label Distribution data----\n");
+                sb.Append(ResultLabelDistributionValuesToString(result));
+            }
+
+            return sb.ToString();
+
+
+
+        }
+
+        public static string ResultLabelDistributionValuesToString(SipperLcmsTargetedResult result)
+        {
+            int peakCounter = 0;
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var item in result.LabelDistributionVals)
+            {
+                sb.Append(peakCounter + "\t" + item + Environment.NewLine);
+                peakCounter++;
+            }
+
+            return sb.ToString();
+        }
+
+
+        public static string ResultChromCorrValuesToString(SipperLcmsTargetedResult result)
+        {
+
+            int peakCounter = 0;
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var item in result.ChromCorrelationData.CorrelationDataItems)
+            {
+                sb.Append(peakCounter + "\t" + item.CorrelationRSquaredVal + Environment.NewLine);
+                peakCounter++;
+            }
+
+            return sb.ToString();
+
+        }
+
     }
 }

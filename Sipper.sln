@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sipper.Scripts", "Sipper.Sc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sipper", "Sipper\Sipper.csproj", "{E9434349-AFE0-4A13-B3D0-1453B6C50978}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Sipper_installer", "Sipper_installer\Sipper_installer.vdproj", "{682CC21A-EA7C-4C97-AC8F-38CA98225089}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -25,6 +27,8 @@ Global
 		{E9434349-AFE0-4A13-B3D0-1453B6C50978}.Debug|x86.Build.0 = Debug|x86
 		{E9434349-AFE0-4A13-B3D0-1453B6C50978}.Release|x86.ActiveCfg = Release|x86
 		{E9434349-AFE0-4A13-B3D0-1453B6C50978}.Release|x86.Build.0 = Release|x86
+		{682CC21A-EA7C-4C97-AC8F-38CA98225089}.Debug|x86.ActiveCfg = Debug
+		{682CC21A-EA7C-4C97-AC8F-38CA98225089}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

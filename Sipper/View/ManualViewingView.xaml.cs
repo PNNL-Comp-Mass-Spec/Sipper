@@ -3,7 +3,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
 using DeconTools.Backend;
+using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.Results;
 using Sipper.Model;
 using Sipper.ViewModel;
@@ -31,6 +35,8 @@ namespace Sipper.View
 
 
             ViewModel = new ManualViewingViewModel(project.ResultRepository, project.FileInputs);
+
+            LoadSettings();
 
             ViewModel.AllDataLoadedAndReadyEvent += new AllDataLoadedAndReadyEventHandler(ViewModel_AllDataLoadedAndReadyEvent);
 
@@ -505,6 +511,100 @@ namespace Sipper.View
             ViewModel.CopyChromatogramToClipboard();
         }
 
+        private void StackPanel_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (ViewModel.CurrentResult == null) return;
+
+
+            if (e.Key==Key.Y)
+            {
+                ViewModel.CurrentResultValidationCode = ValidationCode.Yes;
+                
+                
+            }
+            else if (e.Key==Key.N)
+            {
+                ViewModel.CurrentResultValidationCode = ValidationCode.No;
+                
+            }
+            else if (e.Key==Key.M)
+            {
+                ViewModel.CurrentResultValidationCode = ValidationCode.Maybe;
+                
+            }
+            else if (e.Key==Key.O)
+            {
+                ViewModel.CurrentResultValidationCode = ValidationCode.None;
+                
+            }
+            else
+            {
+                
+            }
+
+            
+
+        }
+
+        private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            SaveSettings();
+        }
+
+        private  void LoadSettings()
+        {
+
+            double minWidth = 1;
+            double mzwidth = Properties.Settings.Default.MSGraphMZWindow;
+
+            if (mzwidth<minWidth)
+            {
+                mzwidth = minWidth;
+            }
+
+            ViewModel.MassSpecVisibleWindowWidth = mzwidth;
+
+
+
+
+
+        }
+
+        private void SaveSettings()
+        {
+            if (ViewModel.MassSpecVisibleWindowWidth > 1)
+            {
+                Properties.Settings.Default.MSGraphMZWindow = ViewModel.MassSpecVisibleWindowWidth;
+            }
+            else
+            {
+                Properties.Settings.Default.MSGraphMZWindow = 10;
+            }
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
+        }
+
+        private void TxtTargetFilterStringChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            //got this from stack overflow
+            //use this to update the binding when anything is typed
+            TextBox tBox = (TextBox)sender;
+            DependencyProperty prop = TextBox.TextProperty;
+
+            BindingExpression binding = BindingOperations.GetBindingExpression(tBox, prop);
+            if (binding != null) { binding.UpdateSource(); }
+
+        }
+
+        private void btnClearTargetFilterClick(object sender, RoutedEventArgs e)
+        {
+            txtTargetFilterString.Text = string.Empty;
+        }
 
     }
 }

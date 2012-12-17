@@ -1,19 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
+using System.Windows.Input;
 using DeconTools.Backend;
 using DeconTools.Backend.Core;
 using DeconTools.Backend.Data;
 using DeconTools.Backend.Runs;
 using DeconTools.Backend.Utilities;
 using DeconTools.Backend.Utilities.IsotopeDistributionCalculation;
+using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.Core;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 using Sipper.Model;
+using Globals = DeconTools.Backend.Globals;
 
 namespace Sipper.ViewModel
 {
@@ -27,7 +32,7 @@ namespace Sipper.ViewModel
 
         private TargetedResultRepository _resultRepositorySource;
         private BackgroundWorker _backgroundWorker;
-
+        private string _peaksFilename;
 
 
 
@@ -36,9 +41,11 @@ namespace Sipper.ViewModel
 
         public ManualViewingViewModel(FileInputsInfo fileInputs = null)
         {
+
             _resultRepositorySource = new TargetedResultRepository();
 
             Results = new ObservableCollection<SipperLcmsFeatureTargetedResultDTO>();
+          
             WorkflowParameters = new SipperTargetedWorkflowParameters();
 
             Workflow = new SipperTargetedWorkflow(WorkflowParameters);
@@ -48,10 +55,7 @@ namespace Sipper.ViewModel
 
 
             LoadParameters();
-
-
-
-
+            
             UpdateGraphRelatedProperties();
 
             ChromGraphXWindowWidth = 600;
@@ -61,7 +65,7 @@ namespace Sipper.ViewModel
             : this(fileInputs)
         {
             _resultRepositorySource = resultRepository;
-            SetResults();
+            SetResults(_resultRepositorySource.Results);
 
             if (IsAllDataReady)
             {
@@ -151,9 +155,43 @@ namespace Sipper.ViewModel
         }
 
 
+        private double _massSpecVisibleWindowWidth;
+        public double MassSpecVisibleWindowWidth
+        {
+            get { return _massSpecVisibleWindowWidth; }
+            set
+            {
+                _massSpecVisibleWindowWidth = value;
+                OnPropertyChanged("MassSpecVisibleWindowWidth");
+            }
+        }
+
         public FileInputsViewModel FileInputs { get; private set; }
 
+        public ValidationCode CurrentResultValidationCode
+        {
+            get
+            {
+                if (_currentResult == null)
+                {
+                    return ValidationCode.None;
+                }
+                else
+                {
+                    return _currentResult.ValidationCode;
+                }
+            }
+            set
+            {
+                if (_currentResult == null)
+                {
+                    return;
+                }
 
+                _currentResult.ValidationCode = value;
+                OnPropertyChanged("CurrentResultValidationCode");
+            }
+        }
 
         public string DatasetFilePath
         {
@@ -168,8 +206,12 @@ namespace Sipper.ViewModel
             }
 
         }
+        
 
         public ObservableCollection<SipperLcmsFeatureTargetedResultDTO> Results { get; set; }
+     
+
+       
 
         private SipperLcmsFeatureTargetedResultDTO _currentResult;
         public SipperLcmsFeatureTargetedResultDTO CurrentResult
@@ -181,7 +223,7 @@ namespace Sipper.ViewModel
 
                 _currentResult = value;
                 OnPropertyChanged("CurrentResult");
-
+                OnPropertyChanged("CurrentResultValidationCode");
             }
         }
 
@@ -197,7 +239,7 @@ namespace Sipper.ViewModel
             }
         }
 
-     
+
 
         private string _targetsFileStatusText;
         public string TargetsFileStatusText
@@ -210,6 +252,22 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("TargetsFileStatusText");
             }
         }
+
+
+        private string _targetFilterString;
+        public string TargetFilterString
+        {
+            get { return _targetFilterString; }
+            set
+            {
+                _targetFilterString = value;
+
+                FilterTargets();
+                OnPropertyChanged("TargetFilterString");
+            }
+        }
+
+
 
 
         private string _parameterFileStatusText;
@@ -338,6 +396,8 @@ namespace Sipper.ViewModel
 
 
         private XYData _theorProfileXYData;
+
+
         public XYData TheorProfileXYData
         {
             get { return _theorProfileXYData; }
@@ -345,6 +405,21 @@ namespace Sipper.ViewModel
             {
                 _theorProfileXYData = value;
                 OnPropertyChanged("TheorProfileXYData");
+            }
+        }
+
+        private int _percentProgress;
+
+        /// <summary>
+        /// Data for peak loading progress bar
+        /// </summary>
+        public int PercentProgress
+        {
+            get { return _percentProgress; }
+            set
+            {
+                _percentProgress = value;
+                OnPropertyChanged("PercentProgress");
             }
         }
 
@@ -373,7 +448,7 @@ namespace Sipper.ViewModel
                 fwhm = Workflow.Result.IsotopicProfile.GetFWHM();
                 IsotopicProfileUtilities.AlignTwoIsotopicProfiles(Workflow.Result.IsotopicProfile, theorProfileAligned);
 
-                if (Workflow.SubtractedIso!=null && Workflow.SubtractedIso.Peaklist.Count>0)
+                if (Workflow.SubtractedIso != null && Workflow.SubtractedIso.Peaklist.Count > 0)
                 {
                     SubtractedMassSpecXYData = TheorXYDataCalculationUtilities.GetTheoreticalIsotopicProfileXYData(Workflow.SubtractedIso, fwhm);
                 }
@@ -381,11 +456,11 @@ namespace Sipper.ViewModel
                 {
                     SubtractedMassSpecXYData = new XYData
                                                    {
-                                                       Xvalues = new double[] {400, 500, 600},
-                                                       Yvalues = new double[] {0, 0, 0}
+                                                       Xvalues = new double[] { 400, 500, 600 },
+                                                       Yvalues = new double[] { 0, 0, 0 }
                                                    };
                 }
-                
+
 
 
             }
@@ -434,15 +509,8 @@ namespace Sipper.ViewModel
 
             if (Run != null)
             {
-                try
-                {
-                    LoadPeaks();
-                }
-                catch (Exception ex)
-                {
-                    GeneralStatusMessage = ex.Message;
+                LoadPeaksUsingBackgroundWorker();
 
-                }
 
                 FileInputs.DatasetParentFolder = Run.DataSetPath;
             }
@@ -452,21 +520,138 @@ namespace Sipper.ViewModel
 
         }
 
-        private void LoadPeaks()
+        private void LoadPeaksUsingBackgroundWorker()
         {
             if (Run == null) return;
 
-            string expectedPeaksFilename = this.Run.DataSetPath + "\\" + this.Run.DatasetName + "_peaks.txt";
-
-            if (!File.Exists(expectedPeaksFilename))
+            if (_backgroundWorker != null && _backgroundWorker.IsBusy)
             {
-                throw new FileNotFoundException("The _peaks.txt file for the raw dataset could not be found. This can be created using the Autoprocessor.");
+                GeneralStatusMessage = "Patience please. Already busy...";
+                return;
+
             }
 
-            PeakImporterFromText peakImporter = new PeakImporterFromText(expectedPeaksFilename, _backgroundWorker);
-            peakImporter.ImportPeaks(this.Run.ResultCollection.MSPeakResultList);
+            _backgroundWorker = new BackgroundWorker();
+            _backgroundWorker.WorkerSupportsCancellation = true;
+            _backgroundWorker.WorkerReportsProgress = true;
+            _backgroundWorker.RunWorkerCompleted += BackgroundWorkerCompleted;
+            _backgroundWorker.ProgressChanged += BackgroundWorkerProgressChanged;
+            _backgroundWorker.DoWork += BackgroundWorkerDoWork;
+
+            _backgroundWorker.RunWorkerAsync();
+
 
         }
+
+        private void LoadPeaks()
+        {
+            try
+            {
+                _peaksFilename = this.Run.DataSetPath + "\\" + this.Run.DatasetName + "_peaks.txt";
+
+                if (!File.Exists(_peaksFilename))
+                {
+                    GeneralStatusMessage =
+                        "Creating chromatogram data (_peaks.txt file); this is only done once. It takes 1 - 5 min .......";
+                    var deconParam = (TargetedWorkflowParameters)WorkflowParameters;
+
+                    var peakCreationParameters = new PeakDetectAndExportWorkflowParameters();
+                    peakCreationParameters.PeakBR = deconParam.ChromGenSourceDataPeakBR;
+                    peakCreationParameters.PeakFitType = Globals.PeakFitType.QUADRATIC;
+                    peakCreationParameters.SigNoiseThreshold = deconParam.ChromGenSourceDataSigNoise;
+
+                    var peakCreator = new PeakDetectAndExportWorkflow(Run, peakCreationParameters, _backgroundWorker);
+                    peakCreator.Execute();
+                }
+            }
+            catch (Exception ex)
+            {
+                GeneralStatusMessage = ex.Message;
+                return;
+            }
+
+            GeneralStatusMessage = "Loading chromatogram data (_peaks.txt file) .......";
+            try
+            {
+                PeakImporterFromText peakImporter = new PeakImporterFromText(_peaksFilename, _backgroundWorker);
+                peakImporter.ImportPeaks(this.Run.ResultCollection.MSPeakResultList);
+            }
+            catch (Exception ex)
+            {
+                GeneralStatusMessage = ex.Message;
+                return;
+                //throw new ApplicationException("Peaks failed to load. Maybe the details below will help... \n\n" + ex.Message + "\nStacktrace: " + ex.StackTrace, ex);
+            }
+
+            if (Run.ResultCollection.MSPeakResultList != null && Run.ResultCollection.MSPeakResultList.Count > 0)
+            {
+                int numPeaksLoaded = Run.ResultCollection.MSPeakResultList.Count;
+                GeneralStatusMessage = "Chromatogram data LOADED. (# peaks= " + numPeaksLoaded + ")";
+            }
+            else
+            {
+                GeneralStatusMessage = "No Chromatogram data!!! Check your _peaks.txt file for correct format.";
+            }
+
+        }
+
+        void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
+        {
+            var worker = (BackgroundWorker)sender;
+
+            LoadPeaks();
+
+
+            if (worker.CancellationPending)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void BackgroundWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                GeneralStatusMessage = "Cancelled";
+            }
+            else if (e.Error != null)
+            {
+                GeneralStatusMessage = "Error loading peaks. Contact a good friend.";
+            }
+            else
+            {
+                PercentProgress = 100;
+            }
+        }
+
+        private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            PercentProgress = e.ProgressPercentage;
+        }
+
+
+
+        //private void BackgroundWorkerLoadPeaks(object sender, DoWorkEventArgs e)
+        //{
+        //    var worker = (BackgroundWorker)sender;
+
+        //    try
+        //    {
+        //        PeakImporterFromText peakImporter = new PeakImporterFromText(_peaksFilename, _backgroundWorker);
+        //        peakImporter.ImportPeaks(this.Run.ResultCollection.MSPeakResultList);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new ApplicationException("Peaks failed to load. Maybe the details below will help... \n\n" + ex.Message + "\nStacktrace: " + ex.StackTrace, ex);
+        //    }
+
+
+        //    if (worker.CancellationPending)
+        //    {
+        //        e.Cancel = true;
+        //    }
+        //}
 
 
         private bool checkForPeaksFile()
@@ -552,16 +737,102 @@ namespace Sipper.ViewModel
                 _resultRepositorySource.Results.AddRange(tempResults.Results);
             }
 
-            SetResults();
+            SetResults(_resultRepositorySource.Results);
 
 
         }
 
-        public void SetResults()
+
+
+        private void FilterTargets()
         {
+            //determine delimiter of TargetFilterString, if any
+            if (string.IsNullOrEmpty(TargetFilterString))
+            {
+                SetResults(_resultRepositorySource.Results);
+                return;
+            }
+
+            char[] delimitersToCheck = new char[] { '\t', ',', '\n', ' ' };
+
+            var trimmedFilterString = TargetFilterString.Trim(delimitersToCheck);
+
+            string delimiter = DetermineDelimiterInString(trimmedFilterString);
+
+            List<string> filterList = new List<string>();
+            if (!string.IsNullOrEmpty(delimiter))
+            {
+                var parsedFilterStringArray = trimmedFilterString.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
+                filterList.AddRange(parsedFilterStringArray);
+
+            }
+            else
+            {
+                filterList.Add(trimmedFilterString);
+            }
 
 
-            var query = (from n in _resultRepositorySource.Results select (SipperLcmsFeatureTargetedResultDTO)n);
+
+            var filteredResults = new List<TargetedResultDTO>();
+            foreach (var filter in filterList)
+            {
+                int myInt;
+                bool isNumerical = int.TryParse(filter, out myInt);
+
+
+
+                if (isNumerical)
+                {
+                    filteredResults.AddRange(_resultRepositorySource.Results.Where(p => p.TargetID.ToString().StartsWith(myInt.ToString())));
+                }
+                else
+                {
+                    filteredResults.AddRange(_resultRepositorySource.Results.Where(p => p.Code.Contains(filter)));
+                }
+
+            }
+
+            SetResults(filteredResults);
+
+
+
+
+
+            //split string
+
+            //determine if number or letters
+
+            //if number, filter based on targetID;  if letters, filter based on code
+        }
+
+        private string DetermineDelimiterInString(string targetFilterString)
+        {
+            string[] delimitersToCheck = new string[] { "\t", ","," ",Environment.NewLine };
+            string mostFrequentDelim = string.Empty;
+
+            int maxCount = int.MinValue;
+
+            foreach (var delim in delimitersToCheck)
+            {
+
+                string[] tempStringArray = new[] { delim };
+
+                var count = targetFilterString.Split(tempStringArray, StringSplitOptions.RemoveEmptyEntries).Length - 1;
+
+                if (count > maxCount)
+                {
+                    mostFrequentDelim = delim;
+                    maxCount = count;
+                }
+
+            }
+
+            return mostFrequentDelim;
+        }
+
+        private void SetResults(IEnumerable<TargetedResultDTO> resultsToSet)
+        {
+            var query = (from n in resultsToSet select (SipperLcmsFeatureTargetedResultDTO)n);
 
             Results.Clear();
             foreach (var resultDto in query)
@@ -569,10 +840,9 @@ namespace Sipper.ViewModel
                 Results.Add(resultDto);
             }
 
-            TargetsFileStatusText = Results.Count + " loaded.";
-
-
+            TargetsFileStatusText = "Viewing " + Results.Count + " results/targets";
         }
+
 
         public void SaveResults()
         {
@@ -647,7 +917,7 @@ namespace Sipper.ViewModel
             {
                 //var xvals = ratioData.Peaklist.Select((p, i) => new { peak = p, index = i }).Select(n => (double)n.index).ToList();
 
-                LabelDistributionXYData.Xvalues = CurrentResult.LabelDistributionVals.Select((value, index) => new { index }).Select(n=>(double)n.index).ToArray();
+                LabelDistributionXYData.Xvalues = CurrentResult.LabelDistributionVals.Select((value, index) => new { index }).Select(n => (double)n.index).ToArray();
                 LabelDistributionXYData.Yvalues = CurrentResult.LabelDistributionVals;
             }
             else
@@ -661,7 +931,7 @@ namespace Sipper.ViewModel
             if (CurrentResult != null)
             {
                 MSGraphMinX = CurrentResult.MonoMZ - 1.75;
-                MSGraphMaxX = CurrentResult.MonoMZ + 7;
+                MSGraphMaxX = CurrentResult.MonoMZ + MassSpecVisibleWindowWidth;
             }
             else
             {
@@ -685,7 +955,7 @@ namespace Sipper.ViewModel
 
         }
 
-       
+
 
 
         private void SetCurrentWorkflowTarget(SipperLcmsFeatureTargetedResultDTO result)
