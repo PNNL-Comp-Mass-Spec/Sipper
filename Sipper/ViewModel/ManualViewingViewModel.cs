@@ -5,8 +5,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
 using DeconTools.Backend;
 using DeconTools.Backend.Core;
 using DeconTools.Backend.Data;
@@ -45,7 +43,7 @@ namespace Sipper.ViewModel
             _resultRepositorySource = new TargetedResultRepository();
 
             Results = new ObservableCollection<SipperLcmsFeatureTargetedResultDTO>();
-          
+
             WorkflowParameters = new SipperTargetedWorkflowParameters();
 
             Workflow = new SipperTargetedWorkflow(WorkflowParameters);
@@ -55,7 +53,7 @@ namespace Sipper.ViewModel
 
 
             LoadParameters();
-            
+
             UpdateGraphRelatedProperties();
 
             ChromGraphXWindowWidth = 600;
@@ -206,12 +204,12 @@ namespace Sipper.ViewModel
             }
 
         }
-        
+
 
         public ObservableCollection<SipperLcmsFeatureTargetedResultDTO> Results { get; set; }
-     
 
-       
+
+
 
         private SipperLcmsFeatureTargetedResultDTO _currentResult;
         public SipperLcmsFeatureTargetedResultDTO CurrentResult
@@ -312,6 +310,21 @@ namespace Sipper.ViewModel
                 { OnPropertyChanged("GeneralStatusMessage"); }
 
             }
+        }
+
+
+
+        public string WorkflowStatusMessage
+        {
+            get
+            {
+                if (Workflow != null)
+                {
+                    return Workflow.WorkflowStatusMessage;
+                }
+                return String.Empty;
+            }
+
         }
 
 
@@ -423,6 +436,8 @@ namespace Sipper.ViewModel
             }
         }
 
+
+
         #endregion
 
 
@@ -472,14 +487,7 @@ namespace Sipper.ViewModel
 
             TheorProfileXYData = TheorXYDataCalculationUtilities.GetTheoreticalIsotopicProfileXYData(Workflow.Result.Target.IsotopicProfile, fwhm);
 
-
-
-
-
-
-
-            GeneralStatusMessage = "Updated.";
-
+            OnPropertyChanged("WorkflowStatusMessage");
             OnPropertyChanged("PeptideSequence");
         }
 
@@ -708,7 +716,11 @@ namespace Sipper.ViewModel
         protected bool IsParametersLoaded { get; set; }
         protected bool IsRunLoaded
         {
-            get { return Run != null; }
+            get
+            {
+                return Run != null
+                    && Run.PeakList != null && Run.PeakList.Count > 0;
+            }
         }
 
         protected bool IsResultsLoaded
@@ -807,7 +819,7 @@ namespace Sipper.ViewModel
 
         private string DetermineDelimiterInString(string targetFilterString)
         {
-            string[] delimitersToCheck = new string[] { "\t", ","," ",Environment.NewLine };
+            string[] delimitersToCheck = new string[] { "\t", ",", " ", Environment.NewLine };
             string mostFrequentDelim = string.Empty;
 
             int maxCount = int.MinValue;

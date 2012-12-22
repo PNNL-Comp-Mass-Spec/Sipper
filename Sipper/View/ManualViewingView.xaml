@@ -71,15 +71,16 @@
         <Border Name="BottomBorder" DockPanel.Dock="Bottom">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200"></ColumnDefinition>
+                    <ColumnDefinition Width="400"></ColumnDefinition>
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 
-                
-                
                 <WrapPanel Grid.Column="0"  Margin="6,6,6,6"  >
+                    
                     <TextBlock FontSize="15" VerticalAlignment="Top" HorizontalAlignment="Left">Status info:</TextBlock>
-                    <TextBlock FontSize="12"  Foreground= "#FFA77171" Margin="6,3,3,3" VerticalAlignment="Top" TextWrapping="Wrap" Text="{Binding Path=DataContext.GeneralStatusMessage, ElementName=window, Mode=OneWay}"  ></TextBlock>
+                    <TextBlock FontSize="12"  Foreground= "#FFA77171" Margin="6,3,3,3" VerticalAlignment="Top" TextWrapping="Wrap" Text="{Binding Path=DataContext.GeneralStatusMessage, ElementName=window, Mode=OneWay}" ></TextBlock>
+                    <TextBlock FontSize="12"  Foreground= "#FFA77171" Margin="6,3,3,3" VerticalAlignment="Top" TextWrapping="Wrap" Text="{Binding Path=DataContext.WorkflowStatusMessage, ElementName=window, Mode=OneWay}" ></TextBlock>
+                    
                 </WrapPanel>
 
                 <WrapPanel Grid.Column="1"   Margin="6,6,6,6">
