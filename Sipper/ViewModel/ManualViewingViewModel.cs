@@ -44,9 +44,9 @@ namespace Sipper.ViewModel
 
             Results = new ObservableCollection<SipperLcmsFeatureTargetedResultDTO>();
 
-            WorkflowParameters = new SipperTargetedWorkflowParameters();
+            var workflowParameters = new SipperTargetedWorkflowParameters();
 
-            Workflow = new SipperTargetedWorkflow(WorkflowParameters);
+            Workflow = new SipperTargetedWorkflow(workflowParameters);
             FileInputs = new FileInputsViewModel(fileInputs);
 
             FileInputs.PropertyChanged += FileInputsPropertyChanged;
@@ -281,13 +281,6 @@ namespace Sipper.ViewModel
             }
         }
 
-
-        private SipperTargetedWorkflowParameters _workflowParameters;
-        public SipperTargetedWorkflowParameters WorkflowParameters
-        {
-            get { return _workflowParameters; }
-            set { _workflowParameters = value; }
-        }
 
         private SipperTargetedWorkflow _workflow;
         public SipperTargetedWorkflow Workflow
@@ -561,7 +554,7 @@ namespace Sipper.ViewModel
                 {
                     GeneralStatusMessage =
                         "Creating chromatogram data (_peaks.txt file); this is only done once. It takes 1 - 5 min .......";
-                    var deconParam = (TargetedWorkflowParameters)WorkflowParameters;
+                    var deconParam = (TargetedWorkflowParameters)Workflow.WorkflowParameters;
 
                     var peakCreationParameters = new PeakDetectAndExportWorkflowParameters();
                     peakCreationParameters.PeakBR = deconParam.ChromGenSourceDataPeakBR;
@@ -686,6 +679,9 @@ namespace Sipper.ViewModel
             if (String.IsNullOrEmpty(FileInputs.ParameterFilePath))
             {
                 ParameterFileStatusText = "None loaded; using defaults";
+
+                Workflow.WorkflowParameters = new SipperTargetedWorkflowParameters();
+
             }
             else
             {
@@ -693,19 +689,23 @@ namespace Sipper.ViewModel
 
                 if (fileInfo.Exists)
                 {
-                    WorkflowParameters.LoadParameters(FileInputs.ParameterFilePath);
+                    Workflow.WorkflowParameters.LoadParameters(FileInputs.ParameterFilePath);
                     ParameterFileStatusText = fileInfo.Name + " LOADED";
+
+
 
                     IsParametersLoaded = true;
                 }
                 else
                 {
-                    WorkflowParameters = new SipperTargetedWorkflowParameters();
+                    Workflow.WorkflowParameters = new SipperTargetedWorkflowParameters();
                     ParameterFileStatusText = "None loaded; using defaults";
                 }
 
 
             }
+
+            Workflow.IsWorkflowInitialized = false;    //important... forces workflow to be reinitialized with new parameters
 
 
 
@@ -1026,7 +1026,7 @@ namespace Sipper.ViewModel
         {
             if (xyData == null || xyData.Xvalues.Length == 0) return 0;
 
-            int indexStart = MathUtils.GetClosest(xyData.Xvalues, xMin, WorkflowParameters.MSToleranceInPPM * 3);
+            int indexStart = MathUtils.GetClosest(xyData.Xvalues, xMin, ((TargetedWorkflowParameters)Workflow.WorkflowParameters).MSToleranceInPPM * 3);
 
             if (indexStart < 0)
             {

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using DeconTools.UnitTesting2;
+using DeconTools.Workflows.Backend.Core;
 using NUnit.Framework;
 using Sipper.Model;
 using Sipper.ViewModel;
@@ -46,8 +47,8 @@ namespace Sipper.UnitTesting.ViewModelTests
 
             ManualViewingViewModel viewModel = new ManualViewingViewModel(fileInputs);
 
-            Assert.IsNotNull(viewModel.WorkflowParameters);
-            Assert.AreEqual(2, viewModel.WorkflowParameters.MSPeakDetectorPeakBR);
+            Assert.IsNotNull(viewModel.Workflow.WorkflowParameters);
+            Assert.AreEqual(2,((TargetedWorkflowParameters)(viewModel.Workflow.WorkflowParameters)).MSPeakDetectorPeakBR);
 
         }
 
