@@ -240,70 +240,70 @@ namespace Sipper.Scripts.SipperPaper
 
         private void ApplyFilterF1b(SipperLcmsFeatureTargetedResultDTO result)
         {
-            if (result.ChromCorrelationMedian > 0.90 && result.ChromCorrelationAverage > 0.85)
-            {
-                if (result.RSquaredValForRatioCurve > 0.8 && result.IScore < 0.2)
-                {
-                    result.PassesFilter = true;
-                }
+            //if (result.ChromCorrelationMedian > 0.90 && result.ChromCorrelationAverage > 0.85)
+            //{
+            //    if (result.RSquaredValForRatioCurve > 0.8 && result.IScore < 0.2)
+            //    {
+            //        result.PassesFilter = true;
+            //    }
 
-            }
+            //}
         }
 
 
         private void ApplyFilterF1c(SipperLcmsFeatureTargetedResultDTO result)
         {
 
-            if (result.AreaUnderRatioCurveRevised > 0)
-            {
-                if (result.ChromCorrelationAverage > 0.85 && result.ChromCorrelationMedian > 0.9)
-                {
-                    if (result.RSquaredValForRatioCurve > 0.85)
-                    {
+            //if (result.AreaUnderRatioCurveRevised > 0)
+            //{
+            //    if (result.ChromCorrelationAverage > 0.85 && result.ChromCorrelationMedian > 0.9)
+            //    {
+            //        if (result.RSquaredValForRatioCurve > 0.85)
+            //        {
 
-                        //high quality results
-                        if (result.RSquaredValForRatioCurve > 0.95 && result.AreaUnderRatioCurve > 75)
-                        {
-                            if (result.IScore <= 0.4)
-                            {
-                                result.PassesFilter = true;
-                            }
-                        }
-                        //high quality results
-                        else if (result.RSquaredValForRatioCurve > 0.5 && result.AreaUnderRatioCurveRevised > 15)
-                        {
-                            if (result.IScore <= 0.4)
-                            {
-                                result.PassesFilter = true;
-                            }
-                        }
-                        else if (result.ChromCorrelationMedian > 0.99 && result.ChromCorrelationAverage > 0.99)
-                        {
-                            if (result.IScore <= 0.4)
-                            {
-                                result.PassesFilter = true;
-                            }
-                        }
-                        //high intensity results
-                        else if (result.RSquaredValForRatioCurve > 0.95 && result.Intensity > 1e5)
-                        {
-                            if (result.IScore <= 0.4)
-                            {
-                                result.PassesFilter = true;
-                            }
+            //            //high quality results
+            //            if (result.RSquaredValForRatioCurve > 0.95 && result.AreaUnderRatioCurve > 75)
+            //            {
+            //                if (result.IScore <= 0.4)
+            //                {
+            //                    result.PassesFilter = true;
+            //                }
+            //            }
+            //            //high quality results
+            //            else if (result.RSquaredValForRatioCurve > 0.5 && result.AreaUnderRatioCurveRevised > 15)
+            //            {
+            //                if (result.IScore <= 0.4)
+            //                {
+            //                    result.PassesFilter = true;
+            //                }
+            //            }
+            //            else if (result.ChromCorrelationMedian > 0.99 && result.ChromCorrelationAverage > 0.99)
+            //            {
+            //                if (result.IScore <= 0.4)
+            //                {
+            //                    result.PassesFilter = true;
+            //                }
+            //            }
+            //            //high intensity results
+            //            else if (result.RSquaredValForRatioCurve > 0.95 && result.Intensity > 1e5)
+            //            {
+            //                if (result.IScore <= 0.4)
+            //                {
+            //                    result.PassesFilter = true;
+            //                }
 
-                        }
-                        //all other results - 
-                        else if (result.RSquaredValForRatioCurve > 0.95 && result.IScore <= 0.25)
-                        {
-                            result.PassesFilter = true;
-                        }
+            //            }
+            //            //all other results - 
+            //            else if (result.RSquaredValForRatioCurve > 0.95 && result.IScore <= 0.25)
+            //            {
+            //                result.PassesFilter = true;
+            //            }
 
-                    }
+            //        }
 
 
-                }
-            }
+            //    }
+            //}
 
         }
 

@@ -216,7 +216,7 @@ namespace Sipper.Scripts
             sb.Append("PercentPeptideLabelled= \t" + result.PercentPeptideLabelled);
             sb.Append(delim);
 
-            sb.Append("RSquaredForRatioCurve= \t" + result.RSquaredValForRatioCurve);
+            sb.Append("FitScoreLabelled= \t" + result.FitScoreLabeledProfile);
             sb.Append(delim);
 
             if (showTheorUnlabelledData)

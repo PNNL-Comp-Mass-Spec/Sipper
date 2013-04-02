@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using DeconTools.Backend.Algorithms;
 using DeconTools.Backend.Core;
 using DeconTools.Backend.Core.Results;
 using DeconTools.Backend.ProcessingTasks.ChromatogramProcessing;
@@ -203,9 +204,9 @@ namespace Sipper.Scripts.SipperPaper
 
 
             SipperLcmsTargetedResult result = executor.TargetedWorkflow.Result as SipperLcmsTargetedResult;
-            ChromatogramCorrelatorTask chromatogramCorrelator = new ChromatogramCorrelatorTask();
+            var chromatogramCorrelator = new ChromatogramCorrelator(5);
             chromatogramCorrelator.MinimumRelativeIntensityForChromCorr = 0.00001;
-            chromatogramCorrelator.ChromToleranceInPPM = 10;
+            chromatogramCorrelator.ChromTolerance = 10;
 
             chromatogramCorrelator.Execute(executor.TargetedWorkflow.Run.ResultCollection);
 

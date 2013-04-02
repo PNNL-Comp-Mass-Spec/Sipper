@@ -9,8 +9,6 @@ namespace Sipper.Scripts
 {
     public class SipperDatasetUtilities
     {
-
-       
         public static List<string>GetDatasetNames()
         {
             string fileContainingDatasetnames =

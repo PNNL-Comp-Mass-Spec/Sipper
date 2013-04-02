@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DeconTools.Backend.Core;
 using DeconTools.Backend.Core.Results;
@@ -351,7 +352,8 @@ namespace Sipper.Scripts.SipperPaper
         [Test]
         public void CreateIsotopicProfilesWithNoise()
         {
-            string testDataset = @"F:\Yellowstone\RawData\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
+            string testDataset =
+                @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\RawData\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
             Run run = new RunFactory().CreateRun(testDataset);
 
 
@@ -453,8 +455,8 @@ namespace Sipper.Scripts.SipperPaper
                 quantifier.Execute(run.ResultCollection);
 
 
-                sb.Append(result.RSquaredValForRatioCurve);
-                sb.Append("\t");
+                //sb.Append(result.RSquaredValForRatioCurve);
+                //sb.Append("\t");
                 sb.Append(result.AreaUnderRatioCurveRevised);
                 sb.Append("\t");
                 sb.Append(result.PercentPeptideLabelled);
@@ -473,6 +475,98 @@ namespace Sipper.Scripts.SipperPaper
             //TestUtilities.DisplayIsotopicProfileData(unlabelled);
 
         }
+
+
+        [Test]
+        public void CreateIsotopicProfilesWithNoise2()
+        {
+            string testDataset =
+                @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\RawData\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
+            Run run = new RunFactory().CreateRun(testDataset);
+
+
+            IsoBlender.Model.IsotopicProfileCreator isocreator = new IsotopicProfileCreator();
+
+            string peptideSeq = "SAMPLERSAMPLER";
+            string elementLabelled = "C";
+            int lightIsotope = 12;
+            int heavyIsotope = 13;
+            int chargeState = 2;
+
+            double percentLabelling = 0;
+            var unlabelled = isocreator.CreateIsotopicProfileFromSequence(peptideSeq, elementLabelled, lightIsotope,
+                                                                               heavyIsotope, percentLabelling, chargeState);
+
+
+            int numIterations = 1000;
+
+            List<IsotopicProfile> isoList = new List<IsotopicProfile>();
+            double amountNoiseToAdd = 0.01;
+            double noiseStDev = 0.01;
+
+            double fractionUnlabelled = 0.5;
+            double fractionlabelled = 1- fractionUnlabelled;
+
+
+            MathNet.Numerics.Distributions.Normal normalDist = new Normal(amountNoiseToAdd, noiseStDev);
+
+            percentLabelling = 30;
+            var labeledProfile = isocreator.CreateIsotopicProfileFromSequence(peptideSeq, elementLabelled, lightIsotope,
+                                                                                heavyIsotope, percentLabelling, chargeState);
+
+            PeakUtilities.TrimIsotopicProfile(labeledProfile, 0.01);
+
+
+            for (int i = 0; i < numIterations; i++)
+            {
+
+                IsotopicProfileMixture mixer = new IsotopicProfileMixture();
+                mixer.AddIsotopicProfile(unlabelled, fractionUnlabelled);
+                mixer.AddIsotopicProfile(labeledProfile, fractionlabelled);
+
+                var mixedIso = mixer.GetMixedIsotopicProfile();
+
+                addNoiseToIsotopicProfile(mixedIso, normalDist);
+
+                isoList.Add(mixedIso);
+            }
+
+            StringBuilder sb = new StringBuilder();
+
+            var firstIso = isoList.First();
+
+            TestUtilities.DisplayIsotopicProfileData(firstIso);
+
+
+            foreach (var isotopicProfile in isoList)
+            {
+                int numPeaksToReport = 35;
+                for (int i = 0; i < numPeaksToReport; i++)
+                {
+                    if (i>=isotopicProfile.Peaklist.Count)
+                    {
+                        sb.Append(0);
+                    }
+                    else
+                    {
+                        sb.Append(isotopicProfile.Peaklist[i].Height);    
+                    }
+                    
+                    sb.Append("\t");
+                }
+
+                sb.Append(Environment.NewLine);
+                
+            }
+
+            Console.WriteLine(sb.ToString());
+
+            //TestUtilities.DisplayIsotopicProfileData(unlabelled);
+
+        }
+
+
+
 
         private void addNoiseToIsotopicProfile(IsotopicProfile iso, Normal normalDist)
         {

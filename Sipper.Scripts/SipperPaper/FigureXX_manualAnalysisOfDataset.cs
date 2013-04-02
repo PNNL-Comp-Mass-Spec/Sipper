@@ -15,29 +15,44 @@ namespace Sipper.Scripts.SipperPaper
     public class ParameterOptimizationDataItem
     {
 
-        public ParameterOptimizationDataItem(double rsquaredVal, double area, double iscore, double chromCorr, int sharedCount, int uniqueToAuto)
+        public ParameterOptimizationDataItem(double fitScoreLabelled, double area, double iscore, double chromCorr,int contigScore,double percentIncorp, double percentPeptide,  int sharedCount, int uniqueToAuto)
         {
-            RSquareVal = rsquaredVal;
+            FitScoreLabelled = fitScoreLabelled;
             Area = area;
             IScore = iscore;
             ChromCorr = chromCorr;
             SharedCount = sharedCount;
             UniqueToAuto = uniqueToAuto;
+            ContigScore = contigScore;
+            PercentIncorporation = percentIncorp;
+            PercentPeptide = percentPeptide;
         }
 
+        public double PercentPeptide { get; set; }
+
+        public double PercentIncorporation { get; set; }
+
         public double Area { get; set; }
-        public double RSquareVal { get; set; }
+        public double FitScoreLabelled { get; set; }
         public double IScore { get; set; }
         public double ChromCorr { get; set; }
         public int SharedCount { get; set; }
         public int UniqueToAuto { get; set; }
+        public int ContigScore { get; set; }
+        public double RSquared { get; set; }
 
+
+        public override string ToString()
+        {
+            return SharedCount + "; " + UniqueToAuto;
+        }
     }
 
 
     [TestFixture]
     public class FigureXX_manualAnalysisOfDataset
     {
+        [Ignore("Not used anymore")]
         [Test]
         public void CollectAnnotatedResultsAndOutput()
         {
@@ -71,27 +86,27 @@ namespace Sipper.Scripts.SipperPaper
             foreach (var originalResult in originalResults)
             {
 
-                if (!SipperFilters.PassesF1Filter(originalResult))
-                {
-                    originalResult.ValidationCode = ValidationCode.Maybe;
-                }
-                else
-                {
-                    SipperLcmsFeatureTargetedResultDTO annoResult1 = annoResults1.FirstOrDefault(p => p.TargetID == originalResult.TargetID);
-                    if (annoResult1 != null)
-                    {
-                        originalResult.ValidationCode = annoResult1.ValidationCode;
-                    }
+                //if (!SipperFilters.PassesF1Filter(originalResult))
+                //{
+                //    originalResult.ValidationCode = ValidationCode.Maybe;
+                //}
+                //else
+                //{
+                //    SipperLcmsFeatureTargetedResultDTO annoResult1 = annoResults1.FirstOrDefault(p => p.TargetID == originalResult.TargetID);
+                //    if (annoResult1 != null)
+                //    {
+                //        originalResult.ValidationCode = annoResult1.ValidationCode;
+                //    }
 
 
-                    SipperLcmsFeatureTargetedResultDTO annoResult2 = annoResults2.FirstOrDefault(p => p.TargetID == originalResult.TargetID);
-                    if (annoResult2 != null)
-                    {
-                        originalResult.ValidationCode = annoResult2.ValidationCode;
-                    }
+                //    SipperLcmsFeatureTargetedResultDTO annoResult2 = annoResults2.FirstOrDefault(p => p.TargetID == originalResult.TargetID);
+                //    if (annoResult2 != null)
+                //    {
+                //        originalResult.ValidationCode = annoResult2.ValidationCode;
+                //    }
 
 
-                }
+                //}
             }
 
 
@@ -103,6 +118,7 @@ namespace Sipper.Scripts.SipperPaper
 
         }
 
+        [Category("Paper")]
         [Test]
         public void SortResultsIntoAnnotationCatagoriesAndExport()
         {
@@ -160,7 +176,7 @@ namespace Sipper.Scripts.SipperPaper
             var maybeResults = originalResults.Where(p => p.ValidationCode == ValidationCode.Maybe).ToList();
 
 
-            var currentResultsToAnalyze = maybeResults;
+            var currentResultsToAnalyze = yesResultsOnly;
 
 
             var statsInfo = GetStatsData(currentResultsToAnalyze);
@@ -192,29 +208,29 @@ namespace Sipper.Scripts.SipperPaper
             var noResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.No).ToList();
             var maybeResults = originalResults.Where(p => p.ValidationCode == ValidationCode.Maybe).ToList();
 
-            var looseFilteredResults = autoResults.Where(SipperFilters.PassesLabelLooseFilterF2).ToList();
-            var tightFilteredResults = autoResults.Where(SipperFilters.PassesLabelTightFilterF1).ToList();
+            //var looseFilteredResults = autoResults.Where(SipperFilters.PassesLabelLooseFilterF2).ToList();
+            //var tightFilteredResults = autoResults.Where(SipperFilters.PassesLabelTightFilterF1).ToList();
             
 
-            var manualResults = yesResultsOnly;
-            var intersectResults = tightFilteredResults.Select(p => p.TargetID).Intersect(manualResults.Select(p => p.TargetID)).ToList();
-            var uniqueToManual = manualResults.Select(p => p.TargetID).Except(tightFilteredResults.Select(p => p.TargetID)).ToList();
-            var uniqueToAuto = tightFilteredResults.Select(p => p.TargetID).Except(manualResults.Select(p => p.TargetID)).ToList();
-            var problemResults = tightFilteredResults.Where(r => uniqueToAuto.Contains(r.TargetID)).ToList();
-            var uniqueToManualResults = manualResults.Where(r => uniqueToManual.Contains(r.TargetID)).ToList();
+            //var manualResults = yesResultsOnly;
+            //var intersectResults = tightFilteredResults.Select(p => p.TargetID).Intersect(manualResults.Select(p => p.TargetID)).ToList();
+            //var uniqueToManual = manualResults.Select(p => p.TargetID).Except(tightFilteredResults.Select(p => p.TargetID)).ToList();
+            //var uniqueToAuto = tightFilteredResults.Select(p => p.TargetID).Except(manualResults.Select(p => p.TargetID)).ToList();
+            //var problemResults = tightFilteredResults.Where(r => uniqueToAuto.Contains(r.TargetID)).ToList();
+            //var uniqueToManualResults = manualResults.Where(r => uniqueToManual.Contains(r.TargetID)).ToList();
 
-            Console.WriteLine("Manual count= \t" + manualResults.Count);
-            Console.WriteLine("Auto count - looseFilter= \t" + looseFilteredResults.Count);
-            Console.WriteLine("Auto count - tightFilter= \t" + tightFilteredResults.Count);
+            //Console.WriteLine("Manual count= \t" + manualResults.Count);
+            //Console.WriteLine("Auto count - looseFilter= \t" + looseFilteredResults.Count);
+            //Console.WriteLine("Auto count - tightFilter= \t" + tightFilteredResults.Count);
 
-            Console.WriteLine("Shared count - tight = \t" + intersectResults.Count);
-            Console.WriteLine("Unique to Manual - tight = \t" + uniqueToManual.Count);
-            Console.WriteLine("Unique to Auto- tight = \t" + uniqueToAuto.Count);
+            //Console.WriteLine("Shared count - tight = \t" + intersectResults.Count);
+            //Console.WriteLine("Unique to Manual - tight = \t" + uniqueToManual.Count);
+            //Console.WriteLine("Unique to Auto- tight = \t" + uniqueToAuto.Count);
 
-            var statsInfo = GetStatsData(problemResults);
+            //var statsInfo = GetStatsData(problemResults);
 
-            Console.WriteLine();
-            Console.WriteLine(statsInfo);
+            //Console.WriteLine();
+            //Console.WriteLine(statsInfo);
 
             //intersectResults = f4FilteredResults.Select(p => p.TargetID).Intersect(manualResults.Select(p => p.TargetID)).ToList();
             //uniqueToManual = manualResults.Select(p => p.TargetID).Except(f4FilteredResults.Select(p => p.TargetID)).ToList();
@@ -242,205 +258,205 @@ namespace Sipper.Scripts.SipperPaper
         }
 
 
-        [Test]
-        public void ParameterOptimization_forLabeledPeptides()
-        {
+        //[Test]
+        //public void ParameterOptimization_forLabeledPeptides()
+        //{
 
-            string manualResultsFile =
-                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_ManualAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results_ALL_validated.txt";
+        //    string manualResultsFile =
+        //        @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_ManualAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results_ALL_validated.txt";
 
 
-            string autoResultsFile =
-                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_AutomatedAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results.txt";
+        //    string autoResultsFile =
+        //        @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_AutomatedAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results.txt";
 
 
-            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(manualResultsFile);
-            var originalResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+        //    SipperResultFromTextImporter importer = new SipperResultFromTextImporter(manualResultsFile);
+        //    var originalResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-            importer = new SipperResultFromTextImporter(autoResultsFile);
-            var autoResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+        //    importer = new SipperResultFromTextImporter(autoResultsFile);
+        //    var autoResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-            var yesResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
-            var noResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.No).ToList();
-            var maybeResults = originalResults.Where(p => p.ValidationCode == ValidationCode.Maybe).ToList();
+        //    var yesResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+        //    var noResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.No).ToList();
+        //    var maybeResults = originalResults.Where(p => p.ValidationCode == ValidationCode.Maybe).ToList();
 
-            var manualResults = yesResultsOnly;
+        //    var manualResults = yesResultsOnly;
 
-            double maxRatio = 0;
+        //    double maxRatio = 0;
 
 
-            StringBuilder sb = new StringBuilder();
+        //    StringBuilder sb = new StringBuilder();
 
-            List<ParameterOptimizationDataItem> optimizationData = new List<ParameterOptimizationDataItem>();
+        //    List<ParameterOptimizationDataItem> optimizationData = new List<ParameterOptimizationDataItem>();
 
-            sb.Append("rsquared\tarea\tiscore\tshared\tuniqueToAuto\tratio\n");
+        //    sb.Append("rsquared\tarea\tiscore\tshared\tuniqueToAuto\tratio\n");
 
-            for (double rsquaredVal = 0.55; rsquaredVal < 1.1; rsquaredVal = rsquaredVal + 0.01)
-            {
-                for (double area = 0; area < 10.5; area = area + 0.5)
-                {
-                    for (double iscore = 0; iscore < 0.50; iscore = iscore + 0.02)
-                    {
-                        for (double chromCorr = 0.5; chromCorr <= 1.0; chromCorr = chromCorr + 0.05)
-                        {
+        //    for (double rsquaredVal = 0.55; rsquaredVal < 1.1; rsquaredVal = rsquaredVal + 0.01)
+        //    {
+        //        for (double area = 0; area < 10.5; area = area + 0.5)
+        //        {
+        //            for (double iscore = 0; iscore < 0.50; iscore = iscore + 0.02)
+        //            {
+        //                for (double chromCorr = 0.5; chromCorr <= 1.0; chromCorr = chromCorr + 0.05)
+        //                {
 
-                            var f3FilteredResults = (from n in autoResults
-                                                     where n.IScore <= iscore &&
-                                                           n.AreaUnderRatioCurveRevised >= area &&
-                                                           n.RSquaredValForRatioCurve >= rsquaredVal &&
-                                                           n.ChromCorrelationMedian >= chromCorr
-                                                     select n).ToList();
+        //                    var f3FilteredResults = (from n in autoResults
+        //                                             where n.IScore <= iscore &&
+        //                                                   n.AreaUnderRatioCurveRevised >= area &&
+        //                                                  // n.RSquaredValForRatioCurve >= rsquaredVal &&
+        //                                                   n.ChromCorrelationMedian >= chromCorr
+        //                                             select n).ToList();
 
-                            var intersectResults = f3FilteredResults.Select(p => p.TargetID).Intersect(manualResults.Select(p => p.TargetID)).ToList();
-                            var uniqueToAuto = f3FilteredResults.Select(p => p.TargetID).Except(manualResults.Select(p => p.TargetID)).ToList();
-                            var ratio = intersectResults.Count / (double)uniqueToAuto.Count;
+        //                    var intersectResults = f3FilteredResults.Select(p => p.TargetID).Intersect(manualResults.Select(p => p.TargetID)).ToList();
+        //                    var uniqueToAuto = f3FilteredResults.Select(p => p.TargetID).Except(manualResults.Select(p => p.TargetID)).ToList();
+        //                    var ratio = intersectResults.Count / (double)uniqueToAuto.Count;
 
 
-                            ParameterOptimizationDataItem optimizationDataItem = new ParameterOptimizationDataItem(rsquaredVal, area, iscore, chromCorr,
-                                                                  intersectResults.Count, uniqueToAuto.Count);
+        //                    ParameterOptimizationDataItem optimizationDataItem = new ParameterOptimizationDataItem(rsquaredVal, area, iscore, chromCorr,0,
+        //                                                          intersectResults.Count, uniqueToAuto.Count);
 
 
-                            if (double.IsNaN(ratio))
-                            {
-                                ratio = -1;
-                            }
+        //                    if (double.IsNaN(ratio))
+        //                    {
+        //                        ratio = -1;
+        //                    }
 
-                            optimizationData.Add(optimizationDataItem);
+        //                    optimizationData.Add(optimizationDataItem);
 
-                            sb.Append(rsquaredVal + "\t" + area + "\t" + iscore + "\t" + chromCorr + "\t" + intersectResults.Count + "\t" + uniqueToAuto.Count + "\t" + ratio + "\n");
+        //                    sb.Append(rsquaredVal + "\t" + area + "\t" + iscore + "\t" + chromCorr + "\t" + intersectResults.Count + "\t" + uniqueToAuto.Count + "\t" + ratio + "\n");
 
 
-                        }
-                    }
+        //                }
+        //            }
 
 
 
-                }
+        //        }
 
-            }
+        //    }
 
 
-            int maxNumUniqueToAuto = optimizationData.Select(p => p.UniqueToAuto).Max();
+        //    int maxNumUniqueToAuto = optimizationData.Select(p => p.UniqueToAuto).Max();
 
 
-            for (int i = 0; i <= maxNumUniqueToAuto; i++)
-            {
-                var maxSharedVal = optimizationData.Where(p => p.UniqueToAuto == i).Select(p => p.SharedCount).Max();
+        //    for (int i = 0; i <= maxNumUniqueToAuto; i++)
+        //    {
+        //        var maxSharedVal = optimizationData.Where(p => p.UniqueToAuto == i).Select(p => p.SharedCount).Max();
 
-                Console.WriteLine(i + "\t" + maxSharedVal);
+        //        Console.WriteLine(i + "\t" + maxSharedVal);
 
 
-            }
+        //    }
 
 
-            Console.WriteLine(sb.ToString());
-        }
+        //    Console.WriteLine(sb.ToString());
+        //}
 
-        [Test]
-        public void ParameterOptimization_forNonLabeledPeptides()
-        {
+        //[Test]
+        //public void ParameterOptimization_forNonLabeledPeptides()
+        //{
 
-            string manualResultsFile =
-                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_ManualAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results_ALL_validated.txt";
+        //    string manualResultsFile =
+        //        @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_ManualAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results_ALL_validated.txt";
 
 
-            string autoResultsFile =
-                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_AutomatedAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results.txt";
+        //    string autoResultsFile =
+        //        @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_AutomatedAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results.txt";
 
 
-            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(manualResultsFile);
-            var originalResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+        //    SipperResultFromTextImporter importer = new SipperResultFromTextImporter(manualResultsFile);
+        //    var originalResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-            importer = new SipperResultFromTextImporter(autoResultsFile);
-            var autoResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+        //    importer = new SipperResultFromTextImporter(autoResultsFile);
+        //    var autoResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-            var yesResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
-            var noResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.No).ToList();
-            var maybeResults = originalResults.Where(p => p.ValidationCode == ValidationCode.Maybe).ToList();
+        //    var yesResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+        //    var noResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.No).ToList();
+        //    var maybeResults = originalResults.Where(p => p.ValidationCode == ValidationCode.Maybe).ToList();
 
-            var manualResults = noResultsOnly;
+        //    var manualResults = noResultsOnly;
 
-            double maxRatio = 0;
+        //    double maxRatio = 0;
 
 
-            StringBuilder sb = new StringBuilder();
+        //    StringBuilder sb = new StringBuilder();
 
-            List<ParameterOptimizationDataItem> optimizationData = new List<ParameterOptimizationDataItem>();
+        //    List<ParameterOptimizationDataItem> optimizationData = new List<ParameterOptimizationDataItem>();
 
-            sb.Append("rsquared\tarea\tiscore\tshared\tuniqueToAuto\tratio\n");
+        //    sb.Append("rsquared\tarea\tiscore\tshared\tuniqueToAuto\tratio\n");
 
-            for (double rsquaredVal = 0; rsquaredVal < 1.1; rsquaredVal = rsquaredVal + 0.1)
-            {
-                for (double area = 0; area < 10; area = area + 0.5)
-                {
-                    for (double iscore = 0; iscore < 0.50; iscore = iscore + 0.02)
-                    {
-                        for (double chromCorr = 0.5; chromCorr <= 1.0; chromCorr = chromCorr + 0.05)
-                        {
+        //    for (double rsquaredVal = 0; rsquaredVal < 1.1; rsquaredVal = rsquaredVal + 0.1)
+        //    {
+        //        for (double area = 0; area < 10; area = area + 0.5)
+        //        {
+        //            for (double iscore = 0; iscore < 0.50; iscore = iscore + 0.02)
+        //            {
+        //                for (double chromCorr = 0.5; chromCorr <= 1.0; chromCorr = chromCorr + 0.05)
+        //                {
 
-                            var f3FilteredResults = (from n in autoResults
-                                                     where n.IScore <= iscore &&
-                                                           n.AreaUnderRatioCurveRevised <= area &&
-                                                           n.RSquaredValForRatioCurve <= rsquaredVal &&
-                                                           n.ChromCorrelationMedian >= chromCorr
-                                                     select n).ToList();
+        //                    var f3FilteredResults = (from n in autoResults
+        //                                             where n.IScore <= iscore &&
+        //                                                   n.AreaUnderRatioCurveRevised <= area &&
+        //                                                  // n.RSquaredValForRatioCurve <= rsquaredVal &&
+        //                                                   n.ChromCorrelationMedian >= chromCorr
+        //                                             select n).ToList();
 
-                            var intersectResults = f3FilteredResults.Select(p => p.TargetID).Intersect(manualResults.Select(p => p.TargetID)).ToList();
-                            var uniqueToAuto = f3FilteredResults.Select(p => p.TargetID).Except(manualResults.Select(p => p.TargetID)).ToList();
-                            var ratio = intersectResults.Count / (double)uniqueToAuto.Count;
+        //                    var intersectResults = f3FilteredResults.Select(p => p.TargetID).Intersect(manualResults.Select(p => p.TargetID)).ToList();
+        //                    var uniqueToAuto = f3FilteredResults.Select(p => p.TargetID).Except(manualResults.Select(p => p.TargetID)).ToList();
+        //                    var ratio = intersectResults.Count / (double)uniqueToAuto.Count;
 
-                            ParameterOptimizationDataItem optimizationDataItem = new ParameterOptimizationDataItem(rsquaredVal, area, iscore, chromCorr,
-                                                                  intersectResults.Count, uniqueToAuto.Count);
+        //                    ParameterOptimizationDataItem optimizationDataItem = new ParameterOptimizationDataItem(rsquaredVal, area, iscore, chromCorr,0,
+        //                                                          intersectResults.Count, uniqueToAuto.Count);
 
 
-                            if (double.IsNaN(ratio))
-                            {
-                                ratio = -1;
-                            }
+        //                    if (double.IsNaN(ratio))
+        //                    {
+        //                        ratio = -1;
+        //                    }
 
-                            optimizationData.Add(optimizationDataItem);
+        //                    optimizationData.Add(optimizationDataItem);
 
-                            sb.Append(rsquaredVal + "\t" + area + "\t" + iscore + "\t" + chromCorr + "\t" + intersectResults.Count + "\t" + uniqueToAuto.Count + "\t" + ratio + "\n");
+        //                    sb.Append(rsquaredVal + "\t" + area + "\t" + iscore + "\t" + chromCorr + "\t" + intersectResults.Count + "\t" + uniqueToAuto.Count + "\t" + ratio + "\n");
 
 
-                        }
-                    }
+        //                }
+        //            }
 
 
 
-                }
+        //        }
 
-            }
+        //    }
 
 
-            int maxNumUniqueToAuto = optimizationData.Select(p => p.UniqueToAuto).Max();
+        //    int maxNumUniqueToAuto = optimizationData.Select(p => p.UniqueToAuto).Max();
 
 
-            for (int i = 0; i <= maxNumUniqueToAuto; i++)
-            {
-                var sharedData = optimizationData.Where(p => p.UniqueToAuto == i).Select(p => p.SharedCount);
+        //    for (int i = 0; i <= maxNumUniqueToAuto; i++)
+        //    {
+        //        var sharedData = optimizationData.Where(p => p.UniqueToAuto == i).Select(p => p.SharedCount);
 
-                int maxSharedVal;
-                if (!sharedData.Any())
-                {
-                    maxSharedVal = 0;
-                }
-                else
-                {
-                    maxSharedVal = optimizationData.Where(p => p.UniqueToAuto == i).Select(p => p.SharedCount).Max();    
-                }
+        //        int maxSharedVal;
+        //        if (!sharedData.Any())
+        //        {
+        //            maxSharedVal = 0;
+        //        }
+        //        else
+        //        {
+        //            maxSharedVal = optimizationData.Where(p => p.UniqueToAuto == i).Select(p => p.SharedCount).Max();    
+        //        }
 
                 
                 
 
-                Console.WriteLine(i + "\t" + maxSharedVal);
+        //        Console.WriteLine(i + "\t" + maxSharedVal);
 
 
-            }
+        //    }
 
 
-            //Console.WriteLine(sb.ToString());
-        }
+        //    //Console.WriteLine(sb.ToString());
+        //}
 
 
 

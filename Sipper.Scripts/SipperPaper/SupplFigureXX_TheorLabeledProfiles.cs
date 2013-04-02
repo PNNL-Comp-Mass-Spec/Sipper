@@ -15,7 +15,9 @@ namespace Sipper.Scripts.SipperPaper
 {
     public class SupplFigureXX_TheorLabeledProfiles
     {
+        private double resolution = 40000;
 
+        [Category("Paper")]
         [Test]
         public void GetInfoForFeature5905()
         {
@@ -47,7 +49,7 @@ namespace Sipper.Scripts.SipperPaper
 
         }
 
-
+        [Category("Paper")]
         [Test]
         public void profile0_unlabeledAndFullyLabeled()
         {
@@ -81,14 +83,176 @@ namespace Sipper.Scripts.SipperPaper
 
             //TestUtilities.DisplayIsotopicProfileData(fullyLabelled);
 
-            double resolution = 40000;
+
             double mz = mixedIso.getMonoPeak().XValue;
 
-            double fwhm = mz/resolution;
+            double fwhm = mz / resolution;
             var xydata = TheorXYDataCalculationUtilities.GetTheoreticalIsotopicProfileXYData(mixedIso, fwhm);
 
-            TestUtilities.DisplayXYValues(xydata);
+            DisplayIsotopicProfile(unlabelledTheor);
 
+            //TestUtilities.DisplayIsotopicProfileData(unlabelledTheor);
+
+            //TestUtilities.DisplayXYValues(xydata);
+
+        }
+
+
+        [Category("Paper")]
+        [Test]
+        public void profiles_partialLabeled()
+        {
+            string testDataset = @"F:\Yellowstone\RawData\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
+            Run run = new RunFactory().CreateRun(testDataset);
+
+
+            IsoBlender.Model.IsotopicProfileCreator isocreator = new IsotopicProfileCreator();
+
+            string peptideSeq = "SAMPLERSAMPLER";
+            string elementLabelled = "C";
+            int lightIsotope = 12;
+            int heavyIsotope = 13;
+            int chargeState = 2;
+
+            double percentLabelling = 0;
+            var unlabelledTheor = isocreator.CreateIsotopicProfileFromSequence(peptideSeq, elementLabelled, lightIsotope,
+                                                                               heavyIsotope, percentLabelling, chargeState);
+
+            double[] labelPercents = { 0, 2, 8, 16 };
+
+            foreach (var labelPercent in labelPercents)
+            {
+                var fullyLabelled = isocreator.CreateIsotopicProfileFromSequence(peptideSeq, elementLabelled, lightIsotope,
+                                                                                    heavyIsotope, labelPercent, chargeState);
+
+                double fractionUnlabelled = 0;
+                double fractionLabelled = 1 - fractionUnlabelled;
+
+                var mixer = new IsotopicProfileMixture();
+                mixer.AddIsotopicProfile(unlabelledTheor, fractionUnlabelled);
+                mixer.AddIsotopicProfile(fullyLabelled, fractionLabelled);
+
+                var mixedIso = mixer.GetMixedIsotopicProfile();
+
+
+                Console.WriteLine("------\t" + labelPercent);
+                DisplayIsotopicProfile(mixedIso);
+                Console.WriteLine();
+            }
+
+            foreach (var labelPercent in labelPercents)
+            {
+                var fullyLabelled = isocreator.CreateIsotopicProfileFromSequence(peptideSeq, elementLabelled, lightIsotope,
+                                                                                    heavyIsotope, labelPercent, chargeState);
+
+
+                double fractionUnlabelled = 0.8;
+                double fractionLabelled = 1 - fractionUnlabelled;
+
+                var mixer = new IsotopicProfileMixture();
+                mixer.AddIsotopicProfile(unlabelledTheor, fractionUnlabelled);
+                mixer.AddIsotopicProfile(fullyLabelled, fractionLabelled);
+
+                var mixedIso = mixer.GetMixedIsotopicProfile();
+
+
+                Console.WriteLine("------\t" + labelPercent);
+                DisplayIsotopicProfile(mixedIso);
+                Console.WriteLine();
+
+            }
+
+
+
+        }
+
+
+
+        [Category("Paper")]
+        [Test]
+        public void profiles_partialLabeled90To10Mix()
+        {
+            string testDataset = @"F:\Yellowstone\RawData\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
+            Run run = new RunFactory().CreateRun(testDataset);
+
+
+            IsoBlender.Model.IsotopicProfileCreator isocreator = new IsotopicProfileCreator();
+
+            string peptideSeq = "SAMPLERSAMPLER";
+            string elementLabelled = "C";
+            int lightIsotope = 12;
+            int heavyIsotope = 13;
+            int chargeState = 2;
+
+            double percentLabelling = 0;
+            var unlabelledTheor = isocreator.CreateIsotopicProfileFromSequence(peptideSeq, elementLabelled, lightIsotope,
+                                                                               heavyIsotope, percentLabelling, chargeState);
+
+            double[] labelPercents = { 0, 2, 8, 16 };
+
+            foreach (var labelPercent in labelPercents)
+            {
+                var fullyLabelled = isocreator.CreateIsotopicProfileFromSequence(peptideSeq, elementLabelled, lightIsotope,
+                                                                                    heavyIsotope, labelPercent, chargeState);
+
+                double fractionUnlabelled = 0;
+                double fractionLabelled = 1 - fractionUnlabelled;
+
+                var mixer = new IsotopicProfileMixture();
+                mixer.AddIsotopicProfile(unlabelledTheor, fractionUnlabelled);
+                mixer.AddIsotopicProfile(fullyLabelled, fractionLabelled);
+
+                var mixedIso = mixer.GetMixedIsotopicProfile();
+
+
+                Console.WriteLine("------\t" + labelPercent);
+                DisplayIsotopicProfile(mixedIso);
+                Console.WriteLine();
+            }
+
+            foreach (var labelPercent in labelPercents)
+            {
+                var fullyLabelled = isocreator.CreateIsotopicProfileFromSequence(peptideSeq, elementLabelled, lightIsotope,
+                                                                                    heavyIsotope, labelPercent, chargeState);
+
+
+                double fractionUnlabelled = 0.9;
+                double fractionLabelled = 1 - fractionUnlabelled;
+
+                var mixer = new IsotopicProfileMixture();
+                mixer.AddIsotopicProfile(unlabelledTheor, fractionUnlabelled);
+                mixer.AddIsotopicProfile(fullyLabelled, fractionLabelled);
+
+                var mixedIso = mixer.GetMixedIsotopicProfile();
+
+
+                Console.WriteLine("------\t" + labelPercent);
+                DisplayIsotopicProfile(mixedIso);
+                Console.WriteLine();
+
+            }
+
+
+
+        }
+
+
+
+
+        private void DisplayIsotopicProfile(IsotopicProfile unlabelledTheor)
+        {
+            StringBuilder sb = new StringBuilder();
+
+
+            foreach (var msPeak in unlabelledTheor.Peaklist)
+            {
+                sb.Append(msPeak.XValue);
+                sb.Append("\t");
+                sb.Append(msPeak.Height);
+                sb.Append(Environment.NewLine);
+            }
+
+            Console.WriteLine(sb.ToString());
         }
 
         [Test]
@@ -124,13 +288,15 @@ namespace Sipper.Scripts.SipperPaper
 
             //TestUtilities.DisplayIsotopicProfileData(fullyLabelled);
 
-            double resolution = 40000;
+            DisplayIsotopicProfile(mixedIso);
+
+
             double mz = mixedIso.getMonoPeak().XValue;
 
             double fwhm = mz / resolution;
             var xydata = TheorXYDataCalculationUtilities.GetTheoreticalIsotopicProfileXYData(mixedIso, fwhm);
 
-            TestUtilities.DisplayXYValues(xydata);
+            //TestUtilities.DisplayXYValues(xydata);
 
         }
 
@@ -167,7 +333,7 @@ namespace Sipper.Scripts.SipperPaper
 
             //TestUtilities.DisplayIsotopicProfileData(fullyLabelled);
 
-            double resolution = 40000;
+
             double mz = mixedIso.getMonoPeak().XValue;
 
             double fwhm = mz / resolution;
@@ -210,7 +376,7 @@ namespace Sipper.Scripts.SipperPaper
 
             //TestUtilities.DisplayIsotopicProfileData(fullyLabelled);
 
-            double resolution = 40000;
+
             double mz = mixedIso.getMonoPeak().XValue;
 
             double fwhm = mz / resolution;
@@ -253,7 +419,7 @@ namespace Sipper.Scripts.SipperPaper
 
             //TestUtilities.DisplayIsotopicProfileData(fullyLabelled);
 
-            double resolution = 40000;
+
             double mz = mixedIso.getMonoPeak().XValue;
 
             double fwhm = mz / resolution;
@@ -296,7 +462,7 @@ namespace Sipper.Scripts.SipperPaper
 
             //TestUtilities.DisplayIsotopicProfileData(fullyLabelled);
 
-            double resolution = 40000;
+
             double mz = mixedIso.getMonoPeak().XValue;
 
             double fwhm = mz / resolution;
@@ -339,7 +505,7 @@ namespace Sipper.Scripts.SipperPaper
 
             //TestUtilities.DisplayIsotopicProfileData(fullyLabelled);
 
-            double resolution = 40000;
+
             double mz = mixedIso.getMonoPeak().XValue;
 
             double fwhm = mz / resolution;
@@ -382,7 +548,7 @@ namespace Sipper.Scripts.SipperPaper
 
             //TestUtilities.DisplayIsotopicProfileData(fullyLabelled);
 
-            double resolution = 40000;
+
             double mz = mixedIso.getMonoPeak().XValue;
 
             double fwhm = mz / resolution;
@@ -425,7 +591,7 @@ namespace Sipper.Scripts.SipperPaper
 
             //TestUtilities.DisplayIsotopicProfileData(fullyLabelled);
 
-            double resolution = 40000;
+
             double mz = mixedIso.getMonoPeak().XValue;
 
             double fwhm = mz / resolution;
@@ -468,7 +634,7 @@ namespace Sipper.Scripts.SipperPaper
 
             //TestUtilities.DisplayIsotopicProfileData(fullyLabelled);
 
-            double resolution = 40000;
+
             double mz = mixedIso.getMonoPeak().XValue;
 
             double fwhm = mz / resolution;
@@ -512,7 +678,7 @@ namespace Sipper.Scripts.SipperPaper
 
             //TestUtilities.DisplayIsotopicProfileData(fullyLabelled);
 
-            double resolution = 40000;
+
             double mz = mixedIso.getMonoPeak().XValue;
 
             double fwhm = mz / resolution;
@@ -556,7 +722,7 @@ namespace Sipper.Scripts.SipperPaper
 
             //TestUtilities.DisplayIsotopicProfileData(fullyLabelled);
 
-            double resolution = 40000;
+
             double mz = mixedIso.getMonoPeak().XValue;
 
             double fwhm = mz / resolution;

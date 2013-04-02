@@ -38,14 +38,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DeconTools\Library\alglibnet2.dll</HintPath>
     </Reference>
-    <Reference Include="DeconTools.Backend, Version=1.0.4598.28967, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="DeconTools.Backend, Version=1.0.4827.20569, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DeconTools\DeconTools.Backend\bin\x86\Release\DeconTools.Backend.dll</HintPath>
     </Reference>
     <Reference Include="DeconTools.UnitTesting2">
       <HintPath>..\..\DeconTools\DeconTools.UnitTesting2\bin\x86\Release\DeconTools.UnitTesting2.dll</HintPath>
     </Reference>
-    <Reference Include="DeconTools.Workflows, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DeconTools.Workflows, Version=1.0.4765.29692, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DeconTools\DeconTools.Workflows\DeconTools.Workflows\bin\x86\Release\DeconTools.Workflows.dll</HintPath>
     </Reference>
@@ -54,7 +54,7 @@
     </Reference>
     <Reference Include="GWSGraphLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\GWSGraphLibrary\GWSGraphLibrary\bin\Release\GWSGraphLibrary.dll</HintPath>
+      <HintPath>..\..\GWSGraphLibrary\GWSGraphLibrary\bin\Debug\GWSGraphLibrary.dll</HintPath>
     </Reference>
     <Reference Include="IsoBlender">
       <HintPath>..\..\IsoBlender\IsoBlender\bin\Debug\IsoBlender.exe</HintPath>
@@ -78,6 +78,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="ZedGraph, Version=5.1.5.28844, Culture=neutral, PublicKeyToken=02a83cbd123fcd60, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ASMS2012Scripts.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="SipperPaper\FigureXX_LabelDistributionAnalysis.cs" />
     <Compile Include="SipperPaper\FigureXX_LabelDistributionAnalysisForEntireDataset.cs" />
     <Compile Include="SipperPaper\FigureXX_LargeScaleAutoProcessing.cs" />
+    <Compile Include="SipperPaper\FigureXX_LISR score demo.cs" />
     <Compile Include="SipperPaper\FigureXX_manualAnalysisOfDataset.cs" />
     <Compile Include="SipperPaper\FigureXX_theoreticalProfilesWithLinearAnalysis.cs" />
     <Compile Include="SipperPaper\FigureXX_TypicalProteinSIPData.cs" />
@@ -106,6 +108,7 @@
     <Compile Include="SipperPaper\FilterResultsBasedOnSTAC.cs" />
     <Compile Include="SipperPaper\Script_GetAminoAcidFrequencies.cs" />
     <Compile Include="SipperPaper\Script_OptimizeFilters.cs" />
+    <Compile Include="SipperPaper\Script_OutputMassSpecImagesForLcmsFeatures.cs" />
     <Compile Include="SipperPaper\SipperFilters.cs" />
     <Compile Include="SipperPaper\SipperPaperScripts.cs" />
     <Compile Include="SipperPaper\SupplFigureXX_TheorLabeledProfiles.cs" />

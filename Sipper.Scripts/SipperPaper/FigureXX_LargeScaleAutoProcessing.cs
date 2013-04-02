@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using DeconTools.Backend.FileIO;
+using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 using GwsDMSUtilities;
@@ -14,8 +15,10 @@ namespace Sipper.Scripts.SipperPaper
     [TestFixture]
     public class FigureXX_LargeScaleAutoProcessing
     {
+
+        [Category("Final")]
         [Test]
-        public void checkForResults()
+        public void CheckForResults()
         {
             var datasetnames = SipperDatasetUtilities.GetDatasetNames();
 
@@ -29,9 +32,6 @@ namespace Sipper.Scripts.SipperPaper
                 string expectedResultFile = resultFolder + "\\" + datasetname + "_results.txt";
 
                 FileInfo fileInfo = new FileInfo(expectedResultFile);
-
-
-
                 sb.Append(datasetname);
                 sb.Append("\t");
 
@@ -40,6 +40,8 @@ namespace Sipper.Scripts.SipperPaper
                     sb.Append("TRUE");
                     sb.Append("\t");
                     sb.Append((double)fileInfo.Length / 1000);
+                    sb.Append("\t");
+                    sb.Append(fileInfo.LastWriteTime.ToShortDateString());
                 }
                 else
                 {
@@ -54,7 +56,7 @@ namespace Sipper.Scripts.SipperPaper
 
         }
 
-
+        [Category("Final")]
         [Test]
         public void GetFilterStatsOnAllResults()
         {
@@ -71,8 +73,6 @@ namespace Sipper.Scripts.SipperPaper
 
                 FileInfo fileInfo = new FileInfo(expectedResultFile);
 
-
-
                 sb.Append(datasetname);
                 sb.Append("\t");
 
@@ -82,12 +82,18 @@ namespace Sipper.Scripts.SipperPaper
                     SipperResultFromTextImporter importer = new SipperResultFromTextImporter(fileInfo.FullName);
                     var results = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-                    var looseFilteredResults = results.Where(SipperFilters.PassesLabelLooseFilterF2).ToList();
-                    var tightFilteredResults = results.Where(SipperFilters.PassesLabelTightFilterF1).ToList();
+                    var tightFilterResults = SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
 
-                    sb.Append(tightFilteredResults.Count);
+                    int countTightFilterResults = tightFilterResults.Count(p => p.ValidationCode == ValidationCode.Yes);
+
+                    var looseFilteredResults = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(results);
+                    int countLooseFilter = looseFilteredResults.Count(p => p.ValidationCode == ValidationCode.Yes);
+
+                    sb.Append(tightFilterResults.Count);
                     sb.Append("\t");
-                    sb.Append(looseFilteredResults.Count);
+                    sb.Append(countTightFilterResults);
+                    sb.Append("\t");
+                    sb.Append(countLooseFilter);
                 }
                 else
                 {
@@ -129,7 +135,9 @@ namespace Sipper.Scripts.SipperPaper
                     SipperResultFromTextImporter importer = new SipperResultFromTextImporter(fileInfo.FullName);
                     var results = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-                    var tightFilteredResults = results.Where(SipperFilters.PassesLabelTightFilterF1).ToList();
+                    var tightFilteredResults =
+                        SipperFilters.ApplyAutoValidationCodeF1TightFilter(results).Where(p => p.ValidationCode == ValidationCode.Yes).
+                            ToList();
 
 
                     var massTagIDs = tightFilteredResults.Select(p => p.MatchedMassTagID).ToList();
@@ -138,7 +146,7 @@ namespace Sipper.Scripts.SipperPaper
 
                     foreach (var r in tightFilteredResults)
                     {
-                        sb.Append(r.DatasetName + "\t" + r.TargetID + "\t" + r.MatchedMassTagID + "\t" + r.Intensity + "\t" + r.PercentCarbonsLabelled + "\t" + r.PercentPeptideLabelled + "\n");
+                        sb.Append(r.DatasetName + "\t" + r.TargetID + "\t" + r.MatchedMassTagID + "\t" + r.Intensity + "\t" + r.FitScoreLabeledProfile.ToString("0.000") + "\t" +  r.PercentCarbonsLabelled.ToString("0.0") + "\t" + r.PercentPeptideLabelled.ToString("0.0") + "\n");
 
                     }
 
@@ -211,7 +219,7 @@ namespace Sipper.Scripts.SipperPaper
                 {
                     SipperResultFromTextImporter importer = new SipperResultFromTextImporter(fileInfo.FullName);
                     var results = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
-                    var tightFilteredResults = results.Where(SipperFilters.PassesLabelTightFilterF1).ToList();
+                    var tightFilteredResults = SipperFilters.ApplyAutoValidationCodeF1TightFilter(results).Where(p => p.ValidationCode == ValidationCode.Yes);
 
                     var enrichedMassTagIDs = tightFilteredResults.Select(p => p.MatchedMassTagID).ToList();
                     var massTagIDs = results.Select(p => p.MatchedMassTagID).ToList();
@@ -275,6 +283,24 @@ namespace Sipper.Scripts.SipperPaper
 
             MassTagUtilities massTagUtilities = new MassTagUtilities();
             massTagUtilities.ExportMassTagsWithJCVIInformation(outputMassTagFilename);
+        }
+
+
+
+        [Test]
+        public void GetAminoAcidFrequecies_All_vs_enriched()
+        {
+            string allUniquePeptidesFile =
+                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_largeScaleAutomatedAnalysis\unique_peptideSequencesOnly.txt";
+
+            string enrichedUniquePeptidesFile =
+                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_largeScaleAutomatedAnalysis\enriched_unique_peptideSequencesOnly.txt";
+
+
+            Script_GetAminoAcidFrequencies.DisplayAminoAcidFrequencies(allUniquePeptidesFile);
+
+            Script_GetAminoAcidFrequencies.DisplayAminoAcidFrequencies(enrichedUniquePeptidesFile);
+
         }
 
 
