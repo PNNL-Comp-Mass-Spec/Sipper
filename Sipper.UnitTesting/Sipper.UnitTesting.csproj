@@ -34,13 +34,14 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DeconTools.Backend">
-      <HintPath>..\..\DeconTools\DeconTools.Backend\bin\x86\Release\DeconTools.Backend.dll</HintPath>
+    <Reference Include="DeconTools.Backend, Version=1.0.4827.20569, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DeconTools\DeconTools.Workflows\DeconTools.Workflows\bin\x86\Release\DeconTools.Backend.dll</HintPath>
     </Reference>
     <Reference Include="DeconTools.UnitTesting2">
       <HintPath>..\Library\DeconTools.UnitTesting2.dll</HintPath>
     </Reference>
-    <Reference Include="DeconTools.Workflows, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DeconTools.Workflows, Version=1.0.4827.20607, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DeconTools\DeconTools.Workflows\DeconTools.Workflows\bin\x86\Release\DeconTools.Workflows.dll</HintPath>
     </Reference>

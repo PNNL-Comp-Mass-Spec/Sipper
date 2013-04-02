@@ -920,8 +920,8 @@ namespace Sipper.ViewModel
 
 
             RatioLogsXYData = new XYData();
-            RatioLogsXYData.Xvalues = Workflow.RatioLogVals == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.RatioLogVals.Xvalues;
-            RatioLogsXYData.Yvalues = Workflow.RatioLogVals == null ? new double[] { 0, 0, 0, 0, 0 } : Workflow.RatioLogVals.Yvalues;
+            RatioLogsXYData.Xvalues = new double[] {0, 1, 2, 3, 4};
+            RatioLogsXYData.Yvalues = new double[] {0, 0, 0, 0, 0}; 
 
 
             LabelDistributionXYData = new XYData();
