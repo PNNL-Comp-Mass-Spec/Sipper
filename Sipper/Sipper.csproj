@@ -164,6 +164,12 @@
     <Resource Include="Images\Coffee cup.png" />
     <Resource Include="Images\C13EnrichedProfile1.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\arrow-up-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\arrow-down-icon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /C  /Y "$(SolutionDir)Library\DLLsToBeCopied" "$(TargetDir)"</PostBuildEvent>

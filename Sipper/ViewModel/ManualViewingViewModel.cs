@@ -8,6 +8,8 @@ using System.Windows;
 using DeconTools.Backend;
 using DeconTools.Backend.Core;
 using DeconTools.Backend.Data;
+using DeconTools.Backend.ProcessingTasks;
+using DeconTools.Backend.ProcessingTasks.MSGenerators;
 using DeconTools.Backend.Runs;
 using DeconTools.Backend.Utilities;
 using DeconTools.Backend.Utilities.IsotopeDistributionCalculation;
@@ -31,7 +33,7 @@ namespace Sipper.ViewModel
         private TargetedResultRepository _resultRepositorySource;
         private BackgroundWorker _backgroundWorker;
         private string _peaksFilename;
-
+        private MSGenerator _msGenerator;
 
 
         #region Constructors
@@ -390,10 +392,49 @@ namespace Sipper.ViewModel
         public double ChromGraphXWindowWidth { get; set; }
 
 
+        private double _msGraphMaxX;
+        public double MSGraphMaxX
+        {
+            get { return _msGraphMaxX; }
+            set
+            {
+                _msGraphMaxX = value;
+                OnPropertyChanged("MSGraphMaxX");
+            }
+        }
 
-        public double MSGraphMaxX { get; set; }
+        private double _msGraphMinX;
+        public double MSGraphMinX
+        {
+            get { return _msGraphMinX; }
+            set
+            {
+                _msGraphMinX = value;
+                OnPropertyChanged("MSGraphMinX");
+            }
+        }
 
-        public double MSGraphMinX { get; set; }
+
+        public int MinLCScan
+        {
+            get
+            {
+                if (Run == null) return 1;
+                return Run.MinLCScan;
+            }
+       
+        }
+
+        public int MaxLCScan
+        {
+            get
+            {
+                if (Run == null) return 1;
+                return    Run.MaxLCScan;
+            }
+          
+        }
+
 
         public XYData LabelDistributionXYData { get; set; }
 
@@ -437,6 +478,54 @@ namespace Sipper.ViewModel
 
         #region Public Methods
 
+        private ScanSetFactory _scanSetFactory = new ScanSetFactory();
+
+        private int _currentLCScan;
+        public int CurrentLCScan
+        {
+            get { return _currentLCScan; }
+            set
+            {
+                _currentLCScan = value;
+                OnPropertyChanged("CurrentLCScan");
+            }
+        }
+
+        public void NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode selectionMode = Globals.ScanSelectionMode.ASCENDING)
+        {
+            if (Run == null) return;
+
+            if (Workflow == null) return;
+
+            TargetedWorkflowParameters workflowParameters = (TargetedWorkflowParameters)Workflow.WorkflowParameters;
+
+
+
+            int nextPossibleMS;
+            if (selectionMode == Globals.ScanSelectionMode.DESCENDING)
+            {
+                nextPossibleMS = CurrentLCScan - 1;
+            }
+            else
+            {
+                nextPossibleMS = CurrentLCScan + 1;
+            }
+
+            CurrentLCScan = Run.GetClosestMSScan(nextPossibleMS, selectionMode);
+
+            if (_msGenerator == null)
+            {
+                _msGenerator = MSGeneratorFactory.CreateMSGenerator(Run.MSFileType);
+
+            }
+
+
+            var currentScanSet = _scanSetFactory.CreateScanSet(Run, CurrentLCScan, workflowParameters.NumMSScansToSum);
+            MassSpecXYData = _msGenerator.GenerateMS(Run, currentScanSet);
+
+
+        }
+
         public void ExecuteWorkflow()
         {
             GeneralStatusMessage = ".......";
@@ -444,6 +533,14 @@ namespace Sipper.ViewModel
             SetCurrentWorkflowTarget(CurrentResult);
 
             Workflow.Execute();
+
+
+            if (Workflow.Success)
+            {
+                TargetedWorkflowParameters workflowParameters = (TargetedWorkflowParameters)Workflow.WorkflowParameters;
+                CurrentLCScan = Workflow.Result.GetScanNum();
+            }
+
 
             UpdateGraphRelatedProperties();
 
@@ -920,8 +1017,8 @@ namespace Sipper.ViewModel
 
 
             RatioLogsXYData = new XYData();
-            RatioLogsXYData.Xvalues = new double[] {0, 1, 2, 3, 4};
-            RatioLogsXYData.Yvalues = new double[] {0, 0, 0, 0, 0}; 
+            RatioLogsXYData.Xvalues = new double[] { 0, 1, 2, 3, 4 };
+            RatioLogsXYData.Yvalues = new double[] { 0, 0, 0, 0, 0 };
 
 
             LabelDistributionXYData = new XYData();

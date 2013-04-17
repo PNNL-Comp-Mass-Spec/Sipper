@@ -12,6 +12,7 @@ using DeconTools.Workflows.Backend.Results;
 using Sipper.Model;
 using Sipper.ViewModel;
 using ZedGraph;
+using Globals = DeconTools.Backend.Globals;
 
 namespace Sipper.View
 {
@@ -157,8 +158,6 @@ namespace Sipper.View
             var chromUserControl = (GWSGraphLibrary.ChromGraphControl)(chromGraphHost.Child);
             var msgraphUserControl = (GWSGraphLibrary.MSGraphControl)(msGraphHost.Child);
             var theorMSUserControl = (GWSGraphLibrary.MSGraphControl)(theorMSGraphHost.Child);
-            var ratioGraphUserControl = (GWSGraphLibrary.BasicGraphControl)(ratioGraphHost.Child);
-            var logRatioGraphUserControl = (GWSGraphLibrary.BasicGraphControl)(logRatioGraphHost.Child);
             var labelDistribUserControl = (GWSGraphLibrary.BasicGraphControl)(labelDistributionGraphHost.Child);
 
             chromCorrUserControl.GraphPane.GraphObjList.Clear();
@@ -213,44 +212,6 @@ namespace Sipper.View
             labelDistribUserControl.zedGraphControl1.GraphPane.YAxis.Scale.MinorStep = 0.01;
 
 
-            ratioGraphUserControl.GraphPane.XAxis.Title.FontSpec.Size = 9;
-            ratioGraphUserControl.GraphPane.YAxis.Title.FontSpec.Size = 9;
-            ratioGraphUserControl.GraphPane.XAxis.Scale.FontSpec.Size = 9;
-            ratioGraphUserControl.GraphPane.YAxis.Scale.FontSpec.Size = 9;
-
-            ratioGraphUserControl.GraphPane.XAxis.MinorTic.Size = 0;
-
-            ratioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Scale.MaxAuto = true;
-            ratioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Scale.MinAuto = true;
-
-            ratioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Format = "0.#";
-            ratioGraphUserControl.zedGraphControl1.GraphPane.XAxis.Title.Text = "peak num";
-            ratioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Title.Text = "(obs-theor)/(theor) ";
-            ratioGraphUserControl.zedGraphControl1.GraphPane.Title.FontSpec.Size = 9;
-            ratioGraphUserControl.zedGraphControl1.GraphPane.Title.Text = "Obs/Theor ratio data";
-
-
-
-            logRatioGraphUserControl.GraphPane.XAxis.Title.FontSpec.Size = 9;
-            logRatioGraphUserControl.GraphPane.YAxis.Title.FontSpec.Size = 9;
-            logRatioGraphUserControl.GraphPane.XAxis.Scale.FontSpec.Size = 9;
-            logRatioGraphUserControl.GraphPane.YAxis.Scale.FontSpec.Size = 9;
-
-            logRatioGraphUserControl.GraphPane.XAxis.MinorTic.Size = 0;
-
-            logRatioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Format = "0.#";
-            logRatioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Scale.MaxAuto = true;
-            logRatioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Scale.MinAuto = true;
-            logRatioGraphUserControl.zedGraphControl1.GraphPane.XAxis.Title.Text = "peak num";
-            logRatioGraphUserControl.zedGraphControl1.GraphPane.YAxis.Title.Text = "log (obs-theor)/(theor) ";
-            logRatioGraphUserControl.zedGraphControl1.GraphPane.Title.FontSpec.Size = 9;
-            logRatioGraphUserControl.zedGraphControl1.GraphPane.Title.Text = "Log(Obs/Theor) ratio data";
-
-
-
-
-
-
             _graphsWereSetup = true;
 
 
@@ -260,6 +221,9 @@ namespace Sipper.View
 
         void zedGraphControl1_ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
         {
+
+            ViewModel.MSGraphMinX = sender.GraphPane.XAxis.Scale.Min;
+            ViewModel.MSGraphMaxX = sender.GraphPane.XAxis.Scale.Max;
 
             var theorMSUserControl = (GWSGraphLibrary.MSGraphControl)(theorMSGraphHost.Child);
             theorMSUserControl.zedGraphControl1.GraphPane.XAxis.Scale.Min = sender.GraphPane.XAxis.Scale.Min;
@@ -290,8 +254,6 @@ namespace Sipper.View
             var msgraphUserControl = (GWSGraphLibrary.MSGraphControl)(msGraphHost.Child);
             var labelDistribUserControl = (GWSGraphLibrary.BasicGraphControl)(labelDistributionGraphHost.Child);
             var theorMSUserControl = (GWSGraphLibrary.MSGraphControl)(theorMSGraphHost.Child);
-            var ratioGraphUserControl = (GWSGraphLibrary.BasicGraphControl)(ratioGraphHost.Child);
-            var logRatioGraphUserControl = (GWSGraphLibrary.BasicGraphControl)(logRatioGraphHost.Child);
 
 
 
@@ -299,8 +261,6 @@ namespace Sipper.View
             chromUserControl.GraphPane.GraphObjList.Clear();
             msgraphUserControl.GraphPane.GraphObjList.Clear();
             theorMSUserControl.GraphPane.GraphObjList.Clear();
-            ratioGraphUserControl.GraphPane.GraphObjList.Clear();
-            logRatioGraphUserControl.GraphPane.GraphObjList.Clear();
             labelDistribUserControl.GraphPane.GraphObjList.Clear();
 
 
@@ -321,7 +281,7 @@ namespace Sipper.View
                     }
                 }
 
-                string graphTitle = "MS for scan " + (ViewModel.CurrentResult == null ? "" : ViewModel.CurrentResult.ScanLC.ToString("0"));
+                string graphTitle = "MS for scan " + ViewModel.CurrentLCScan;
                 msgraphUserControl.AddAnnotationRelativeAxis(graphTitle, 0.3, 0, 10);
             }
 
@@ -403,31 +363,12 @@ namespace Sipper.View
                 chromUserControl.AddAnnotationRelativeAxis(ViewModel.ChromTitleText, 0.5, 0, 10f);
 
             }
-
-            if (ViewModel.RatioXYData != null)
-            {
-                ratioGraphUserControl.GenerateGraph(ViewModel.RatioXYData.Xvalues, ViewModel.RatioXYData.Yvalues);
-
-
-            }
-
-            var logRatioGraph = (GWSGraphLibrary.BasicGraphControl)(logRatioGraphHost.Child);
-            if (ViewModel.RatioLogsXYData != null)
-            {
-                logRatioGraph.GenerateGraph(ViewModel.RatioLogsXYData.Xvalues, ViewModel.RatioLogsXYData.Yvalues);
-
-
-            }
-
-
-
+            
             msgraphUserControl.Refresh();
             chromUserControl.Refresh();
             theorMSUserControl.Refresh();
             labelDistribUserControl.Refresh();
             chromCorrUserControl.Refresh();
-            logRatioGraph.Refresh();
-            ratioGraphUserControl.Refresh();
         }
 
         private void GetMinMaxValuesForLabelDistributionGraph(XYData labelDistributionXYData, out double xMin, out double xMax, out double yMin, out double yMax)
@@ -605,6 +546,142 @@ namespace Sipper.View
         {
             txtTargetFilterString.Text = string.Empty;
         }
+
+        private void btnNavigateUpClick(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.ASCENDING);
+            try
+            {
+                updateGraphs();
+            }
+            catch (Exception exception)
+            {
+                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
+            }
+        }
+
+
+        private void btnNavigateDownClick(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.DESCENDING);
+            try
+            {
+                updateGraphs();
+            }
+            catch (Exception exception)
+            {
+                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
+            }
+        }
+
+        private void NavigateToSpecificScanEvent(object sender, RoutedEventArgs e)
+        {
+
+            int currentScan;
+             if (Int32.TryParse(txtCurrentScan.Text,out currentScan))
+             {
+                 ViewModel.CurrentLCScan = currentScan;
+             }
+             else
+             {
+                 return;
+             }
+
+            ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
+            try
+            {
+                updateGraphs();
+            }
+            catch (Exception exception)
+            {
+                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
+            }
+        }
+
+        private void TextBox_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta>0)
+            {
+                ViewModel.NavigateToNextMS1MassSpectrum();
+            }
+            else
+            {
+                ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.DESCENDING);
+            }
+
+            try
+            {
+                updateGraphs();
+            }
+            catch (Exception exception)
+            {
+                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
+            }
+
+        }
+
+        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+            slider.Minimum = ViewModel.MinLCScan;
+            slider.Maximum = ViewModel.MaxLCScan;
+
+            ViewModel.CurrentLCScan = (int)e.NewValue;
+
+            ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
+            try
+            {
+                updateGraphs();
+            }
+            catch (Exception exception)
+            {
+                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
+            }
+        }
+
+        private void MsGraphMinMouseWheelEvent(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta>0)
+            {
+                ViewModel.MSGraphMinX= ViewModel.MSGraphMinX + 1;
+            }
+            else
+            {
+                ViewModel.MSGraphMinX = ViewModel.MSGraphMinX - 1;
+            }
+
+            try
+            {
+                updateGraphs();
+            }
+            catch (Exception exception)
+            {
+                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
+            }
+        }
+
+
+        private void MsGraphMaxMouseWheelEvent(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                ViewModel.MSGraphMaxX = ViewModel.MSGraphMaxX + 1;
+            }
+            else
+            {
+                ViewModel.MSGraphMaxX = ViewModel.MSGraphMaxX - 1;
+            }
+
+            try
+            {
+                updateGraphs();
+            }
+            catch (Exception exception)
+            {
+                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
+            }
+        }
+      
 
     }
 }
