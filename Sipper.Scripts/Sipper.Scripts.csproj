@@ -99,6 +99,7 @@
     <Compile Include="SipperPaper\FigureXX_LabelDistributionAnalysis.cs" />
     <Compile Include="SipperPaper\FigureXX_LabelDistributionAnalysisForEntireDataset.cs" />
     <Compile Include="SipperPaper\FigureXX_LargeScaleAutoProcessing.cs" />
+    <Compile Include="SipperPaper\FigureXX_LILS score demo.cs" />
     <Compile Include="SipperPaper\FigureXX_LISR score demo.cs" />
     <Compile Include="SipperPaper\FigureXX_manualAnalysisOfDataset.cs" />
     <Compile Include="SipperPaper\FigureXX_theoreticalProfilesWithLinearAnalysis.cs" />

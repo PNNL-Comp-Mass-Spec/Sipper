@@ -16,7 +16,7 @@ namespace Sipper.Scripts.SipperPaper
     public class Script_OptimizeFilters
     {
         
-        [Category("Final")]
+        [Category("Paper")]
         [Test]
         public void ParameterOptimization_forLabeledPeptides()
         {
@@ -83,8 +83,8 @@ namespace Sipper.Scripts.SipperPaper
                                                                        // && n.ChromCorrelationMedian >= chromCorr
                                                                   && n.ContiguousnessScore >= contigScore
                                                                        //&& n.NumHighQualityProfilePeaks > 2
-                                                                    && n.PercentCarbonsLabelled > percentIncorp &&
-                                                                   n.PercentPeptideLabelled > peptidePop
+                                                                    && n.PercentCarbonsLabelled >= percentIncorp &&
+                                                                   n.PercentPeptideLabelled >= peptidePop
 
 
                                                                    select n).ToList();
@@ -174,7 +174,7 @@ namespace Sipper.Scripts.SipperPaper
 
    
 
-        [Category("Final")]
+        [Category("Paper")]
         [Test]
         public void GetFilteredOutputOnAutoProcessed()
         {

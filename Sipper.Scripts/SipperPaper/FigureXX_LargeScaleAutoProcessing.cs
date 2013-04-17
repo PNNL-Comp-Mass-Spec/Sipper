@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using DeconTools.Backend.FileIO;
 using DeconTools.Workflows.Backend;
+using DeconTools.Workflows.Backend.Core;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 using GwsDMSUtilities;
@@ -56,14 +57,19 @@ namespace Sipper.Scripts.SipperPaper
 
         }
 
-        [Category("Final")]
+        [Category("Paper")]
         [Test]
         public void GetFilterStatsOnAllResults()
         {
             var datasetnames = SipperDatasetUtilities.GetDatasetNames();
 
+            //string resultFolder =
+            //    @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Results\Results_2013_04_09";
+
             string resultFolder =
                 @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Results";
+
+
 
             StringBuilder sb = new StringBuilder();
 
@@ -108,6 +114,49 @@ namespace Sipper.Scripts.SipperPaper
 
 
         }
+
+
+
+        [Test]
+        public void ExecuteSipperOnSpecificTargets()
+        {
+            string paramFile =
+              @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Parameters\ExecutorParameters1.xml";
+
+            SipperWorkflowExecutorParameters parameters = new SipperWorkflowExecutorParameters();
+            parameters.LoadParameters(paramFile);
+
+
+            parameters.DbName = "";
+            parameters.DbServer = "";
+            parameters.DbTableName = "";
+
+            parameters.TargetsBaseFolder =
+                @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Targets\Unidentified";
+
+            parameters.FolderPathForCopiedRawDataset = @"D:\data\sipper";
+
+
+            string testDataset =
+                @"F:\Yellowstone\RawData\Yellow_C12_060_7Jan10_Andromeda_09-10-16.raw";
+
+
+
+            int testTarget = 8625;
+
+
+            SipperWorkflowExecutor executor = new SipperWorkflowExecutor(parameters, testDataset);
+
+            executor.Targets.TargetList = (from n in executor.Targets.TargetList where n.ID == testTarget select n).ToList();
+            
+            executor.Execute();
+
+
+
+        }
+
+        
+
 
 
         [Test]

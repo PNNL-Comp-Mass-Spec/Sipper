@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,308 @@ namespace Sipper.Scripts.SipperPaper
     [TestFixture]
     public class FigureXX_UnidentifiedFeatures
     {
+
+
+        [Category("Paper")]
+        [Test]
+        public void Compare_Identified_VS_Averagine_for_previouslyIDedTargets()
+        {
+            string normalResultsFile =
+                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_AutomatedAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results.txt";
+
+            string averagineResultsFile =
+                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_UnidentifiedFeatures\Study1 - effect of using averagine\Yellow_C13_070_23Mar10_Griffin_10-01-28_AVERAGINE_2013_04_08_results.txt";
+
+            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(normalResultsFile);
+            var originalResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+
+            importer = new SipperResultFromTextImporter(averagineResultsFile);
+            var averagineResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+
+            var originalTightFilter = SipperFilters.ApplyAutoValidationCodeF1TightFilter(originalResults).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+            var averagineTightFilter = SipperFilters.ApplyAveragineBasedTightFilter(averagineResults).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+            var intersectResults = originalTightFilter.Select(p => p.TargetID).Intersect(averagineTightFilter.Select(p => p.TargetID)).ToList();
+            var uniqueToOriginal = originalTightFilter.Select(p => p.TargetID).Except(averagineTightFilter.Select(p => p.TargetID)).ToList();
+            var uniqueToAveragine = averagineTightFilter.Select(p => p.TargetID).Except(originalTightFilter.Select(p => p.TargetID)).ToList();
+
+            Console.WriteLine("OriginalFiltered count= \t" + originalTightFilter.Count);
+            Console.WriteLine("AveragineFiltered count= \t" + averagineTightFilter.Count);
+            Console.WriteLine("Shared count = \t" + intersectResults.Count);
+            Console.WriteLine("Unique to original = \t" + uniqueToOriginal.Count);
+            Console.WriteLine("Unique to averagine = \t" + uniqueToAveragine.Count);
+
+            var originalLooseFilter = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(originalResults).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+            var averagineLooseFilter = SipperFilters.ApplyAveragineBasedLooseFilter(averagineResults).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+            var intersectResultsLooseFilter = originalLooseFilter.Select(p => p.TargetID).Intersect(averagineLooseFilter.Select(p => p.TargetID)).ToList();
+            uniqueToOriginal = originalLooseFilter.Select(p => p.TargetID).Except(averagineLooseFilter.Select(p => p.TargetID)).ToList();
+            uniqueToAveragine = averagineLooseFilter.Select(p => p.TargetID).Except(originalLooseFilter.Select(p => p.TargetID)).ToList();
+
+            Console.WriteLine();
+            Console.WriteLine("LooseFilter results------------------");
+            Console.WriteLine("OriginalFiltered count= \t" + originalLooseFilter.Count);
+            Console.WriteLine("AveragineFiltered count= \t" + averagineLooseFilter.Count);
+            Console.WriteLine("Shared count = \t" + intersectResultsLooseFilter.Count);
+            Console.WriteLine("Unique to original = \t" + uniqueToOriginal.Count);
+            Console.WriteLine("Unique to averagine = \t" + uniqueToAveragine.Count);
+        }
+
+
+
+        [Category("Paper")]
+        [Test]
+        public void ParameterOptimization_for_Averagine_LabeledPeptides()
+        {
+
+            string manualResultsFile =
+                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_ManualAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results_all_validated.txt";
+
+            string autoResultsFile =
+                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_UnidentifiedFeatures\Study1 - effect of using averagine\Yellow_C13_070_23Mar10_Griffin_10-01-28_AVERAGINE_2013_04_08_results.txt";
+
+
+            FileInfo fileInfo = new FileInfo(autoResultsFile);
+
+            if (fileInfo.Exists)
+            {
+                Console.WriteLine("Autoresults file info:\nFilename=" + fileInfo.FullName + "\nLast write time= " + fileInfo.LastWriteTime);
+            }
+
+            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(manualResultsFile);
+            var originalResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+
+            importer = new SipperResultFromTextImporter(autoResultsFile);
+            var autoResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+
+            var yesResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+            var noResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.No).ToList();
+            var maybeResults = originalResults.Where(p => p.ValidationCode == ValidationCode.Maybe).ToList();
+
+            var manualResults = yesResultsOnly;
+
+            double maxRatio = 0;
+
+
+
+            StringBuilder sb = new StringBuilder();
+            List<ParameterOptimizationDataItem> optimizationData = new List<ParameterOptimizationDataItem>();
+
+            sb.Append("fitScore\tarea\tiscore\tshared\tuniqueToAuto\tratio\tcontigScore\n");
+
+            for (double fitScoreLabelled = 0.2; fitScoreLabelled < 1.1; fitScoreLabelled = fitScoreLabelled + 0.1)
+            {
+                for (double area = 0; area < 10.5; area = area + 1)
+                {
+                    for (double iscore = 0; iscore < 1.0; iscore = iscore + 0.1)
+                    {
+                        for (double chromCorr = 0.955; chromCorr <= 0.96; chromCorr = chromCorr + 0.1)
+                        {
+                            for (double rsquaredVal = 0.55; rsquaredVal <= 0.56; rsquaredVal = rsquaredVal + 0.05)
+                            {
+                                for (int contigScore = 0; contigScore <= 7; contigScore++)
+                                {
+
+                                    for (double percentIncorp = 0; percentIncorp < 2; percentIncorp = percentIncorp + 0.5)
+                                    {
+                                        for (double peptidePop = 0; peptidePop < 2; peptidePop = peptidePop + 0.5)
+                                        {
+
+
+                                            var filteredResults = (from n in autoResults
+                                                                   where
+                                                                   n.AreaUnderRatioCurveRevised >= area
+                                                                  && n.IScore <= iscore
+                                                                   && n.FitScoreLabeledProfile <= fitScoreLabelled
+                                                                       // && n.ChromCorrelationMedian >= chromCorr
+                                                                  && n.ContiguousnessScore >= contigScore
+                                                                       //&& n.NumHighQualityProfilePeaks > 2
+                                                                    && n.PercentCarbonsLabelled >= percentIncorp &&
+                                                                   n.PercentPeptideLabelled >= peptidePop
+
+
+                                                                   select n).ToList();
+
+                                            var intersectResults =
+                                                filteredResults.Select(p => p.TargetID).Intersect(manualResults.Select(p => p.TargetID)).ToList();
+                                            var uniqueToAuto =
+                                                filteredResults.Select(p => p.TargetID).Except(manualResults.Select(p => p.TargetID)).ToList();
+                                            var ratio = intersectResults.Count / (double)uniqueToAuto.Count;
+
+
+                                            ParameterOptimizationDataItem optimizationDataItem =
+                                                new ParameterOptimizationDataItem(fitScoreLabelled, area, iscore, chromCorr, contigScore, percentIncorp, peptidePop, intersectResults.Count, uniqueToAuto.Count);
+                                            optimizationDataItem.RSquared = rsquaredVal;
+
+
+                                            if (double.IsNaN(ratio))
+                                            {
+                                                ratio = -1;
+                                            }
+
+                                            optimizationData.Add(optimizationDataItem);
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+
+            int maxNumUniqueToAuto = optimizationData.Select(p => p.UniqueToAuto).Max();
+
+            List<ParameterOptimizationDataItem> firstSetOfParameters = new List<ParameterOptimizationDataItem>();
+            bool foundFirstSet = false;
+            int minUniqueToAuto = 0;
+
+            Dictionary<int, int> pairs = new Dictionary<int, int>();
+
+            for (int i = 0; i <= maxNumUniqueToAuto; i++)
+            {
+                var uniqueToAuto = optimizationData.Where(p => p.UniqueToAuto == i);
+
+                int maxSharedVal;
+                bool any = uniqueToAuto.Any();
+                if (any)
+                {
+                    maxSharedVal = uniqueToAuto.Max(p => p.SharedCount);
+
+                    pairs.Add(i, maxSharedVal);
+
+                    Console.WriteLine(i + "\t" + maxSharedVal);
+                }
+            }
+
+
+            //Now I iterate over certain levels of false-negative values, and pull
+            //out the parameter settings
+            int[] falsePositiveArray = { 0, 2, 3, 4, 6, 15 };
+            foreach (var i in falsePositiveArray)
+            {
+                var anotherPair = pairs.First(p => p.Key == i);
+
+                var bestParams =
+               (from n in optimizationData where n.UniqueToAuto == anotherPair.Key && n.SharedCount == anotherPair.Value select n).ToList();
+
+                Console.WriteLine();
+                Console.WriteLine("uniqueToAuto\tShared\tArea\tChromCorr\tFitScoreLabelled\tIScore\tContig\tPercentIncorp\tPercentPeptide");
+                foreach (var item in bestParams)
+                {
+                    Console.WriteLine(item.UniqueToAuto + "\t" + item.SharedCount + "\t" + item.Area + "\t" + item.ChromCorr + "\t" +
+                                      item.FitScoreLabelled + "\t" + item.IScore + "\t" + item.ContigScore + "\t" + item.PercentIncorporation + "\t" + item.PercentPeptide);
+                }
+            }
+
+
+
+
+
+
+
+            //Console.WriteLine(sb.ToString());
+        }
+
+
+
+        [Category("Paper")]
+        [Test]
+        public void GetFilteredOutputOnAutoProcessed_Averagine()
+        {
+
+
+            string manualResultsFile =
+           @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_ManualAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results_ALL_validated.txt";
+
+            string autoResultsFile =
+                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_UnidentifiedFeatures\Study1 - effect of using averagine\Yellow_C13_070_23Mar10_Griffin_10-01-28_AVERAGINE_2013_04_08_results.txt";
+
+            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(manualResultsFile);
+            var originalResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+
+            importer = new SipperResultFromTextImporter(autoResultsFile);
+            var autoResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+
+            var yesResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+
+            var noResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.No).ToList();
+
+            var intersectAutoYes = autoResults.Select(p => p.TargetID).Intersect(yesResultsOnly.Select(p => p.TargetID)).ToList();
+
+
+            string outputFolder =
+              @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_UnidentifiedFeatures\Study1 - effect of using averagine";
+
+            //Get all auto results and Tag the validation code
+            List<SipperLcmsFeatureTargetedResultDTO> autoYES = SipperFilters.ApplyAutoValidationCodeF1TightFilter(autoResults);
+
+            var autoYESIDsOnly = autoYES.Where(p => p.ValidationCode == ValidationCode.Yes).Select(p => p.TargetID).ToList();
+            var manualResultsWithAutoYES = (from n in originalResults where autoYESIDsOnly.Contains(n.TargetID) select n).ToList();
+            string outputFile = outputFolder + "\\" + Path.GetFileName(autoResultsFile).Replace("_results.txt", "_manual_But_AutoTightYES_results.txt");
+            var exporter = new SipperResultToLcmsFeatureExporter(outputFile);
+            exporter.ExportResults(manualResultsWithAutoYES);
+
+            autoYES = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(autoResults);
+            autoYESIDsOnly = autoYES.Where(p => p.ValidationCode == ValidationCode.Yes).Select(p => p.TargetID).ToList();
+            manualResultsWithAutoYES = (from n in originalResults where autoYESIDsOnly.Contains(n.TargetID) select n).ToList();
+            outputFile = outputFolder + "\\" + Path.GetFileName(autoResultsFile).Replace("_results.txt", "_manual_But_AutoLooseYES_results.txt");
+            exporter = new SipperResultToLcmsFeatureExporter(outputFile);
+            exporter.ExportResults(manualResultsWithAutoYES);
+
+            autoYES = SipperFilters.ApplyAutoValidationCodeF1TightFilter(autoResults);
+            outputFile = outputFolder + "\\" + Path.GetFileName(autoResultsFile).Replace("_results.txt", "_Auto_TightFilter_results.txt");
+            exporter = new SipperResultToLcmsFeatureExporter(outputFile);
+            exporter.ExportResults(autoYES);
+
+            autoYES = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(autoResults);
+            outputFile = outputFolder + "\\" + Path.GetFileName(autoResultsFile).Replace("_results.txt", "_Auto_LooseFilter_results.txt");
+            exporter = new SipperResultToLcmsFeatureExporter(outputFile);
+            exporter.ExportResults(autoYES);
+
+        }
+
+
+        [Category("Paper")]
+        [Test]
+        public void FilterFraction70ForEnrichedFeaturesFromUnidentified()
+        {
+
+            string confidentlyIdentifiedResultsFilename =
+                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_AutomatedAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results.txt";
+
+
+            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(confidentlyIdentifiedResultsFilename);
+            var identifiedResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+
+
+            string unidentifiedResultsFilename =
+                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_UnidentifiedFeatures\Study2 - processing all unidentified features Yellow_C13_070\Yellow_C13_070_23Mar10_Griffin_10-01-28_UNIDENTIFIED_2013_04_08_results.txt";
+
+            importer = new SipperResultFromTextImporter(unidentifiedResultsFilename);
+            var unidentifiedResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+
+
+            var tightFilteredIdentified = SipperFilters.ApplyAutoValidationCodeF1TightFilter(identifiedResults).Where(n => n.ValidationCode == ValidationCode.Yes).ToList();
+
+            var looseFilteredIdentified = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(identifiedResults).Where(n => n.ValidationCode == ValidationCode.Yes).ToList();
+
+            var tightFilteredUnIdentified = SipperFilters.ApplyAveragineBasedTightFilter(unidentifiedResults).Where(n => n.ValidationCode == ValidationCode.Yes).ToList();
+
+            var looseFilteredUnIdentified = SipperFilters.ApplyAveragineBasedLooseFilter(unidentifiedResults).Where(n => n.ValidationCode == ValidationCode.Yes).ToList();
+
+
+            Console.WriteLine("Total identified results=\t" + identifiedResults.Count);
+            Console.WriteLine("Total Unidentified results=\t " + unidentifiedResults.Count);
+
+            Console.WriteLine("Tight filter, Identified=\t" + tightFilteredIdentified.Count);
+            Console.WriteLine("Tight filter, UnIdentified=\t" + tightFilteredUnIdentified.Count);
+            Console.WriteLine("Loose filter, Identified=\t" + looseFilteredIdentified.Count);
+            Console.WriteLine("Loose filter, UnIdentified=\t" + looseFilteredUnIdentified.Count);
+        }
+
+
+
 
 
         [Test]
@@ -196,102 +499,11 @@ namespace Sipper.Scripts.SipperPaper
 
         }
 
+    
 
-        [Test]
-        public void Compare_Identified_VS_Averagine_for_previouslyIDedTargets()
-        {
-            string normalResultsFile =
-                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_AutomatedAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results.txt";
+       
 
-            string averagineResultsFile =
-                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_UnidentifiedFeatures\Yellow_C13_070_23Mar10_Griffin_10-01-28_AVERAGINE_results.txt";
-
-            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(normalResultsFile);
-            var originalResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
-
-            importer = new SipperResultFromTextImporter(averagineResultsFile);
-            var averagineResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
-
-            var originalTightFilter = SipperFilters.ApplyAutoValidationCodeF1TightFilter(originalResults).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
-            var averagineTightFilter = SipperFilters.ApplyAutoValidationCodeF1TightFilter(averagineResults).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
-            var intersectResults = originalTightFilter.Select(p => p.TargetID).Intersect(averagineTightFilter.Select(p => p.TargetID)).ToList();
-            var uniqueToManual = originalTightFilter.Select(p => p.TargetID).Except(averagineTightFilter.Select(p => p.TargetID)).ToList();
-            var uniqueToAuto = averagineTightFilter.Select(p => p.TargetID).Except(originalTightFilter.Select(p => p.TargetID)).ToList();
-
-            Console.WriteLine("OriginalFiltered count= \t" + originalTightFilter.Count);
-            Console.WriteLine("AveragineFiltered count= \t" + averagineTightFilter.Count);
-            Console.WriteLine("Shared count = \t" + intersectResults.Count);
-            Console.WriteLine("Unique to Manual = \t" + uniqueToManual.Count);
-            Console.WriteLine("Unique to Auto = \t" + uniqueToAuto.Count);
-
-            var originalLooseFilter = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(originalResults).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
-            var averagineLooseFilter = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(averagineResults).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
-            var intersectResultsLooseFilter = originalLooseFilter.Select(p => p.TargetID).Intersect(averagineLooseFilter.Select(p => p.TargetID)).ToList();
-            uniqueToManual = originalLooseFilter.Select(p => p.TargetID).Except(averagineLooseFilter.Select(p => p.TargetID)).ToList();
-            uniqueToAuto = averagineLooseFilter.Select(p => p.TargetID).Except(originalLooseFilter.Select(p => p.TargetID)).ToList();
-
-            Console.WriteLine("LooseFilter results------------------");
-            Console.WriteLine("OriginalFiltered count= \t" + originalLooseFilter.Count);
-            Console.WriteLine("AveragineFiltered count= \t" + averagineLooseFilter.Count);
-            Console.WriteLine("Shared count = \t" + intersectResultsLooseFilter.Count);
-            Console.WriteLine("Unique to Manual = \t" + uniqueToManual.Count);
-            Console.WriteLine("Unique to Auto = \t" + uniqueToAuto.Count);
-        }
-
-
-
-
-        [Test]
-        public void FilterForEnrichedFeatures_LooseFilter()
-        {
-
-            string confidentlyIdentifiedResultsFilename =
-                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_AutomatedAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_results.txt";
-
-
-            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(confidentlyIdentifiedResultsFilename);
-            var confidentResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
-
-
-            string resultsFilename =
-                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_UnidentifiedFeatures\Yellow_C13_070_23Mar10_Griffin_10-01-28_results.txt";
-
-
-            var confidentFeatureIDs = confidentResults.Select(p => p.TargetID).Distinct().ToList();
-
-
-
-            //importer = new SipperResultFromTextImporter(resultsFilename);
-            //var originalResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
-            //var nonRedundantOriginalResults = originalResults.GroupBy(x => x.TargetID).Select(g => g.First()).ToList();
-
-            //List<SipperLcmsFeatureTargetedResultDTO> resultsWithNoID = nonRedundantOriginalResults.Where(sipperLcmsFeatureTargetedResultDto => sipperLcmsFeatureTargetedResultDto.MatchedMassTagID <= 0 
-            //    || !confidentFeatureIDs.Contains(sipperLcmsFeatureTargetedResultDto.TargetID)).ToList();
-
-
-            //var resultsWithID = confidentResults.GroupBy(x => x.TargetID).Select(g => g.First()).ToList();
-            //resultsWithID= SipperFilters.ApplyAutoValidationCodeF2LooseFilter(resultsWithNoID);
-
-            //string outputResultsFilename = resultsFilename.Replace("results.txt", "LooseLabelFilter_results.txt");
-            //SipperResultToLcmsFeatureExporter exporter = new SipperResultToLcmsFeatureExporter(outputResultsFilename);
-            //exporter.ExportResults (resultsWithID);
-
-
-            //resultsWithID = SipperFilters.ApplyAutoValidationCodeF1TightFilter(resultsWithNoID);
-
-            //outputResultsFilename = resultsFilename.Replace("results.txt", "TightLabelFilter_results.txt");
-            // exporter = new SipperResultToLcmsFeatureExporter(outputResultsFilename);
-            //exporter.ExportResults(resultsWithNoID);
-
-
-            //Console.WriteLine("Total results= " + nonRedundantOriginalResults.Count);
-            //Console.WriteLine("Total unidentified results= " + resultsWithNoID.Count);
-            //Console.WriteLine("Total results with ID= " + resultsWithID.Count);
-            //Console.WriteLine("Tight filter, count= " + tightFiltered.Count());
-            //Console.WriteLine("Loose filter, count= " + looseFiltered.Count());
-        }
-
-
+        [Category("Paper")]
         [Test]
         public void FilterForEnrichedFeatures_TightFilter()
         {
@@ -307,7 +519,7 @@ namespace Sipper.Scripts.SipperPaper
             var unidentifiedResults = (from n in nonRedundantOriginalResults where n.MatchedMassTagID <= 0 select n).ToList();
             var identifiedResults = (from n in nonRedundantOriginalResults where n.MatchedMassTagID > 0 select n).ToList();
 
-            unidentifiedResults = SipperFilters.ApplyAutoValidationCodeF1TightFilter(unidentifiedResults);
+            unidentifiedResults = SipperFilters.ApplyAveragineBasedTightFilter(unidentifiedResults);
             identifiedResults = SipperFilters.ApplyAutoValidationCodeF1TightFilter(identifiedResults);
 
             SipperResultToLcmsFeatureExporter exporter = new SipperResultToLcmsFeatureExporter(outputResultsFilename);
@@ -328,7 +540,7 @@ namespace Sipper.Scripts.SipperPaper
         {
 
             string paramFile =
-               @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Parameters\SipperExecutorParams1.xml";
+               @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Parameters\ExecutorParameters1.xml";
 
             SipperWorkflowExecutorParameters parameters = new SipperWorkflowExecutorParameters();
             parameters.LoadParameters(paramFile);
@@ -346,14 +558,20 @@ namespace Sipper.Scripts.SipperPaper
 
 
             string testDataset =
-                @"F:\Yellowstone\RawData\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
+                @"D:\Data\Sipper\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
 
 
 
             SipperWorkflowExecutor executor = new SipperWorkflowExecutor(parameters, testDataset);
             int testTarget = 13232;
 
-            Figure03_FeatureElutionScripts.OutputChromData(testDataset, executor, testTarget);
+            executor.Targets.TargetList = (from n in executor.Targets.TargetList where n.ID == testTarget select n).ToList();
+
+            executor.Execute();
+
+
+
+            //Figure03_FeatureElutionScripts.OutputChromData(testDataset, executor, testTarget);
         }
 
 

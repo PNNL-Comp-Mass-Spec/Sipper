@@ -199,61 +199,38 @@ namespace Sipper.Scripts.SipperPaper
 
 
             SipperResultFromTextImporter importer = new SipperResultFromTextImporter(manualResultsFile);
-            var originalResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+            var manualResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
             importer = new SipperResultFromTextImporter(autoResultsFile);
             var autoResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-            var yesResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
-            var noResultsOnly = originalResults.Where(p => p.ValidationCode == ValidationCode.No).ToList();
-            var maybeResults = originalResults.Where(p => p.ValidationCode == ValidationCode.Maybe).ToList();
+            var yesManualResults = manualResults.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+            var noManualResults = manualResults.Where(p => p.ValidationCode == ValidationCode.No).ToList();
+            var maybeManualResults = manualResults.Where(p => p.ValidationCode == ValidationCode.Maybe).ToList();
 
-            //var looseFilteredResults = autoResults.Where(SipperFilters.PassesLabelLooseFilterF2).ToList();
-            //var tightFilteredResults = autoResults.Where(SipperFilters.PassesLabelTightFilterF1).ToList();
-            
+            var manualYesIDs = (from n in yesManualResults select n.TargetID).ToList();
+            var manualNoIDs = (from n in noManualResults select n.TargetID).ToList();
+            var manualMaybeIDs = (from n in maybeManualResults select n.TargetID).ToList();
 
-            //var manualResults = yesResultsOnly;
-            //var intersectResults = tightFilteredResults.Select(p => p.TargetID).Intersect(manualResults.Select(p => p.TargetID)).ToList();
-            //var uniqueToManual = manualResults.Select(p => p.TargetID).Except(tightFilteredResults.Select(p => p.TargetID)).ToList();
-            //var uniqueToAuto = tightFilteredResults.Select(p => p.TargetID).Except(manualResults.Select(p => p.TargetID)).ToList();
-            //var problemResults = tightFilteredResults.Where(r => uniqueToAuto.Contains(r.TargetID)).ToList();
-            //var uniqueToManualResults = manualResults.Where(r => uniqueToManual.Contains(r.TargetID)).ToList();
+            var autoResultsFilteredForYesManual = (from n in autoResults where manualYesIDs.Contains(n.TargetID) select n).ToList();
+            var autoResultsFilteredForNoManual = (from n in autoResults where manualNoIDs.Contains(n.TargetID) select n).ToList();
+            var autoResultsFilteredForMaybeManual = (from n in autoResults where manualMaybeIDs.Contains(n.TargetID) select n).ToList();
 
-            //Console.WriteLine("Manual count= \t" + manualResults.Count);
-            //Console.WriteLine("Auto count - looseFilter= \t" + looseFilteredResults.Count);
-            //Console.WriteLine("Auto count - tightFilter= \t" + tightFilteredResults.Count);
 
-            //Console.WriteLine("Shared count - tight = \t" + intersectResults.Count);
-            //Console.WriteLine("Unique to Manual - tight = \t" + uniqueToManual.Count);
-            //Console.WriteLine("Unique to Auto- tight = \t" + uniqueToAuto.Count);
+            string exportedResultsFileName = autoResultsFile.Replace("_results.txt", "_auto_filteredByManualYES_results.txt");
+            SipperResultToLcmsFeatureExporter exporter = new SipperResultToLcmsFeatureExporter(exportedResultsFileName);
+            exporter.ExportResults(autoResultsFilteredForYesManual);
 
-            //var statsInfo = GetStatsData(problemResults);
+            exportedResultsFileName = autoResultsFile.Replace("_results.txt", "_auto_filteredByManualNO_results.txt");
+            exporter = new SipperResultToLcmsFeatureExporter(exportedResultsFileName);
+            exporter.ExportResults(autoResultsFilteredForNoManual);
 
-            //Console.WriteLine();
-            //Console.WriteLine(statsInfo);
+            exportedResultsFileName = autoResultsFile.Replace("_results.txt", "_auto_filteredByManualMAYBE_results.txt");
+            exporter = new SipperResultToLcmsFeatureExporter(exportedResultsFileName);
+            exporter.ExportResults(autoResultsFilteredForMaybeManual);
 
-            //intersectResults = f4FilteredResults.Select(p => p.TargetID).Intersect(manualResults.Select(p => p.TargetID)).ToList();
-            //uniqueToManual = manualResults.Select(p => p.TargetID).Except(f4FilteredResults.Select(p => p.TargetID)).ToList();
-            //uniqueToAuto = f4FilteredResults.Select(p => p.TargetID).Except(manualResults.Select(p => p.TargetID)).ToList();
-            //problemResults = f4FilteredResults.Where(r => uniqueToAuto.Contains(r.TargetID)).ToList();
-            //uniqueToManualResults = manualResults.Where(r => uniqueToManual.Contains(r.TargetID)).ToList();
 
-            //Console.WriteLine("Manual count= \t" + manualResults.Count);
-            //Console.WriteLine("Auto count= \t" + f4FilteredResults.Count);
-            //Console.WriteLine("Shared count = \t" + intersectResults.Count);
-            //Console.WriteLine("Unique to Manual = \t" + uniqueToManual.Count);
-            //Console.WriteLine("Unique to Auto = \t" + uniqueToAuto.Count);
 
-            //statsInfo = GetStatsData(problemResults);
-
-            //Console.WriteLine();
-            //Console.WriteLine(statsInfo);
-
-            //string exportedResultsFileName =
-            //       @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_ManualAnalysisOfDataset\Yellow_C13_070_23Mar10_Griffin_10-01-28_filtered_results.txt";
-
-            //SipperResultToLcmsFeatureExporter exporter = new SipperResultToLcmsFeatureExporter(exportedResultsFileName);
-            //exporter.ExportResults(problemResults);
 
         }
 
