@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using DeconTools.UnitTesting2;
 using DeconTools.Workflows.Backend.Core;
 using NUnit.Framework;
@@ -60,7 +62,7 @@ namespace Sipper.UnitTesting.ViewModelTests
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
 
             string testResultFile =
-                @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt";
+                @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Results\Yellow_C13_070_23Mar10_Griffin_10-01-28_temp_results.txt";
 
             string testParameterFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
@@ -71,8 +73,11 @@ namespace Sipper.UnitTesting.ViewModelTests
             viewModel.FileInputs.TargetsFilePath = testResultFile;
             viewModel.FileInputs.DatasetPath = testDatafile;
 
-            //viewModel.CurrentResult = viewModel.Results.First();
+            viewModel.LoadResults(testResultFile);
 
+            viewModel.CurrentResult = viewModel.Results.First(p => p.TargetID == 5555);
+            
+            Thread.Sleep(5000);  //need to wait for peaks to load.... 
             viewModel.ExecuteWorkflow();
 
             Assert.IsNotNull(viewModel.MassSpecXYData);
@@ -81,8 +86,17 @@ namespace Sipper.UnitTesting.ViewModelTests
             Assert.IsNotNull(viewModel.LabelDistributionXYData);
 
 
-            TestUtilities.DisplayXYValues(viewModel.LabelDistributionXYData);
+            //TestUtilities.DisplayXYValues(viewModel.MassSpecXYData);
 
+            Console.WriteLine("CurrentScanSet= " + viewModel.CurrentLCScan);
+
+            viewModel.NavigateToNextMS1MassSpectrum();
+
+            Console.WriteLine("After manual navigating... CurrentScanSet= " + viewModel.CurrentLCScan);
+
+            viewModel.NavigateToNextMS1MassSpectrum();
+
+            Console.WriteLine("After manual navigating... CurrentScanSet= " + viewModel.CurrentLCScan);
 
         }
 
