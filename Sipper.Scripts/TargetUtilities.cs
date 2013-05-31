@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using DeconTools.Backend.FileIO;
 using NUnit.Framework;
 
@@ -34,7 +31,7 @@ namespace Sipper.Scripts
 
             //
 
-            MassTagFromSqlDBImporter mtImporter = new MassTagFromSqlDBImporter(db, server, massTagIDs);
+            MassTagFromSqlDbImporter mtImporter = new MassTagFromSqlDbImporter(db, server, massTagIDs);
             var massTagsForReference = mtImporter.Import().TargetList;
 
 

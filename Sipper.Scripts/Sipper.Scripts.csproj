@@ -84,6 +84,7 @@
     <Compile Include="ASMS2012Scripts.cs" />
     <Compile Include="ChromatogramDisplayScripts.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="EricHotLakesScripts.cs" />
     <Compile Include="GordPaperScripts.cs" />
     <Compile Include="LCMSFeaturesHandlingScripts.cs" />
     <Compile Include="MassTagUtilities.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="SipperPaper\Script_OutputMassSpecImagesForLcmsFeatures.cs" />
     <Compile Include="SipperPaper\SipperFilters.cs" />
     <Compile Include="SipperPaper\SipperPaperScripts.cs" />
+    <Compile Include="SipperPaper\SipperResultWithProteinInfo.cs" />
     <Compile Include="SipperPaper\SupplFigureXX_TheorLabeledProfiles.cs" />
     <Compile Include="SipperResultUtilities.cs" />
     <Compile Include="SteinkePaperScripts.cs" />

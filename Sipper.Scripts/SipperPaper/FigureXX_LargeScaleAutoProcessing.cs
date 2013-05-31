@@ -4,12 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using DeconTools.Backend.FileIO;
+using DeconTools.Backend.Utilities;
 using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.Core;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 using GwsDMSUtilities;
 using NUnit.Framework;
+using Sipper.Model;
 
 namespace Sipper.Scripts.SipperPaper
 {
@@ -70,6 +72,8 @@ namespace Sipper.Scripts.SipperPaper
                 @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Results";
 
 
+            resultFolder = @"D:\Data\Sipper\HLP_Ana\Results";
+
 
             StringBuilder sb = new StringBuilder();
 
@@ -116,6 +120,258 @@ namespace Sipper.Scripts.SipperPaper
         }
 
 
+        [Test]
+        public void EditFastaSoItDoesntHaveCarriageReturns()
+        {
+            string fastaFile = @"D:\Data\Sipper\YSIP_High\MSGFResults\ID_002270_64B2CBBF - Copy.fasta";
+
+            string outputFile = fastaFile.Replace(".fasta", "_edited.fasta");
+
+            using (StreamReader reader = new StreamReader(fastaFile))
+            {
+                using (StreamWriter writer = new StreamWriter(outputFile))
+                {
+
+                    bool isFirstLine = true;
+
+                    while (reader.Peek() != -1)
+                    {
+                        string line = reader.ReadLine();
+
+                        if (string.IsNullOrEmpty(line)) continue;
+
+
+                        byte[] asciiBytes = Encoding.ASCII.GetBytes(line);
+
+                        var firstCharacterAscii = asciiBytes[0];
+
+
+
+                        if (firstCharacterAscii == 62)
+                        {
+                            if (!isFirstLine)
+                            {
+                                writer.WriteLine();
+                            }
+
+                            writer.WriteLine(line);
+
+                            isFirstLine = false;
+                        }
+                        else
+                        {
+                            writer.Write(line);   //notice -  no carriage return
+                        }
+
+                    }
+
+                }
+
+
+            }
+
+
+        }
+
+
+        [Test]
+        public void GetLabelIncorpStatsOnAllResults()
+        {
+            var datasetnames = SipperDatasetUtilities.GetDatasetNames().Where(p => p.Contains("Yellow_C13"));
+
+
+            //datasetnames = (from n in datasetnames where n.Contains("Yellow_C13_70") select n).ToList();
+
+
+            //string resultFolder =
+            //    @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Results\Results_2013_04_09";
+
+            string resultFolder =
+                @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Results\Results_2013_04_09";
+
+
+
+            StringBuilder sb = new StringBuilder();
+
+
+            List<SipperLcmsFeatureTargetedResultDTO> allResults = new List<SipperLcmsFeatureTargetedResultDTO>();
+
+
+            string fastaFile =
+                @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\ID_002270_64B2CBBF.fasta";
+            GwsDMSUtilities.FastaFileReader fastaFileReader = new FastaFileReader(fastaFile);
+
+            var fastaData = fastaFileReader.ImportFastaFile();
+
+            foreach (var datasetname in datasetnames)
+            {
+                string expectedResultFile = resultFolder + "\\" + datasetname + "_results.txt";
+
+                FileInfo fileInfo = new FileInfo(expectedResultFile);
+
+                sb.Append(datasetname);
+                sb.Append("\t");
+
+                if (fileInfo.Exists)
+                {
+
+                    SipperResultFromTextImporter importer = new SipperResultFromTextImporter(fileInfo.FullName);
+                    var results = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
+
+                    var tightFilterResults = SipperFilters.ApplyAutoValidationCodeF1TightFilter(results).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+
+                    int countTightFilterResults = tightFilterResults.Count(p => p.ValidationCode == ValidationCode.Yes);
+
+                    var looseFilteredResults = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(results).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+                    int countLooseFilter = looseFilteredResults.Count(p => p.ValidationCode == ValidationCode.Yes);
+
+
+                    allResults.AddRange(tightFilterResults);
+
+                    sb.Append(tightFilterResults.Count);
+                    sb.Append("\t");
+                    sb.Append(countLooseFilter);
+                }
+                else
+                {
+                    sb.Append("");
+
+                }
+                sb.Append(Environment.NewLine);
+
+
+            }
+            Console.WriteLine(sb.ToString());
+
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("------------label incorporation for all results -------------");
+
+
+
+            sb.Clear();
+
+            List<SipperResultWithProteinInfo> allResultsAndProteinInfo = new List<SipperResultWithProteinInfo>();
+
+            foreach (var r in allResults)
+            {
+
+                var fastaDataForCurrentResult = (from n in fastaData where n.Sequence.Contains(r.Code) select n).ToList();
+
+                foreach (var item in fastaDataForCurrentResult)
+                {
+
+
+                    var organismInfo = JvciPeptideInfo.Parse(item.SingleLineDescription);
+
+
+                    string organism = organismInfo.Organism ?? "";
+                    string proteinName = organismInfo.CommonName ?? "";
+                    string fibroNum = organismInfo.FibroNum ?? "";
+
+
+                    sb.Append(r.DatasetName + "\t" + r.TargetID + "\t" + r.Code + "\t" + r.PercentPeptideLabelled + "\t" + r.PercentCarbonsLabelled + "\t" + organism + "\t" + proteinName + "\t" + fibroNum + "\t" + item.SingleLineDescription + Environment.NewLine);
+
+
+                    SipperResultWithProteinInfo resultWithProteinInfo = new SipperResultWithProteinInfo();
+                    resultWithProteinInfo.DatasetName = r.DatasetName;
+                    resultWithProteinInfo.FeatureID = (int)r.TargetID;
+                    resultWithProteinInfo.FastaDesc = item.SingleLineDescription;
+                    resultWithProteinInfo.FibroAnno = fibroNum;
+                    resultWithProteinInfo.Organism = organism;
+                    resultWithProteinInfo.PercentIncorporation = r.PercentCarbonsLabelled;
+                    resultWithProteinInfo.PercentPeptideLabelled = r.PercentPeptideLabelled;
+                    resultWithProteinInfo.ProteinDesc = proteinName;
+                    resultWithProteinInfo.Sequence = r.Code;
+
+                    allResultsAndProteinInfo.Add(resultWithProteinInfo);
+
+                }
+            }
+
+            Console.WriteLine(sb.ToString());
+
+
+            List<string> organismList = allResultsAndProteinInfo.Select(p => p.Organism).Distinct().OrderBy(p => p).ToList();
+
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+
+            sb.Clear();
+
+
+
+            //Now, report protein-level results... will roll up to protein level
+
+            sb.Append(
+                "Organism\tProtein\tFastaIDs\tNumPeptides\tPeptideLabelPercent\tStdDevPeptideLabelPercent\tPercentIncorp\tStdDevPercentIncorp\n");
+            foreach (var organism in organismList)
+            {
+                string organism1 = organism;
+                var organismResults = allResultsAndProteinInfo.Where(p => p.Organism == organism1).ToList();
+
+                List<string> proteinList = organismResults.Select(p => p.ProteinDesc).Distinct().ToList();
+
+
+                foreach (var protein in proteinList)
+                {
+                    string protein1 = protein;
+                    var proteinResults = organismResults.Where(p => p.ProteinDesc == protein1).ToList();
+
+
+                    var fibroAnnoList = proteinResults.Select(p => p.FibroAnno).Distinct().OrderBy(p => p).ToList();
+
+                    string delimeter = "; ";
+                    var fibroAnnoString = fibroAnnoList.Select(i => i).Aggregate((i, j) => i + delimeter + j);
+
+
+
+                    List<string> peptideList = proteinResults.Select(p => p.Sequence).Distinct().ToList();
+                    List<double> peptidePercentVals = new List<double>();
+                    List<double> carbonIncorpVals = new List<double>();
+
+                    //peptide is found in multiple datasets. Need to roll these up to peptide level
+                    foreach (var peptide in peptideList)
+                    {
+                        string peptide1 = peptide;
+                        var peptideResults = proteinResults.Where(p => p.Sequence == peptide1).ToList();
+                        var percentPeptideVal = peptideResults.Average(p => p.PercentPeptideLabelled);
+                        var carbonIncorp = peptideResults.Average(p => p.PercentIncorporation);
+
+                        peptidePercentVals.Add(percentPeptideVal);
+                        carbonIncorpVals.Add(carbonIncorp);
+                    }
+
+
+                    double averagePercentPeptidesLabeled = peptidePercentVals.Average();
+                    double stdevPercentPeptidesLabeled = MathUtils.GetStDev(peptidePercentVals);
+
+                    double averageIncorp = carbonIncorpVals.Average();
+                    double stdevIncorp = MathUtils.GetStDev(carbonIncorpVals);
+
+                    int numVals = peptidePercentVals.Count;
+
+
+                    string stdevPeptideLabeledstring = double.IsNaN(stdevPercentPeptidesLabeled) ? "" : stdevPercentPeptidesLabeled.ToString("0.00");
+                    string stdevIncorpString = double.IsNaN(stdevIncorp) ? "" : stdevIncorp.ToString("0.00");
+
+                    sb.Append(organism + "\t" + protein + "\t" + fibroAnnoString + "\t" + numVals + "\t" + averagePercentPeptidesLabeled.ToString("0.00") + "\t" +
+                              stdevPeptideLabeledstring + "\t" + averageIncorp.ToString("0.00") + "\t" + stdevIncorpString + Environment.NewLine);
+
+                }
+            }
+
+            Console.WriteLine(sb.ToString());
+
+        }
+
+
+
+
+
 
         [Test]
         public void ExecuteSipperOnSpecificTargets()
@@ -148,14 +404,14 @@ namespace Sipper.Scripts.SipperPaper
             SipperWorkflowExecutor executor = new SipperWorkflowExecutor(parameters, testDataset);
 
             executor.Targets.TargetList = (from n in executor.Targets.TargetList where n.ID == testTarget select n).ToList();
-            
+
             executor.Execute();
 
 
 
         }
 
-        
+
 
 
 
@@ -195,7 +451,7 @@ namespace Sipper.Scripts.SipperPaper
 
                     foreach (var r in tightFilteredResults)
                     {
-                        sb.Append(r.DatasetName + "\t" + r.TargetID + "\t" + r.MatchedMassTagID + "\t" + r.Intensity + "\t" + r.FitScoreLabeledProfile.ToString("0.000") + "\t" +  r.PercentCarbonsLabelled.ToString("0.0") + "\t" + r.PercentPeptideLabelled.ToString("0.0") + "\n");
+                        sb.Append(r.DatasetName + "\t" + r.TargetID + "\t" + r.MatchedMassTagID + "\t" + r.Intensity + "\t" + r.FitScoreLabeledProfile.ToString("0.000") + "\t" + r.PercentCarbonsLabelled.ToString("0.0") + "\t" + r.PercentPeptideLabelled.ToString("0.0") + "\n");
 
                     }
 
@@ -289,14 +545,14 @@ namespace Sipper.Scripts.SipperPaper
             //enrichedPeptides = enrichedPeptides.Where(p => p.MultipleProteinCount == 0).ToList();
             //Script_GetAminoAcidFrequencies.DisplayAminoAcidFrequencies(enrichedPeptides.Select(p => p.Code));
 
-            
-            var allPeptides = infoExtractor.GetPeptideInfo(allMassTags, false,true);
+
+            var allPeptides = infoExtractor.GetPeptideInfo(allMassTags, false, true);
             string baseFolder = @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_largeScaleAutomatedAnalysis";
             string outputMassTagFilename = baseFolder + "\\" + "all_withProteinInfo_massTags.txt";
 
 
 
-           
+
 
 
 
