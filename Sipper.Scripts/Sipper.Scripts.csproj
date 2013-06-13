@@ -50,11 +50,10 @@
       <HintPath>..\..\DeconTools\DeconTools.Workflows\DeconTools.Workflows\bin\x86\Release\DeconTools.Workflows.dll</HintPath>
     </Reference>
     <Reference Include="GwsDMSUtilities">
-      <HintPath>..\..\GwsDMSUtilities\GwsDMSUtilities\bin\Debug\GwsDMSUtilities.dll</HintPath>
+      <HintPath>..\Library\GwsDMSUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="GWSGraphLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\GWSGraphLibrary\GWSGraphLibrary\bin\Debug\GWSGraphLibrary.dll</HintPath>
+    <Reference Include="GWSGraphLibrary">
+      <HintPath>..\Library\GWSGraphLibrary.dll</HintPath>
     </Reference>
     <Reference Include="IsoBlender">
       <HintPath>..\..\IsoBlender\IsoBlender\bin\Debug\IsoBlender.exe</HintPath>
@@ -64,7 +63,7 @@
       <HintPath>..\..\DeconTools\Library\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="MSFeatureStatsAnalysis">
-      <HintPath>..\..\DataAnalysis_scripts\MSFeatureStatsAnalysis\MSFeatureStatsAnalysis\bin\Debug\MSFeatureStatsAnalysis.dll</HintPath>
+      <HintPath>..\Library\MSFeatureStatsAnalysis.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

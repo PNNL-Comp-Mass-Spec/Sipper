@@ -169,9 +169,7 @@ namespace Sipper.ViewModel
 
             ExecutorParameters.TargetsFilePath = FileInputs.TargetsFilePath;
             ExecutorParameters.WorkflowParameterFile = FileInputs.ParameterFilePath;
-            ExecutorParameters.LoggingFolder = GetOutputFolderPath();
-            ExecutorParameters.ResultsFolder = GetOutputFolderPath();
-
+            ExecutorParameters.OutputFolderBase = GetOutputFolderPath();
 
 
 
