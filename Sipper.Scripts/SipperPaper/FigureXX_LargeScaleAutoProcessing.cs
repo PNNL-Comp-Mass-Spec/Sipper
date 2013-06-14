@@ -65,14 +65,14 @@ namespace Sipper.Scripts.SipperPaper
         {
             var datasetnames = SipperDatasetUtilities.GetDatasetNames();
 
-            //string resultFolder =
-            //    @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Results\Results_2013_04_09";
-
             string resultFolder =
-                @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Results";
+                @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Results\Results_2013_04_09";
+
+            //string resultFolder =
+            //    @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Results";
 
 
-            resultFolder = @"D:\Data\Sipper\HLP_Ana\Results";
+            //resultFolder = @"D:\Data\Sipper\HLP_Ana\Results";
 
 
             StringBuilder sb = new StringBuilder();

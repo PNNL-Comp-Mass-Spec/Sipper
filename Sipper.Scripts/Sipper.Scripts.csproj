@@ -102,6 +102,7 @@
     <Compile Include="SipperPaper\FigureXX_LILS score demo.cs" />
     <Compile Include="SipperPaper\FigureXX_LISR score demo.cs" />
     <Compile Include="SipperPaper\FigureXX_manualAnalysisOfDataset.cs" />
+    <Compile Include="SipperPaper\FigureXX_QuantificationAnalysis.cs" />
     <Compile Include="SipperPaper\FigureXX_theoreticalProfilesWithLinearAnalysis.cs" />
     <Compile Include="SipperPaper\FigureXX_TypicalProteinSIPData.cs" />
     <Compile Include="SipperPaper\FigureXX_UnidentifiedFeatures.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="SipperPaper\Script_GetAminoAcidFrequencies.cs" />
     <Compile Include="SipperPaper\Script_OptimizeFilters.cs" />
     <Compile Include="SipperPaper\Script_OutputMassSpecImagesForLcmsFeatures.cs" />
+    <Compile Include="SipperPaper\Script_proteinLevelInfoForAllResults.cs" />
     <Compile Include="SipperPaper\SipperFilters.cs" />
     <Compile Include="SipperPaper\SipperPaperScripts.cs" />
     <Compile Include="SipperPaper\SipperResultWithProteinInfo.cs" />
