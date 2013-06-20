@@ -120,6 +120,59 @@ namespace Sipper.Scripts.SipperPaper
         }
 
 
+
+        [Category("Paper")]
+        [Test]
+        public void GetStatsOnUnidentifiedTargets()
+        {
+            var datasetnames = SipperDatasetUtilities.GetDatasetNames();
+
+            string targetsFolder =
+                @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Targets\Unidentified";
+
+            //string resultFolder =
+            //    @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Results";
+
+
+            //resultFolder = @"D:\Data\Sipper\HLP_Ana\Results";
+
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var datasetname in datasetnames)
+            {
+                string expectedResultFile = targetsFolder + "\\" + datasetname + "_targets.txt";
+
+                FileInfo fileInfo = new FileInfo(expectedResultFile);
+
+                sb.Append(datasetname);
+                sb.Append("\t");
+
+                if (fileInfo.Exists)
+                {
+                    BasicIqTargetImporter iqTargetImporter = new BasicIqTargetImporter(expectedResultFile);
+                    var iqTargets = iqTargetImporter.Import();
+
+                    sb.Append(iqTargets.Count);
+
+                }
+                else
+                {
+                    sb.Append("");
+
+                }
+                sb.Append(Environment.NewLine);
+
+
+            }
+            Console.WriteLine(sb.ToString());
+
+
+        }
+
+
+
+
         [Test]
         public void EditFastaSoItDoesntHaveCarriageReturns()
         {
