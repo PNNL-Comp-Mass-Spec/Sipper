@@ -7,8 +7,15 @@
     Name="window" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:backend="clr-namespace:DeconTools.Workflows.Backend;assembly=DeconTools.Workflows"
-    xmlns:GraphGenerator="clr-namespace:GWSGraphLibrary.GraphGenerator;assembly=GWSGraphLibrary" d:DesignHeight="800" d:DesignWidth="1200" Closing="window_Closing">
+    xmlns:VM="clr-namespace:Sipper.ViewModel"
+    xmlns:GraphGenerator="clr-namespace:GWSGraphLibrary.GraphGenerator;assembly=GWSGraphLibrary"
+    xmlns:oxy="http://oxyplot.codeplex.com" d:DesignHeight="800" d:DesignWidth="1200" Closing="window_Closing">
 
+    
+    <Window.DataContext>
+        <VM:ManualViewingViewModel></VM:ManualViewingViewModel>
+    </Window.DataContext>
+    
     <Window.Resources>
         <ObjectDataProvider MethodName="GetValues"
                             ObjectType="{x:Type System:Enum}"
@@ -361,15 +368,9 @@
                         </Grid.RowDefinitions>
 
 
-             
-                        <WindowsFormsHost Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6,10,0,0"  Name="msGraphHost" HorizontalAlignment="Stretch" Background="White">
-                            <graphLib:MSGraphControl Name="msGraph">
+                <oxy:Plot Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1"  Margin="6,10,0,0"  Model="{Binding ObservedIsoPlot }" />
 
-                            </graphLib:MSGraphControl>
-                        </WindowsFormsHost>
-                   
-
-                
+                             
                 
                         <WrapPanel Margin="6,10,0,0"  Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
                             <WrapPanel.Resources>

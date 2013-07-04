@@ -46,18 +46,11 @@ namespace Sipper.View
 
             ViewModel.Run = project.Run;
 
-            setupGraphEventHandlers();
-
             updateGraphs();
 
         }
 
-        private void setupGraphEventHandlers()
-        {
-            var msgraphUserControl = (GWSGraphLibrary.MSGraphControl)(msGraphHost.Child);
-            msgraphUserControl.zedGraphControl1.ZoomEvent += zedGraphControl1_ZoomEvent;
-        }
-
+        
         private void ViewModel_AllDataLoadedAndReadyEvent(object sender, EventArgs e)
         {
             resultsTab.Focus();
@@ -156,13 +149,13 @@ namespace Sipper.View
         {
             var chromCorrUserControl = (GWSGraphLibrary.BasicGraphControl)(chromCorrGraphHost.Child);
             var chromUserControl = (GWSGraphLibrary.ChromGraphControl)(chromGraphHost.Child);
-            var msgraphUserControl = (GWSGraphLibrary.MSGraphControl)(msGraphHost.Child);
+           
+
             var theorMSUserControl = (GWSGraphLibrary.MSGraphControl)(theorMSGraphHost.Child);
             var labelDistribUserControl = (GWSGraphLibrary.BasicGraphControl)(labelDistributionGraphHost.Child);
 
             chromCorrUserControl.GraphPane.GraphObjList.Clear();
             chromUserControl.GraphPane.GraphObjList.Clear();
-            msgraphUserControl.GraphPane.GraphObjList.Clear();
             theorMSUserControl.GraphPane.GraphObjList.Clear();
             labelDistribUserControl.GraphPane.GraphObjList.Clear();
 
@@ -181,10 +174,6 @@ namespace Sipper.View
             chromCorrUserControl.zedGraphControl1.GraphPane.YAxis.Title.Text = "r2";
             chromCorrUserControl.zedGraphControl1.GraphPane.Title.FontSpec.Size = 9;
             chromCorrUserControl.zedGraphControl1.GraphPane.Title.Text = "Chrom correlation data";
-
-
-            msgraphUserControl.GraphPane.YAxis.Scale.MagAuto = false;
-            msgraphUserControl.GraphPane.YAxis.Scale.Mag = 0;
 
 
             chromUserControl.GraphPane.XAxis.Scale.IsUseTenPower = false;
@@ -251,7 +240,6 @@ namespace Sipper.View
             
             var chromCorrUserControl = (GWSGraphLibrary.BasicGraphControl)(chromCorrGraphHost.Child);
             var chromUserControl = (GWSGraphLibrary.ChromGraphControl)(chromGraphHost.Child);
-            var msgraphUserControl = (GWSGraphLibrary.MSGraphControl)(msGraphHost.Child);
             var labelDistribUserControl = (GWSGraphLibrary.BasicGraphControl)(labelDistributionGraphHost.Child);
             var theorMSUserControl = (GWSGraphLibrary.MSGraphControl)(theorMSGraphHost.Child);
 
@@ -259,7 +247,6 @@ namespace Sipper.View
 
             chromCorrUserControl.GraphPane.GraphObjList.Clear();
             chromUserControl.GraphPane.GraphObjList.Clear();
-            msgraphUserControl.GraphPane.GraphObjList.Clear();
             theorMSUserControl.GraphPane.GraphObjList.Clear();
             labelDistribUserControl.GraphPane.GraphObjList.Clear();
 
@@ -267,22 +254,7 @@ namespace Sipper.View
             if (ViewModel.MassSpecXYData != null)
             {
                 double ymax = ViewModel.GetMaxY(ViewModel.MassSpecXYData, ViewModel.MSGraphMinX, ViewModel.MSGraphMaxX);
-
-                msgraphUserControl.zedGraphControl1.GraphPane.CurveList.Clear();
-
-                msgraphUserControl.GenerateGraph(ViewModel.MassSpecXYData.Xvalues, ViewModel.MassSpecXYData.Yvalues, ViewModel.MSGraphMinX, ViewModel.MSGraphMaxX, 0, ymax);
-                var curve = msgraphUserControl.GraphPane.CurveList.FirstOrDefault();
-
-                if (curve != null)
-                {
-                    if (curve is LineItem)
-                    {
-                        ((LineItem)curve).Line.Width = 2;
-                    }
-                }
-
-                string graphTitle = "MS for scan " + ViewModel.CurrentLCScan;
-                msgraphUserControl.AddAnnotationRelativeAxis(graphTitle, 0.3, 0, 10);
+             
             }
 
             if (ViewModel.ChromXYData != null)
@@ -364,7 +336,6 @@ namespace Sipper.View
 
             }
             
-            msgraphUserControl.Refresh();
             chromUserControl.Refresh();
             theorMSUserControl.Refresh();
             labelDistribUserControl.Refresh();

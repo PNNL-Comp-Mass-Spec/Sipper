@@ -17,6 +17,8 @@ using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.Core;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
+using OxyPlot;
+using OxyPlot.Axes;
 using Sipper.Model;
 using Globals = DeconTools.Backend.Globals;
 
@@ -38,27 +40,27 @@ namespace Sipper.ViewModel
 
         #region Constructors
 
-
-        public ManualViewingViewModel(FileInputsInfo fileInputs = null)
+        public ManualViewingViewModel()
         {
-
+            FileInputs = new FileInputsViewModel();
             _resultRepositorySource = new TargetedResultRepository();
-
             Results = new ObservableCollection<SipperLcmsFeatureTargetedResultDTO>();
-
             var workflowParameters = new SipperTargetedWorkflowParameters();
-
             Workflow = new SipperTargetedWorkflow(workflowParameters);
-            FileInputs = new FileInputsViewModel(fileInputs);
+            ChromGraphXWindowWidth = 600;
+        }
 
+
+
+        public ManualViewingViewModel(FileInputsInfo fileInputs)
+            : this()
+        {
+            FileInputs = new FileInputsViewModel(fileInputs);
             FileInputs.PropertyChanged += FileInputsPropertyChanged;
 
-
             LoadParameters();
-
             UpdateGraphRelatedProperties();
 
-            ChromGraphXWindowWidth = 600;
         }
 
         public ManualViewingViewModel(TargetedResultRepository resultRepository, FileInputsInfo fileInputs = null)
@@ -210,7 +212,22 @@ namespace Sipper.ViewModel
 
         public ObservableCollection<SipperLcmsFeatureTargetedResultDTO> Results { get; set; }
 
+        public PlotModel TheorIsoPlot { get; set; }
 
+
+        private PlotModel _observedIsoPlot;
+        public PlotModel ObservedIsoPlot
+        {
+            get { return _observedIsoPlot; }
+            set
+            {
+                _observedIsoPlot = value;
+                OnPropertyChanged("ObservedIsoPlot");
+            }
+        }
+
+
+        public PlotModel XicPlot { get; set; }
 
 
         private SipperLcmsFeatureTargetedResultDTO _currentResult;
@@ -227,7 +244,7 @@ namespace Sipper.ViewModel
             }
         }
 
-
+       
         public string ChromTitleText
         {
             get
@@ -414,6 +431,7 @@ namespace Sipper.ViewModel
             }
         }
 
+        public float MSGraphMaxY { get; set; }
 
         public int MinLCScan
         {
@@ -422,7 +440,7 @@ namespace Sipper.ViewModel
                 if (Run == null) return 1;
                 return Run.MinLCScan;
             }
-       
+
         }
 
         public int MaxLCScan
@@ -430,9 +448,9 @@ namespace Sipper.ViewModel
             get
             {
                 if (Run == null) return 1;
-                return    Run.MaxLCScan;
+                return Run.MaxLCScan;
             }
-          
+
         }
 
 
@@ -481,6 +499,92 @@ namespace Sipper.ViewModel
         private ScanSetFactory _scanSetFactory = new ScanSetFactory();
 
         private int _currentLCScan;
+
+
+
+        private void CreateObservedIsotopicProfilePlot()
+        {
+
+
+            XYData xydata = new XYData();
+
+            if (Workflow.MassSpectrumXYData==null)
+            {
+                xydata.Xvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Xvalues;
+                xydata.Yvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Yvalues;
+            }
+            else
+            {
+                xydata.Xvalues = Workflow.MassSpectrumXYData.Xvalues;
+                xydata.Yvalues = Workflow.MassSpectrumXYData.Yvalues;
+
+                xydata= xydata.TrimData(Workflow.Result.Target.MZ - 100, Workflow.Result.Target.MZ + 100);
+            }
+
+            
+
+            if (Workflow.Result.IsotopicProfile != null)
+            {
+                MSGraphMaxY = Workflow.Result.IsotopicProfile.getMostIntensePeak().Height;
+            }
+            else
+            {
+                MSGraphMaxY = (float)xydata.getMaxY();
+            }
+
+            string msGraphTitle = Workflow.Result.Target.Code + "; m/z " +
+                                  Workflow.Result.Target.MZ.ToString("0.0000") + "; z=" +
+                                  Workflow.Result.Target.ChargeState;
+
+
+            PlotModel plotModel = new PlotModel(msGraphTitle);
+            plotModel.TitleFontSize = 14;
+            plotModel.Padding = new OxyThickness(0);
+            plotModel.PlotMargins = new OxyThickness(0);
+
+
+            var series = new OxyPlot.Series.LineSeries();
+            series.MarkerSize = 1;
+            series.Color = OxyColors.Black;
+            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            {
+                series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
+            }
+
+            var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
+            xAxis.Minimum = MSGraphMinX;
+            xAxis.Maximum = MSGraphMaxX;
+
+            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
+            yAxis.Minimum = 0;
+            yAxis.AbsoluteMinimum = 0;
+            yAxis.Maximum = MSGraphMaxY + MSGraphMaxY*0.05;
+            //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
+            //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
+            yAxis.AxisChanged += OnYAxisChange;
+
+            plotModel.Series.Add(series);
+            plotModel.Axes.Add(yAxis);
+            plotModel.Axes.Add(xAxis);
+
+            ObservedIsoPlot = plotModel;
+
+
+        }
+
+        private void OnYAxisChange(object sender, AxisChangedEventArgs e)
+        {
+            LinearAxis yAxis = sender as LinearAxis;
+
+            // No need to update anything if the minimum is already <= 0
+            if (yAxis.ActualMinimum <= 0) return;
+
+            // Set the minimum to 0 and refresh the plot
+            yAxis.Zoom(0, yAxis.ActualMaximum);
+            yAxis.PlotModel.RefreshPlot(true);
+        }
+
+
         public int CurrentLCScan
         {
             get { return _currentLCScan; }
@@ -534,11 +638,16 @@ namespace Sipper.ViewModel
 
             Workflow.Execute();
 
+            MSGraphMinX = Workflow.Result.Target.MZ - 1.75;
+            MSGraphMaxX = Workflow.Result.Target.MZ + MassSpecVisibleWindowWidth;
 
             if (Workflow.Success)
             {
                 TargetedWorkflowParameters workflowParameters = (TargetedWorkflowParameters)Workflow.WorkflowParameters;
                 CurrentLCScan = Workflow.Result.GetScanNum();
+                
+                CreateObservedIsotopicProfilePlot();
+
             }
 
 
@@ -580,6 +689,8 @@ namespace Sipper.ViewModel
             OnPropertyChanged("WorkflowStatusMessage");
             OnPropertyChanged("PeptideSequence");
         }
+
+        
 
         public void LoadRun(string fileOrFolderPath)
         {
@@ -1003,9 +1114,9 @@ namespace Sipper.ViewModel
             ChromXYData.Xvalues = Workflow.ChromatogramXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.ChromatogramXYData.Xvalues;
             ChromXYData.Yvalues = Workflow.ChromatogramXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.ChromatogramXYData.Yvalues;
 
-            MassSpecXYData = new XYData();
-            MassSpecXYData.Xvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Xvalues;
-            MassSpecXYData.Yvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Yvalues;
+            //MassSpecXYData = new XYData();
+            //MassSpecXYData.Xvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Xvalues;
+            //MassSpecXYData.Yvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Yvalues;
 
             ChromCorrXYData = new XYData();
             ChromCorrXYData.Xvalues = Workflow.ChromCorrelationRSquaredVals == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.ChromCorrelationRSquaredVals.Xvalues;
@@ -1037,16 +1148,16 @@ namespace Sipper.ViewModel
 
 
 
-            if (CurrentResult != null)
-            {
-                MSGraphMinX = CurrentResult.MonoMZ - 1.75;
-                MSGraphMaxX = CurrentResult.MonoMZ + MassSpecVisibleWindowWidth;
-            }
-            else
-            {
-                MSGraphMinX = MassSpecXYData.Xvalues.Min();
-                MSGraphMaxX = MassSpecXYData.Xvalues.Max();
-            }
+            //if (CurrentResult != null)
+            //{
+            //    MSGraphMinX = CurrentResult.MonoMZ - 1.75;
+            //    MSGraphMaxX = CurrentResult.MonoMZ + MassSpecVisibleWindowWidth;
+            //}
+            //else
+            //{
+            //    MSGraphMinX = MassSpecXYData.Xvalues.Min();
+            //    MSGraphMaxX = MassSpecXYData.Xvalues.Max();
+            //}
 
 
             if (CurrentResult != null)

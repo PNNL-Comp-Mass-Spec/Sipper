@@ -13,7 +13,13 @@ namespace Sipper.ViewModel
 
 
         #region Constructors
-        public FileInputsViewModel(FileInputsInfo fileInputsInfo)
+
+        public FileInputsViewModel()
+        {
+            _fileInputsInfo = new FileInputsInfo();
+        }
+        
+        public FileInputsViewModel(FileInputsInfo fileInputsInfo):this()
         {
             _fileInputsInfo = fileInputsInfo ?? new FileInputsInfo();
 

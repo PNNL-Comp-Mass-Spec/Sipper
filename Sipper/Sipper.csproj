@@ -49,6 +49,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DeconTools\Library\GWSGraphLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="OxyPlot">
+      <HintPath>..\Library\OxyPlot.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot.Pdf">
+      <HintPath>..\Library\OxyPlot.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot.Wpf">
+      <HintPath>..\Library\OxyPlot.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
