@@ -28,7 +28,11 @@ namespace Sipper.Scripts.SipperPaper
 
             string unidentifiedTargetsOutputFolder = @"F:\Yellowstone\IQTargets\UnidentifiedTargets";
 
-            string outputFolder = @"F:\Yellowstone\LcmsFeatureMassSpectraSamples";
+            string outputFolder = @"G:\Yellowstone\LcmsFeatureMassSpectraSamples";
+            outputFolder = @"G:\Yellowstone\LcmsFeatureMassSpectraSamples2";
+
+            if (!Directory.Exists(outputFolder)) Directory.CreateDirectory(outputFolder);
+
 
             //datasetNames = datasetNames.Where(p => p.Contains("Yellow_C13_070")).ToList();
 
@@ -49,12 +53,12 @@ namespace Sipper.Scripts.SipperPaper
             var unidentifiedLcmsFeatures = importer.Import().TargetList;
 
 
-            string umcFile = @"F:\Yellowstone\IQTargets\Yellow_C13_070_23Mar10_Griffin_10-01-28_UMCs.txt";
+            string umcFile = @"G:\Yellowstone\IQTargets\Yellow_C13_070_23Mar10_Griffin_10-01-28_UMCs.txt";
             DeconTools.Backend.Data.UMCFileImporter umcFileImporter = new UMCFileImporter(umcFile, '\t');
 
 
 
-            var idsIdentified = identifiedLcmsFeatures.Select(p => p.ID).ToList();
+            var idsIdentified = identifiedLcmsFeatures.Select(p => p.ID).ToList();  
             var idsUnidentified = unidentifiedLcmsFeatures.Select(p => p.ID).ToList();
 
 
@@ -132,7 +136,11 @@ namespace Sipper.Scripts.SipperPaper
 
                 if (!Directory.Exists(currentOutputFolder)) Directory.CreateDirectory(currentOutputFolder);
 
-                string outputImagename = currentOutputFolder + "\\" + "Feature" + filteredUmc.UMCIndex.ToString().PadLeft(5, '0') + "_scan"+ scan.PrimaryScanNumber + "_mz"+ targetMZ.ToString("0.000")  + "_MS.png";
+                string outputFilename = "Feature" + filteredUmc.UMCIndex.ToString().PadLeft(5, '0') + "_scan" + scan.PrimaryScanNumber + "_mz" + targetMZ.ToString("0.000") + "_MS.png";
+
+                string outputImagename = currentOutputFolder + "\\" + outputFilename;
+
+                graphGenerator.AddAnnotationRelativeAxis(outputFilename,0.3,0.02);
 
                 graphGenerator.SaveGraph(outputImagename);
 
