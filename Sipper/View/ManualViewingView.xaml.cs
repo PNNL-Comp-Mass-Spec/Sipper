@@ -45,9 +45,6 @@ namespace Sipper.View
             DataContext = ViewModel;
 
             ViewModel.Run = project.Run;
-
-            updateGraphs();
-
         }
 
         
@@ -129,217 +126,7 @@ namespace Sipper.View
             if (e.AddedItems.Count == 0) return;
 
             ViewModel.CurrentResult = (SipperLcmsFeatureTargetedResultDTO)e.AddedItems[0];
-
             ViewModel.ExecuteWorkflow();
-
-            try
-            {
-                updateGraphs();
-            }
-            catch (Exception exception)
-            {
-                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
-            }
-
-        }
-
-
-
-        private void setupGraphs()
-        {
-            var chromCorrUserControl = (GWSGraphLibrary.BasicGraphControl)(chromCorrGraphHost.Child);
-            var chromUserControl = (GWSGraphLibrary.ChromGraphControl)(chromGraphHost.Child);
-           
-
-            var theorMSUserControl = (GWSGraphLibrary.MSGraphControl)(theorMSGraphHost.Child);
-            var labelDistribUserControl = (GWSGraphLibrary.BasicGraphControl)(labelDistributionGraphHost.Child);
-
-            chromCorrUserControl.GraphPane.GraphObjList.Clear();
-            chromUserControl.GraphPane.GraphObjList.Clear();
-            theorMSUserControl.GraphPane.GraphObjList.Clear();
-            labelDistribUserControl.GraphPane.GraphObjList.Clear();
-
-
-            chromCorrUserControl.GraphPane.XAxis.Title.FontSpec.Size = 9;
-            chromCorrUserControl.GraphPane.YAxis.Title.FontSpec.Size = 9;
-            chromCorrUserControl.GraphPane.XAxis.Scale.FontSpec.Size = 9;
-            chromCorrUserControl.GraphPane.YAxis.Scale.FontSpec.Size = 9;
-
-            chromCorrUserControl.GraphPane.XAxis.MinorTic.Size = 0;
-
-            chromCorrUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Format = "0.#";
-            chromCorrUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Min = 0.5;
-            chromCorrUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Max = 1.1;
-            chromCorrUserControl.zedGraphControl1.GraphPane.XAxis.Title.Text = "peak num";
-            chromCorrUserControl.zedGraphControl1.GraphPane.YAxis.Title.Text = "r2";
-            chromCorrUserControl.zedGraphControl1.GraphPane.Title.FontSpec.Size = 9;
-            chromCorrUserControl.zedGraphControl1.GraphPane.Title.Text = "Chrom correlation data";
-
-
-            chromUserControl.GraphPane.XAxis.Scale.IsUseTenPower = false;
-            chromUserControl.GraphPane.XAxis.Scale.FormatAuto = false;
-            chromUserControl.GraphPane.Title.IsVisible = false;
-            chromUserControl.GraphPane.YAxis.Scale.MaxAuto = true;
-
-
-
-            theorMSUserControl.GraphPane.YAxis.Scale.Format = "0.0";
-
-            labelDistribUserControl.zedGraphControl1.GraphPane.Border.IsVisible = false;
-            labelDistribUserControl.zedGraphControl1.GraphPane.X2Axis.IsVisible = false;
-            labelDistribUserControl.zedGraphControl1.GraphPane.Y2Axis.IsVisible = false;
-            labelDistribUserControl.zedGraphControl1.GraphPane.XAxis.Scale.Format = "0";
-            labelDistribUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Mag = 0;
-            labelDistribUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Format = "0.000";
-            labelDistribUserControl.GraphPane.XAxis.Title.Text = "num labels";
-            labelDistribUserControl.GraphPane.YAxis.Title.Text = "freq";
-            labelDistribUserControl.GraphPane.Title.FontSpec.Size = 12;
-            labelDistribUserControl.GraphPane.Title.Text = "Label distribution";
-            labelDistribUserControl.zedGraphControl1.GraphPane.XAxis.MinorTic.Size = 0;
-            labelDistribUserControl.zedGraphControl1.GraphPane.XAxis.Scale.MajorStep = 1;
-            labelDistribUserControl.zedGraphControl1.GraphPane.YAxis.Scale.MajorStep = 0.05;
-            labelDistribUserControl.zedGraphControl1.GraphPane.YAxis.Scale.MinorStep = 0.01;
-
-
-            _graphsWereSetup = true;
-
-
-
-
-        }
-
-        void zedGraphControl1_ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
-        {
-
-            ViewModel.MSGraphMinX = sender.GraphPane.XAxis.Scale.Min;
-            ViewModel.MSGraphMaxX = sender.GraphPane.XAxis.Scale.Max;
-
-            var theorMSUserControl = (GWSGraphLibrary.MSGraphControl)(theorMSGraphHost.Child);
-            theorMSUserControl.zedGraphControl1.GraphPane.XAxis.Scale.Min = sender.GraphPane.XAxis.Scale.Min;
-            theorMSUserControl.zedGraphControl1.GraphPane.XAxis.Scale.Max = sender.GraphPane.XAxis.Scale.Max;
-
-
-            theorMSUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Min = 0;
-            theorMSUserControl.zedGraphControl1.GraphPane.YAxis.Scale.Max =
-                ViewModel.GetMaxY(ViewModel.TheorProfileXYData, sender.GraphPane.XAxis.Scale.Min, sender.GraphPane.XAxis.Scale.Max);
-
-
-            theorMSUserControl.zedGraphControl1.AxisChange();
-            theorMSUserControl.Refresh();
-
-        }
-
-
-        private void updateGraphs()
-        {
-            if (!_graphsWereSetup)
-            {
-                setupGraphs();
-            }
-            setupGraphs();
-            
-            var chromCorrUserControl = (GWSGraphLibrary.BasicGraphControl)(chromCorrGraphHost.Child);
-            var chromUserControl = (GWSGraphLibrary.ChromGraphControl)(chromGraphHost.Child);
-            var labelDistribUserControl = (GWSGraphLibrary.BasicGraphControl)(labelDistributionGraphHost.Child);
-            var theorMSUserControl = (GWSGraphLibrary.MSGraphControl)(theorMSGraphHost.Child);
-
-
-
-            chromCorrUserControl.GraphPane.GraphObjList.Clear();
-            chromUserControl.GraphPane.GraphObjList.Clear();
-            theorMSUserControl.GraphPane.GraphObjList.Clear();
-            labelDistribUserControl.GraphPane.GraphObjList.Clear();
-
-
-            if (ViewModel.MassSpecXYData != null)
-            {
-                double ymax = ViewModel.GetMaxY(ViewModel.MassSpecXYData, ViewModel.MSGraphMinX, ViewModel.MSGraphMaxX);
-             
-            }
-
-            if (ViewModel.ChromXYData != null)
-            {
-                chromUserControl.GenerateGraph(ViewModel.ChromXYData.Xvalues, ViewModel.ChromXYData.Yvalues, ViewModel.ChromGraphMinX, ViewModel.ChromGraphMaxX);
-            }
-
-
-            if (ViewModel.LabelDistributionXYData != null)
-            {
-                labelDistribUserControl.GraphPane.CurveList.Clear();
-                labelDistribUserControl.GraphPane.AddBar("", ViewModel.LabelDistributionXYData.Xvalues,
-                                                         ViewModel.LabelDistributionXYData.Yvalues, Color.DarkSlateGray);
-
-
-                double xMin, xMax, yMin, yMax;
-
-                GetMinMaxValuesForLabelDistributionGraph(ViewModel.LabelDistributionXYData, out xMin, out xMax, out yMin,
-                                                         out yMax);
-
-                labelDistribUserControl.GraphPane.YAxis.Scale.MaxAuto = false;
-
-                labelDistribUserControl.GraphPane.YAxis.Scale.Min = yMin;
-                labelDistribUserControl.GraphPane.YAxis.Scale.Max = yMax;
-                labelDistribUserControl.GraphPane.XAxis.Scale.Min = xMin;
-                labelDistribUserControl.GraphPane.XAxis.Scale.Max = xMax;
-
-                labelDistribUserControl.GraphPane.YAxis.Scale.MajorStepAuto=true;
-                labelDistribUserControl.GraphPane.YAxis.Scale.MinorStepAuto = true;
-                labelDistribUserControl.GraphPane.YAxis.Scale.MajorStep = yMax/10;
-
-                ////var curve = labelDistribUserControl.GraphPane.CurveList.FirstOrDefault();
-
-                //if (curve != null)
-                //{
-                //    if (curve is LineItem)
-                //    {
-                //        ((LineItem)curve).Line.Width = 2;
-                //    }
-                //}
-
-            }
-
-
-            if (ViewModel.TheorProfileXYData != null)
-            {
-                theorMSUserControl.GenerateGraph(ViewModel.TheorProfileXYData.Xvalues, ViewModel.TheorProfileXYData.Yvalues,
-                                              ViewModel.MSGraphMinX, ViewModel.MSGraphMaxX);
-
-                var curve = theorMSUserControl.GraphPane.CurveList.FirstOrDefault();
-
-                if (curve != null)
-                {
-                    if (curve is LineItem)
-                    {
-                        ((LineItem)curve).Line.Width = 2;
-                    }
-                }
-
-
-                string theorGraphTitle = "Theoretical MS - formula " + (ViewModel.CurrentResult == null ? "" : ViewModel.CurrentResult.EmpiricalFormula);
-                theorMSUserControl.AddAnnotationRelativeAxis(theorGraphTitle, 0.3, 0, 10);
-            }
-            else
-            {
-                double[] xvals = { 1, 2, 3, 4 };
-                double[] yvals = { 1, 1, 1, 1 };
-                theorMSUserControl.GenerateGraph(xvals, yvals, xvals.Min(), xvals.Max());
-            }
-
-
-
-
-
-            if (ViewModel.ChromCorrXYData != null)
-            {
-                chromCorrUserControl.GenerateGraph(ViewModel.ChromCorrXYData.Xvalues, ViewModel.ChromCorrXYData.Yvalues);
-                chromUserControl.AddAnnotationRelativeAxis(ViewModel.ChromTitleText, 0.5, 0, 10f);
-
-            }
-            
-            chromUserControl.Refresh();
-            theorMSUserControl.Refresh();
-            labelDistribUserControl.Refresh();
-            chromCorrUserControl.Refresh();
         }
 
         private void GetMinMaxValuesForLabelDistributionGraph(XYData labelDistributionXYData, out double xMin, out double xMax, out double yMin, out double yMax)
@@ -521,28 +308,13 @@ namespace Sipper.View
         private void btnNavigateUpClick(object sender, RoutedEventArgs e)
         {
             ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.ASCENDING);
-            try
-            {
-                updateGraphs();
-            }
-            catch (Exception exception)
-            {
-                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
-            }
+           
         }
 
 
         private void btnNavigateDownClick(object sender, RoutedEventArgs e)
         {
             ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.DESCENDING);
-            try
-            {
-                updateGraphs();
-            }
-            catch (Exception exception)
-            {
-                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
-            }
         }
 
         private void NavigateToSpecificScanEvent(object sender, RoutedEventArgs e)
@@ -551,6 +323,8 @@ namespace Sipper.View
             int currentScan;
              if (Int32.TryParse(txtCurrentScan.Text,out currentScan))
              {
+                 if (currentScan == ViewModel.CurrentLCScan) return;
+
                  ViewModel.CurrentLCScan = currentScan;
              }
              else
@@ -559,14 +333,7 @@ namespace Sipper.View
              }
 
             ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
-            try
-            {
-                updateGraphs();
-            }
-            catch (Exception exception)
-            {
-                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
-            }
+          
         }
 
         private void TextBox_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -579,35 +346,18 @@ namespace Sipper.View
             {
                 ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.DESCENDING);
             }
-
-            try
-            {
-                updateGraphs();
-            }
-            catch (Exception exception)
-            {
-                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
-            }
-
         }
 
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-
             slider.Minimum = ViewModel.MinLCScan;
             slider.Maximum = ViewModel.MaxLCScan;
-
+            
+            int sliderScan = (int) e.NewValue;
+            if (ViewModel.CurrentLCScan == sliderScan) return;
             ViewModel.CurrentLCScan = (int)e.NewValue;
-
             ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
-            try
-            {
-                updateGraphs();
-            }
-            catch (Exception exception)
-            {
-                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
-            }
+         
         }
 
         private void MsGraphMinMouseWheelEvent(object sender, MouseWheelEventArgs e)
@@ -621,14 +371,7 @@ namespace Sipper.View
                 ViewModel.MSGraphMinX = ViewModel.MSGraphMinX - 1;
             }
 
-            try
-            {
-                updateGraphs();
-            }
-            catch (Exception exception)
-            {
-                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
-            }
+           
         }
 
 
@@ -642,15 +385,7 @@ namespace Sipper.View
             {
                 ViewModel.MSGraphMaxX = ViewModel.MSGraphMaxX - 1;
             }
-
-            try
-            {
-                updateGraphs();
-            }
-            catch (Exception exception)
-            {
-                ViewModel.GeneralStatusMessage = exception.Message + "\t" + exception.StackTrace;
-            }
+           
         }
       
 

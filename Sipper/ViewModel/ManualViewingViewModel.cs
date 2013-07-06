@@ -212,7 +212,16 @@ namespace Sipper.ViewModel
 
         public ObservableCollection<SipperLcmsFeatureTargetedResultDTO> Results { get; set; }
 
-        public PlotModel TheorIsoPlot { get; set; }
+        private PlotModel _theorIsoPlot;
+        public PlotModel TheorIsoPlot
+        {
+            get { return _theorIsoPlot; }
+            set
+            {
+                _theorIsoPlot = value;
+                OnPropertyChanged("TheorIsoPlot");
+            }
+        }
 
 
         private PlotModel _observedIsoPlot;
@@ -227,8 +236,30 @@ namespace Sipper.ViewModel
         }
 
 
-        public PlotModel XicPlot { get; set; }
+        private PlotModel _chromatogramPlot;
+        public PlotModel ChromatogramPlot
+        {
+            get { return _chromatogramPlot; }
+            set
+            {
+                _chromatogramPlot = value;
+                OnPropertyChanged("ChromatogramPlot");
+            }
+        }
 
+        private PlotModel _chromCorrelationPlot;
+        public PlotModel ChromCorrelationPlot
+        {
+            get
+            {
+                return _chromCorrelationPlot;
+            }
+            set
+            {
+                _chromCorrelationPlot = value;
+                OnPropertyChanged("ChromCorrelationPlot");
+            }
+        }
 
         private SipperLcmsFeatureTargetedResultDTO _currentResult;
         public SipperLcmsFeatureTargetedResultDTO CurrentResult
@@ -244,7 +275,7 @@ namespace Sipper.ViewModel
             }
         }
 
-       
+
         public string ChromTitleText
         {
             get
@@ -502,76 +533,6 @@ namespace Sipper.ViewModel
 
 
 
-        private void CreateObservedIsotopicProfilePlot()
-        {
-
-
-            XYData xydata = new XYData();
-
-            if (Workflow.MassSpectrumXYData==null)
-            {
-                xydata.Xvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Xvalues;
-                xydata.Yvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Yvalues;
-            }
-            else
-            {
-                xydata.Xvalues = Workflow.MassSpectrumXYData.Xvalues;
-                xydata.Yvalues = Workflow.MassSpectrumXYData.Yvalues;
-
-                xydata= xydata.TrimData(Workflow.Result.Target.MZ - 100, Workflow.Result.Target.MZ + 100);
-            }
-
-            
-
-            if (Workflow.Result.IsotopicProfile != null)
-            {
-                MSGraphMaxY = Workflow.Result.IsotopicProfile.getMostIntensePeak().Height;
-            }
-            else
-            {
-                MSGraphMaxY = (float)xydata.getMaxY();
-            }
-
-            string msGraphTitle = Workflow.Result.Target.Code + "; m/z " +
-                                  Workflow.Result.Target.MZ.ToString("0.0000") + "; z=" +
-                                  Workflow.Result.Target.ChargeState;
-
-
-            PlotModel plotModel = new PlotModel(msGraphTitle);
-            plotModel.TitleFontSize = 14;
-            plotModel.Padding = new OxyThickness(0);
-            plotModel.PlotMargins = new OxyThickness(0);
-
-
-            var series = new OxyPlot.Series.LineSeries();
-            series.MarkerSize = 1;
-            series.Color = OxyColors.Black;
-            for (int i = 0; i < xydata.Xvalues.Length; i++)
-            {
-                series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
-            }
-
-            var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
-            xAxis.Minimum = MSGraphMinX;
-            xAxis.Maximum = MSGraphMaxX;
-
-            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
-            yAxis.Minimum = 0;
-            yAxis.AbsoluteMinimum = 0;
-            yAxis.Maximum = MSGraphMaxY + MSGraphMaxY*0.05;
-            //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
-            //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
-            yAxis.AxisChanged += OnYAxisChange;
-
-            plotModel.Series.Add(series);
-            plotModel.Axes.Add(yAxis);
-            plotModel.Axes.Add(xAxis);
-
-            ObservedIsoPlot = plotModel;
-
-
-        }
-
         private void OnYAxisChange(object sender, AxisChangedEventArgs e)
         {
             LinearAxis yAxis = sender as LinearAxis;
@@ -601,21 +562,19 @@ namespace Sipper.ViewModel
 
             if (Workflow == null) return;
 
-            TargetedWorkflowParameters workflowParameters = (TargetedWorkflowParameters)Workflow.WorkflowParameters;
+            var workflowParameters = (TargetedWorkflowParameters)Workflow.WorkflowParameters;
 
-
-
-            int nextPossibleMS;
+            int nextPossibleMs;
             if (selectionMode == Globals.ScanSelectionMode.DESCENDING)
             {
-                nextPossibleMS = CurrentLCScan - 1;
+                nextPossibleMs = CurrentLCScan - 1;
             }
             else
             {
-                nextPossibleMS = CurrentLCScan + 1;
+                nextPossibleMs = CurrentLCScan + 1;
             }
 
-            CurrentLCScan = Run.GetClosestMSScan(nextPossibleMS, selectionMode);
+            CurrentLCScan = Run.GetClosestMSScan(nextPossibleMs, selectionMode);
 
             if (_msGenerator == null)
             {
@@ -627,7 +586,12 @@ namespace Sipper.ViewModel
             var currentScanSet = _scanSetFactory.CreateScanSet(Run, CurrentLCScan, workflowParameters.NumMSScansToSum);
             MassSpecXYData = _msGenerator.GenerateMS(Run, currentScanSet);
 
-
+            if (MassSpecXYData!=null)
+            {
+                MassSpecXYData = MassSpecXYData.TrimData(MSGraphMinX - 20, MSGraphMaxX + 20);
+            }
+            
+            CreateMSPlotForScanByScanAnalysis(currentScanSet);
         }
 
         public void ExecuteWorkflow()
@@ -641,20 +605,225 @@ namespace Sipper.ViewModel
             MSGraphMinX = Workflow.Result.Target.MZ - 1.75;
             MSGraphMaxX = Workflow.Result.Target.MZ + MassSpecVisibleWindowWidth;
 
+            CreateChromatogramPlot();
+            CreateTheorIsotopicProfilePlot();
+            CreateChromCorrPlot();
+            CreateObservedIsotopicProfilePlot();
+
             if (Workflow.Success)
             {
                 TargetedWorkflowParameters workflowParameters = (TargetedWorkflowParameters)Workflow.WorkflowParameters;
                 CurrentLCScan = Workflow.Result.GetScanNum();
-                
-                CreateObservedIsotopicProfilePlot();
-
             }
+
 
 
             UpdateGraphRelatedProperties();
 
-            var theorProfileAligned = Workflow.Result.Target.IsotopicProfile.CloneIsotopicProfile();
 
+
+            OnPropertyChanged("WorkflowStatusMessage");
+            OnPropertyChanged("PeptideSequence");
+        }
+
+        private void CreateChromatogramPlot()
+        {
+            var centerScan = Workflow.Result.Target.ScanLCTarget;
+            ChromGraphMinX = centerScan - ChromGraphXWindowWidth / 2;
+            ChromGraphMaxX = centerScan + ChromGraphXWindowWidth / 2;
+
+            XYData xydata = new XYData();
+            if (Workflow.ChromatogramXYData == null)
+            {
+                xydata.Xvalues = Workflow.ChromatogramXYData == null ? new double[] { 1, Run.MaxLCScan } : Workflow.ChromatogramXYData.Xvalues;
+                xydata.Yvalues = Workflow.ChromatogramXYData == null ? new double[] { 0, 0 } : Workflow.ChromatogramXYData.Yvalues;
+            }
+            else
+            {
+                xydata.Xvalues = Workflow.ChromatogramXYData.Xvalues;
+                xydata.Yvalues = Workflow.ChromatogramXYData.Yvalues;
+            }
+
+            string graphTitle = "TargetID=" + Workflow.Result.Target.ID + "; m/z " +
+                                  Workflow.Result.Target.MZ.ToString("0.0000") + "; z=" +
+                                  Workflow.Result.Target.ChargeState;
+
+
+            PlotModel plotModel = new PlotModel(graphTitle);
+            plotModel.TitleFontSize = 11;
+            plotModel.Padding = new OxyThickness(0);
+            plotModel.PlotMargins = new OxyThickness(0);
+            plotModel.PlotAreaBorderThickness = 0;
+
+            var series = new OxyPlot.Series.LineSeries();
+            series.MarkerSize = 1;
+            series.Color = OxyColors.Black;
+            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            {
+                series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
+            }
+
+            var xAxis = new LinearAxis(AxisPosition.Bottom, "scan");
+            xAxis.Minimum = ChromGraphMinX;
+            xAxis.Maximum = ChromGraphMaxX;
+
+            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
+            yAxis.Minimum = 0;
+            yAxis.AbsoluteMinimum = 0;
+
+
+            var maxY = xydata.getMaxY();
+            yAxis.Maximum = maxY + maxY * 0.05;
+            yAxis.AxisChanged += OnYAxisChange;
+
+            xAxis.AxislineStyle = LineStyle.Solid;
+            xAxis.AxislineThickness = 1;
+            yAxis.AxislineStyle = LineStyle.Solid;
+            yAxis.AxislineThickness = 1;
+
+
+            plotModel.Series.Add(series);
+            plotModel.Axes.Add(yAxis);
+            plotModel.Axes.Add(xAxis);
+
+            ChromatogramPlot = plotModel;
+        }
+
+
+        private void CreateMSPlotForScanByScanAnalysis(ScanSet scanSet)
+        {
+            XYData xydata = new XYData();
+            xydata.Xvalues = MassSpecXYData == null ? new double[] { 400, 1500 } : MassSpecXYData.Xvalues;
+            xydata.Yvalues = MassSpecXYData == null ? new double[] { 0, 0 } : MassSpecXYData.Yvalues;
+
+            string msGraphTitle = "Observed MS - Scan: " + scanSet;
+
+            MSGraphMaxY = (float)xydata.getMaxY(MSGraphMinX,MSGraphMaxX);
+
+
+            PlotModel plotModel = new PlotModel(msGraphTitle);
+            plotModel.TitleFontSize = 11;
+            plotModel.Padding = new OxyThickness(0);
+            plotModel.PlotMargins = new OxyThickness(0);
+            plotModel.PlotAreaBorderThickness = 0;
+
+
+
+            var series = new OxyPlot.Series.LineSeries();
+            series.MarkerSize = 1;
+            series.Color = OxyColors.Black;
+            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            {
+                series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
+            }
+
+            var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
+            xAxis.Minimum = MSGraphMinX;
+            xAxis.Maximum = MSGraphMaxX;
+
+            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
+            yAxis.Minimum = 0;
+            yAxis.AbsoluteMinimum = 0;
+            yAxis.Maximum = MSGraphMaxY + MSGraphMaxY * 0.05;
+            //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
+            //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
+            yAxis.AxisChanged += OnYAxisChange;
+
+
+
+            xAxis.AxislineStyle = LineStyle.Solid;
+            xAxis.AxislineThickness = 1;
+            yAxis.AxislineStyle = LineStyle.Solid;
+            yAxis.AxislineThickness = 1;
+
+            plotModel.Series.Add(series);
+            plotModel.Axes.Add(yAxis);
+            plotModel.Axes.Add(xAxis);
+
+            ObservedIsoPlot = plotModel;
+
+
+        }
+
+
+        private void CreateObservedIsotopicProfilePlot()
+        {
+            XYData xydata = new XYData();
+
+            if (Workflow.MassSpectrumXYData == null)
+            {
+                xydata.Xvalues = Workflow.MassSpectrumXYData == null ? new double[] { 400, 1500 } : Workflow.MassSpectrumXYData.Xvalues;
+                xydata.Yvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 0 } : Workflow.MassSpectrumXYData.Yvalues;
+            }
+            else
+            {
+                xydata.Xvalues = Workflow.MassSpectrumXYData.Xvalues;
+                xydata.Yvalues = Workflow.MassSpectrumXYData.Yvalues;
+
+                xydata = xydata.TrimData(Workflow.Result.Target.MZ - 100, Workflow.Result.Target.MZ + 100);
+            }
+
+            if (Workflow.Result.IsotopicProfile != null)
+            {
+                MSGraphMaxY = Workflow.Result.IsotopicProfile.getMostIntensePeak().Height;
+            }
+            else
+            {
+                MSGraphMaxY = (float)xydata.getMaxY();
+            }
+
+            string msGraphTitle = Workflow.Result.Target.Code + "; m/z " +
+                                  Workflow.Result.Target.MZ.ToString("0.0000") + "; z=" +
+                                  Workflow.Result.Target.ChargeState;
+
+
+            PlotModel plotModel = new PlotModel(msGraphTitle);
+            plotModel.TitleFontSize = 11;
+            plotModel.Padding = new OxyThickness(0);
+            plotModel.PlotMargins = new OxyThickness(0);
+            plotModel.PlotAreaBorderThickness = 0;
+
+
+
+            var series = new OxyPlot.Series.LineSeries();
+            series.MarkerSize = 1;
+            series.Color = OxyColors.Black;
+            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            {
+                series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
+            }
+
+            var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
+            xAxis.Minimum = MSGraphMinX;
+            xAxis.Maximum = MSGraphMaxX;
+
+            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
+            yAxis.Minimum = 0;
+            yAxis.AbsoluteMinimum = 0;
+            yAxis.Maximum = MSGraphMaxY + MSGraphMaxY * 0.05;
+            //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
+            //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
+            yAxis.AxisChanged += OnYAxisChange;
+
+
+
+            xAxis.AxislineStyle = LineStyle.Solid;
+            xAxis.AxislineThickness = 1;
+            yAxis.AxislineStyle = LineStyle.Solid;
+            yAxis.AxislineThickness = 1;
+
+            plotModel.Series.Add(series);
+            plotModel.Axes.Add(yAxis);
+            plotModel.Axes.Add(xAxis);
+
+            ObservedIsoPlot = plotModel;
+
+
+        }
+
+        private void CreateTheorIsotopicProfilePlot()
+        {
+            var theorProfileAligned = Workflow.Result.Target.IsotopicProfile.CloneIsotopicProfile();
             double fwhm;
             if (Workflow.Result.IsotopicProfile != null)
             {
@@ -669,28 +838,137 @@ namespace Sipper.ViewModel
                 else
                 {
                     SubtractedMassSpecXYData = new XYData
-                                                   {
-                                                       Xvalues = new double[] { 400, 500, 600 },
-                                                       Yvalues = new double[] { 0, 0, 0 }
-                                                   };
+                    {
+                        Xvalues = new double[] { 400, 500, 600 },
+                        Yvalues = new double[] { 0, 0, 0 }
+                    };
                 }
-
-
-
             }
             else
             {
                 fwhm = DefaultMSPeakWidth;
             }
 
-
             TheorProfileXYData = TheorXYDataCalculationUtilities.GetTheoreticalIsotopicProfileXYData(Workflow.Result.Target.IsotopicProfile, fwhm);
 
-            OnPropertyChanged("WorkflowStatusMessage");
-            OnPropertyChanged("PeptideSequence");
+            XYData xydata = new XYData();
+            xydata.Xvalues = TheorProfileXYData.Xvalues;
+            xydata.Yvalues = TheorProfileXYData.Yvalues;
+
+
+
+            string msGraphTitle = "Theoretical MS - m/z " +
+                                  Workflow.Result.Target.MZ.ToString("0.0000") + "; z=" +
+                                  Workflow.Result.Target.ChargeState;
+
+
+            PlotModel plotModel = new PlotModel(msGraphTitle);
+            plotModel.TitleFontSize = 11;
+            plotModel.Padding = new OxyThickness(0);
+
+
+            plotModel.PlotMargins = new OxyThickness(50, 0, 0, 0);
+            plotModel.PlotAreaBorderThickness = 0;
+
+            var series = new OxyPlot.Series.LineSeries();
+            series.MarkerSize = 1;
+            series.Color = OxyColors.Black;
+            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            {
+                series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
+            }
+
+            var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
+            xAxis.Minimum = MSGraphMinX;
+            xAxis.Maximum = MSGraphMaxX;
+
+            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
+            yAxis.Minimum = 0;
+            yAxis.AbsoluteMinimum = 0;
+            yAxis.Maximum = 1.05;
+            yAxis.AbsoluteMaximum = 1.05;
+            //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
+            //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
+            yAxis.AxisChanged += OnYAxisChange;
+
+            xAxis.AxislineStyle = LineStyle.Solid;
+            xAxis.AxislineThickness = 1;
+            yAxis.AxislineStyle = LineStyle.Solid;
+            yAxis.AxislineThickness = 1;
+
+
+            plotModel.Series.Add(series);
+            plotModel.Axes.Add(yAxis);
+            plotModel.Axes.Add(xAxis);
+
+
+            TheorIsoPlot = plotModel;
+
+
         }
 
-        
+        private void CreateChromCorrPlot()
+        {
+            ChromCorrXYData = new XYData();
+            ChromCorrXYData.Xvalues = Workflow.ChromCorrelationRSquaredVals == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.ChromCorrelationRSquaredVals.Xvalues;
+            ChromCorrXYData.Yvalues = Workflow.ChromCorrelationRSquaredVals == null ? new double[] { 0, 0, 0, 0, 0 } : Workflow.ChromCorrelationRSquaredVals.Yvalues;
+
+            XYData xydata = new XYData();
+            xydata.Xvalues = ChromCorrXYData.Xvalues;
+            xydata.Yvalues = ChromCorrXYData.Yvalues;
+
+            string graphTitle = "Isotope peak correlation data";
+            PlotModel plotModel = new PlotModel(graphTitle);
+            plotModel.TitleFontSize = 10;
+            plotModel.Padding = new OxyThickness(0);
+            plotModel.PlotMargins = new OxyThickness(0);
+            plotModel.PlotAreaBorderThickness = 0;
+
+            var series = new OxyPlot.Series.LineSeries();
+            series.MarkerSize = 3;
+            series.MarkerType = MarkerType.Square;
+            series.MarkerStrokeThickness = 1;
+            series.MarkerFill = OxyColors.DarkRed;
+            series.MarkerStroke = OxyColors.Black;
+
+
+            series.Color = OxyColors.Black;
+            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            {
+                series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
+            }
+
+            var xAxis = new LinearAxis(AxisPosition.Bottom, "isotopic peak #");
+
+
+            var yAxis = new LinearAxis(AxisPosition.Left, "correlation");
+
+            xAxis.AxislineStyle = LineStyle.Solid;
+            xAxis.AxislineThickness = 1;
+            yAxis.AxislineStyle = LineStyle.Solid;
+            yAxis.AxislineThickness = 1;
+
+
+            xAxis.FontSize = 8;
+            xAxis.MajorStep = 1;
+            xAxis.ShowMinorTicks = false;
+            xAxis.MinorStep = 1;
+            yAxis.FontSize = 8;
+
+            yAxis.Minimum = 0;
+            yAxis.AbsoluteMinimum = 0;
+            yAxis.Maximum = 1.02;
+            yAxis.AbsoluteMaximum = 1.02;
+            yAxis.AxisChanged += OnYAxisChange;
+
+            plotModel.Series.Add(series);
+            plotModel.Axes.Add(yAxis);
+            plotModel.Axes.Add(xAxis);
+
+            ChromCorrelationPlot = plotModel;
+        }
+
+
 
         public void LoadRun(string fileOrFolderPath)
         {
@@ -1118,9 +1396,6 @@ namespace Sipper.ViewModel
             //MassSpecXYData.Xvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Xvalues;
             //MassSpecXYData.Yvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Yvalues;
 
-            ChromCorrXYData = new XYData();
-            ChromCorrXYData.Xvalues = Workflow.ChromCorrelationRSquaredVals == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.ChromCorrelationRSquaredVals.Xvalues;
-            ChromCorrXYData.Yvalues = Workflow.ChromCorrelationRSquaredVals == null ? new double[] { 0, 0, 0, 0, 0 } : Workflow.ChromCorrelationRSquaredVals.Yvalues;
 
             RatioXYData = new XYData();
             RatioXYData.Xvalues = Workflow.RatioVals == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.RatioVals.Xvalues;
@@ -1160,16 +1435,7 @@ namespace Sipper.ViewModel
             //}
 
 
-            if (CurrentResult != null)
-            {
-                ChromGraphMinX = CurrentResult.ScanLC - ChromGraphXWindowWidth / 2;
-                ChromGraphMaxX = CurrentResult.ScanLC + ChromGraphXWindowWidth / 2;
-            }
-            else
-            {
-                ChromGraphMinX = ChromXYData.Xvalues.Min();
-                ChromGraphMaxX = ChromXYData.Xvalues.Max();
-            }
+
 
 
 
