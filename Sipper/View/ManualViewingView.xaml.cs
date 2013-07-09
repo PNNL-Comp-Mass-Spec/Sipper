@@ -51,15 +51,11 @@ namespace Sipper.View
         private void ViewModel_AllDataLoadedAndReadyEvent(object sender, EventArgs e)
         {
             resultsTab.Focus();
-
-
             resultsListView.SelectedItem = resultsListView.Items[0];
 
         }
 
-
         public ManualViewingViewModel ViewModel { get; set; }
-
 
         private void FileDropHandler(object sender, DragEventArgs e)
         {

@@ -16,6 +16,7 @@ using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 using GwsDMSUtilities;
 using NUnit.Framework;
+using Sipper.Model;
 
 namespace Sipper.Scripts.SipperPaper
 {
@@ -40,8 +41,12 @@ namespace Sipper.Scripts.SipperPaper
             importer = new SipperResultFromTextImporter(averagineResultsFile);
             var averagineResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-            var originalTightFilter = SipperFilters.ApplyAutoValidationCodeF1TightFilter(originalResults).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
-            var averagineTightFilter = SipperFilters.ApplyAveragineBasedTightFilter(averagineResults).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+            SipperFilters.ApplyAutoValidationCodeF1TightFilter(originalResults);
+            SipperFilters.ApplyAveragineBasedTightFilter(averagineResults);
+
+
+            var originalTightFilter = originalResults.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+            var averagineTightFilter = averagineResults.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
             var intersectResults = originalTightFilter.Select(p => p.TargetID).Intersect(averagineTightFilter.Select(p => p.TargetID)).ToList();
             var uniqueToOriginal = originalTightFilter.Select(p => p.TargetID).Except(averagineTightFilter.Select(p => p.TargetID)).ToList();
             var uniqueToAveragine = averagineTightFilter.Select(p => p.TargetID).Except(originalTightFilter.Select(p => p.TargetID)).ToList();
@@ -52,8 +57,11 @@ namespace Sipper.Scripts.SipperPaper
             Console.WriteLine("Unique to original = \t" + uniqueToOriginal.Count);
             Console.WriteLine("Unique to averagine = \t" + uniqueToAveragine.Count);
 
-            var originalLooseFilter = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(originalResults).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
-            var averagineLooseFilter = SipperFilters.ApplyAveragineBasedLooseFilter(averagineResults).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+            SipperFilters.ApplyAutoValidationCodeF2LooseFilter(originalResults);
+            SipperFilters.ApplyAveragineBasedLooseFilter(averagineResults);
+
+            var originalLooseFilter = originalResults.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+            var averagineLooseFilter = averagineResults.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
             var intersectResultsLooseFilter = originalLooseFilter.Select(p => p.TargetID).Intersect(averagineLooseFilter.Select(p => p.TargetID)).ToList();
             uniqueToOriginal = originalLooseFilter.Select(p => p.TargetID).Except(averagineLooseFilter.Select(p => p.TargetID)).ToList();
             uniqueToAveragine = averagineLooseFilter.Select(p => p.TargetID).Except(originalLooseFilter.Select(p => p.TargetID)).ToList();
@@ -256,30 +264,30 @@ namespace Sipper.Scripts.SipperPaper
               @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_UnidentifiedFeatures\Study1 - effect of using averagine";
 
             //Get all auto results and Tag the validation code
-            List<SipperLcmsFeatureTargetedResultDTO> autoYES = SipperFilters.ApplyAutoValidationCodeF1TightFilter(autoResults);
+            SipperFilters.ApplyAutoValidationCodeF1TightFilter(autoResults);
 
-            var autoYESIDsOnly = autoYES.Where(p => p.ValidationCode == ValidationCode.Yes).Select(p => p.TargetID).ToList();
+            var autoYESIDsOnly = autoResults.Where(p => p.ValidationCode == ValidationCode.Yes).Select(p => p.TargetID).ToList();
             var manualResultsWithAutoYES = (from n in originalResults where autoYESIDsOnly.Contains(n.TargetID) select n).ToList();
             string outputFile = outputFolder + "\\" + Path.GetFileName(autoResultsFile).Replace("_results.txt", "_manual_But_AutoTightYES_results.txt");
             var exporter = new SipperResultToLcmsFeatureExporter(outputFile);
             exporter.ExportResults(manualResultsWithAutoYES);
 
-            autoYES = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(autoResults);
-            autoYESIDsOnly = autoYES.Where(p => p.ValidationCode == ValidationCode.Yes).Select(p => p.TargetID).ToList();
+            SipperFilters.ApplyAutoValidationCodeF2LooseFilter(autoResults);
+            autoYESIDsOnly = autoResults.Where(p => p.ValidationCode == ValidationCode.Yes).Select(p => p.TargetID).ToList();
             manualResultsWithAutoYES = (from n in originalResults where autoYESIDsOnly.Contains(n.TargetID) select n).ToList();
             outputFile = outputFolder + "\\" + Path.GetFileName(autoResultsFile).Replace("_results.txt", "_manual_But_AutoLooseYES_results.txt");
             exporter = new SipperResultToLcmsFeatureExporter(outputFile);
             exporter.ExportResults(manualResultsWithAutoYES);
 
-            autoYES = SipperFilters.ApplyAutoValidationCodeF1TightFilter(autoResults);
+            SipperFilters.ApplyAutoValidationCodeF1TightFilter(autoResults);
             outputFile = outputFolder + "\\" + Path.GetFileName(autoResultsFile).Replace("_results.txt", "_Auto_TightFilter_results.txt");
             exporter = new SipperResultToLcmsFeatureExporter(outputFile);
-            exporter.ExportResults(autoYES);
+            exporter.ExportResults(autoResults);
 
-            autoYES = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(autoResults);
+            SipperFilters.ApplyAutoValidationCodeF2LooseFilter(autoResults);
             outputFile = outputFolder + "\\" + Path.GetFileName(autoResultsFile).Replace("_results.txt", "_Auto_LooseFilter_results.txt");
             exporter = new SipperResultToLcmsFeatureExporter(outputFile);
-            exporter.ExportResults(autoYES);
+            exporter.ExportResults(autoResults);
 
         }
 
@@ -303,14 +311,17 @@ namespace Sipper.Scripts.SipperPaper
             importer = new SipperResultFromTextImporter(unidentifiedResultsFilename);
             var unidentifiedResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
+            SipperFilters.ApplyAutoValidationCodeF1TightFilter(identifiedResults);
+            var tightFilteredIdentified = identifiedResults.Where(n => n.ValidationCode == ValidationCode.Yes).ToList();
 
-            var tightFilteredIdentified = SipperFilters.ApplyAutoValidationCodeF1TightFilter(identifiedResults).Where(n => n.ValidationCode == ValidationCode.Yes).ToList();
+            SipperFilters.ApplyAutoValidationCodeF2LooseFilter(identifiedResults);
+            var looseFilteredIdentified = identifiedResults.Where(n => n.ValidationCode == ValidationCode.Yes).ToList();
 
-            var looseFilteredIdentified = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(identifiedResults).Where(n => n.ValidationCode == ValidationCode.Yes).ToList();
+            SipperFilters.ApplyAveragineBasedTightFilter(unidentifiedResults);
+            var tightFilteredUnIdentified =identifiedResults.Where(n => n.ValidationCode == ValidationCode.Yes).ToList();
 
-            var tightFilteredUnIdentified = SipperFilters.ApplyAveragineBasedTightFilter(unidentifiedResults).Where(n => n.ValidationCode == ValidationCode.Yes).ToList();
-
-            var looseFilteredUnIdentified = SipperFilters.ApplyAveragineBasedLooseFilter(unidentifiedResults).Where(n => n.ValidationCode == ValidationCode.Yes).ToList();
+            SipperFilters.ApplyAveragineBasedLooseFilter(unidentifiedResults);
+            var looseFilteredUnIdentified = identifiedResults.Where(n => n.ValidationCode == ValidationCode.Yes).ToList();
 
 
             Console.WriteLine("Total identified results=\t" + identifiedResults.Count);
@@ -519,8 +530,8 @@ namespace Sipper.Scripts.SipperPaper
             var unidentifiedResults = (from n in nonRedundantOriginalResults where n.MatchedMassTagID <= 0 select n).ToList();
             var identifiedResults = (from n in nonRedundantOriginalResults where n.MatchedMassTagID > 0 select n).ToList();
 
-            unidentifiedResults = SipperFilters.ApplyAveragineBasedTightFilter(unidentifiedResults);
-            identifiedResults = SipperFilters.ApplyAutoValidationCodeF1TightFilter(identifiedResults);
+            SipperFilters.ApplyAveragineBasedTightFilter(unidentifiedResults);
+            SipperFilters.ApplyAutoValidationCodeF1TightFilter(identifiedResults);
 
             SipperResultToLcmsFeatureExporter exporter = new SipperResultToLcmsFeatureExporter(outputResultsFilename);
             exporter.ExportResults(unidentifiedResults);

@@ -6,6 +6,7 @@ using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 using NUnit.Framework;
+using Sipper.Model;
 using Sipper.Scripts.SipperPaper;
 
 namespace Sipper.Scripts
@@ -41,16 +42,17 @@ namespace Sipper.Scripts
                     SipperResultFromTextImporter importer = new SipperResultFromTextImporter(fileInfo.FullName);
                     var results = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-                    var tightFilterResults = SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
+                    SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
 
-                    int countTightFilterResults = tightFilterResults.Count(p => p.ValidationCode == ValidationCode.Yes);
+                    int countTightFilterResults = results.Count(p => p.ValidationCode == ValidationCode.Yes);
 
-                    var looseFilteredResults = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(results);
+                    SipperFilters.ApplyAutoValidationCodeF2LooseFilter(results);
+                    var looseFilteredResults = results;
                     int countLooseFilter = looseFilteredResults.Count(p => p.ValidationCode == ValidationCode.Yes);
 
                     sb.Append(fileInfo.Name);
                     sb.Append("\t");
-                    sb.Append(tightFilterResults.Count);
+                    sb.Append(results.Count);
                     sb.Append("\t");
                     sb.Append(countTightFilterResults);
                     sb.Append("\t");
@@ -91,9 +93,11 @@ namespace Sipper.Scripts
                     SipperResultFromTextImporter importer = new SipperResultFromTextImporter(fileInfo.FullName);
                     var results = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-                    var tightFilterResults = SipperFilters.ApplyAutoValidationCodeF1TightFilter(results).Where(p=>p.ValidationCode==ValidationCode.Yes).ToList();
+                    SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
+                    var tightFilterResults =results.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
 
-                    var looseFilterResults = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(results).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+                    SipperFilters.ApplyAutoValidationCodeF2LooseFilter(results);
+                    var looseFilterResults = results.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
 
                     string outputFilename = fileInfo.FullName.Replace("_results.txt", "_tightFilter_results.txt");
 

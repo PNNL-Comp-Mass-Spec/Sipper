@@ -5,6 +5,7 @@ using System.Text;
 using DeconTools.Backend.Core;
 using DeconTools.Backend.Core.Results;
 using DeconTools.Backend.Utilities;
+using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.Core;
 using DeconTools.Workflows.Backend.Results;
 using Sipper.Model;
@@ -16,12 +17,10 @@ namespace Sipper.ViewModel
 
     public class AutoprocessorViewModel : ViewModelBase
     {
-        private SipperWorkflowExecutor _sipperWorkflowExecutor;
+        private BasicTargetedWorkflowExecutor _workflowExecutor;
         private SipperTargetedWorkflow _sipperTargetedWorkflow;
 
         private BackgroundWorker _backgroundWorker;
-
-        private ResultFilterCriteria _filterCriteria;
 
         private TargetedResultRepository _resultRepository;
 
@@ -31,11 +30,14 @@ namespace Sipper.ViewModel
         public AutoprocessorViewModel(FileInputsInfo fileInputs = null)
         {
             ExecutorParameters = new SipperWorkflowExecutorParameters();
+            ExecutorParameters.TargetType = Globals.TargetType.LcmsFeature;
+
+
             SipperWorkflowParameters = new SipperTargetedWorkflowParameters();
             StatusCollection = new ObservableCollection<string>();
             ProgressInfos = new ObservableCollection<TargetedWorkflowExecutorProgressInfo>();
 
-            _filterCriteria = ResultFilterCriteria.GetFilterScheme1();
+            
             FileInputs = new FileInputsViewModel(fileInputs);
         }
 
@@ -51,9 +53,9 @@ namespace Sipper.ViewModel
 
         #region Properties
 
-        public FileInputsViewModel FileInputs { get; private set; }
-
         public Run Run { get; set; }
+
+        public FileInputsViewModel FileInputs { get; private set; }
 
         public SipperWorkflowExecutorParameters ExecutorParameters { get; set; }
 
@@ -118,19 +120,19 @@ namespace Sipper.ViewModel
             }
         }
 
-        private TargetedWorkflowExecutorProgressInfo _currentResult;
+        private TargetedWorkflowExecutorProgressInfo _currentResultInfo;
         
 
-        public TargetedWorkflowExecutorProgressInfo CurrentResult
+        public TargetedWorkflowExecutorProgressInfo CurrentResultInfo
         {
             get
             {
-                return _currentResult;
+                return _currentResultInfo;
             }
             set
             {
-                _currentResult = value;
-                OnPropertyChanged("CurrentResult");
+                _currentResultInfo = value;
+                OnPropertyChanged("CurrentResultInfo");
                 OnCurrentResultUpdated(new EventArgs());
             }
         }
@@ -171,9 +173,6 @@ namespace Sipper.ViewModel
             ExecutorParameters.WorkflowParameterFile = FileInputs.ParameterFilePath;
             ExecutorParameters.OutputFolderBase = GetOutputFolderPath();
 
-
-
-
             _backgroundWorker = new BackgroundWorker();
             _backgroundWorker.WorkerSupportsCancellation = true;
             _backgroundWorker.WorkerReportsProgress = true;
@@ -200,17 +199,22 @@ namespace Sipper.ViewModel
         void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = (BackgroundWorker)sender;
-            _sipperWorkflowExecutor = new SipperWorkflowExecutor(ExecutorParameters, FileInputs.DatasetPath, worker);
-            _sipperWorkflowExecutor.Execute();
+           
+            _workflowExecutor = new BasicTargetedWorkflowExecutor(ExecutorParameters, FileInputs.DatasetPath, worker);
+            _workflowExecutor.RunIsDisposed = false;
+
+            _workflowExecutor.Execute();
 
             _resultRepository.Results.Clear();
-            _resultRepository.Results.AddRange(_sipperWorkflowExecutor.GetResults());
+            _resultRepository.Results.AddRange(_workflowExecutor.GetResults());
 
 
             if (worker.CancellationPending)
             {
                 e.Cancel = true;
             }
+
+            Run = _workflowExecutor.Run;
 
         }
 
@@ -261,9 +265,12 @@ namespace Sipper.ViewModel
                     }
                     else
                     {
-                        CurrentResult = info;
-
-                        if (ResultPassesFilterCriteria(CurrentResult.Result as SipperLcmsTargetedResult))
+                        CurrentResultInfo = info;
+                        
+                        //HACK: need to convert to the other Sipper result type in order to use the filter. 
+                        var sipperResult = (SipperLcmsFeatureTargetedResultDTO)ResultDTOFactory.CreateTargetedResult(CurrentResultInfo.Result);
+                        SipperFilters.ApplyAutoValidationCodeF2LooseFilter(sipperResult);
+                        if (sipperResult.ValidationCode==ValidationCode.Yes)
                         {
                             ProgressInfos.Add(info);
                         }
@@ -283,32 +290,15 @@ namespace Sipper.ViewModel
 
         }
 
-        private bool ResultPassesFilterCriteria(SipperLcmsTargetedResult sipperResult)
-        {
-
-            if (sipperResult.InterferenceScore >= _filterCriteria.IScoreMin
-                && sipperResult.InterferenceScore <= _filterCriteria.IScoreMax
-                && sipperResult.AreaUnderRatioCurveRevised >= _filterCriteria.AreaUnderRatioCurveRevisedMin
-                && sipperResult.ChromCorrelationAverage >= _filterCriteria.ChromCorrelationAverageMin
-                && sipperResult.ChromCorrelationMedian >= _filterCriteria.ChromCorrelationMedianMin
-                && sipperResult.RSquaredValForRatioCurve >= _filterCriteria.RSquaredValForRatioCurveMin
-                )
-            {
-                return true;
-            }
-            return false;
-        }
-
-
-
+   
         public string GetInfoStringOnCurrentResult()
         {
-            if (CurrentResult == null || CurrentResult.Result == null)
+            if (CurrentResultInfo == null || CurrentResultInfo.Result == null)
             {
                 return String.Empty;
             }
 
-            var sipperResult = (SipperLcmsTargetedResult)CurrentResult.Result;
+            var sipperResult = (SipperLcmsTargetedResult)CurrentResultInfo.Result;
 
             StringBuilder stringBuilder = new StringBuilder();
 

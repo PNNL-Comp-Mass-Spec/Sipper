@@ -92,14 +92,14 @@ namespace Sipper.Scripts.SipperPaper
                     SipperResultFromTextImporter importer = new SipperResultFromTextImporter(fileInfo.FullName);
                     var results = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-                    var tightFilterResults = SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
+                    SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
 
-                    int countTightFilterResults = tightFilterResults.Count(p => p.ValidationCode == ValidationCode.Yes);
+                    int countTightFilterResults = results.Count(p => p.ValidationCode == ValidationCode.Yes);
 
-                    var looseFilteredResults = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(results);
-                    int countLooseFilter = looseFilteredResults.Count(p => p.ValidationCode == ValidationCode.Yes);
+                    SipperFilters.ApplyAutoValidationCodeF2LooseFilter(results);
+                    int countLooseFilter = results.Count(p => p.ValidationCode == ValidationCode.Yes);
 
-                    sb.Append(tightFilterResults.Count);
+                    sb.Append(results.Count);
                     sb.Append("\t");
                     sb.Append(countTightFilterResults);
                     sb.Append("\t");
@@ -271,11 +271,13 @@ namespace Sipper.Scripts.SipperPaper
                     SipperResultFromTextImporter importer = new SipperResultFromTextImporter(fileInfo.FullName);
                     var results = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-                    var tightFilterResults = SipperFilters.ApplyAutoValidationCodeF1TightFilter(results).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+                    SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
+                    var tightFilterResults = results.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
 
                     int countTightFilterResults = tightFilterResults.Count(p => p.ValidationCode == ValidationCode.Yes);
 
-                    var looseFilteredResults = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(results).Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
+                    SipperFilters.ApplyAutoValidationCodeF2LooseFilter(results);
+                    var looseFilteredResults = results.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
                     int countLooseFilter = looseFilteredResults.Count(p => p.ValidationCode == ValidationCode.Yes);
 
 
@@ -493,9 +495,8 @@ namespace Sipper.Scripts.SipperPaper
                     SipperResultFromTextImporter importer = new SipperResultFromTextImporter(fileInfo.FullName);
                     var results = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-                    var tightFilteredResults =
-                        SipperFilters.ApplyAutoValidationCodeF1TightFilter(results).Where(p => p.ValidationCode == ValidationCode.Yes).
-                            ToList();
+                    SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
+                    var tightFilteredResults = results.Where(p => p.ValidationCode == ValidationCode.Yes).ToList();
 
 
                     var massTagIDs = tightFilteredResults.Select(p => p.MatchedMassTagID).ToList();
@@ -577,7 +578,9 @@ namespace Sipper.Scripts.SipperPaper
                 {
                     SipperResultFromTextImporter importer = new SipperResultFromTextImporter(fileInfo.FullName);
                     var results = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
-                    var tightFilteredResults = SipperFilters.ApplyAutoValidationCodeF1TightFilter(results).Where(p => p.ValidationCode == ValidationCode.Yes);
+
+                    SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
+                    var tightFilteredResults = results.Where(p => p.ValidationCode == ValidationCode.Yes);
 
                     var enrichedMassTagIDs = tightFilteredResults.Select(p => p.MatchedMassTagID).ToList();
                     var massTagIDs = results.Select(p => p.MatchedMassTagID).ToList();

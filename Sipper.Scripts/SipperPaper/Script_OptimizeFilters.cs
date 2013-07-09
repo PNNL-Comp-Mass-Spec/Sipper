@@ -9,6 +9,7 @@ using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 using NUnit.Framework;
+using Sipper.Model;
 
 namespace Sipper.Scripts.SipperPaper
 {
@@ -203,30 +204,30 @@ namespace Sipper.Scripts.SipperPaper
               @"C:\Users\d3x720\Documents\PNNL\My_Manuscripts\Manuscript08_Sipper_C13\Data_Analysis\FigureXX_AutomatedAnalysisOfDataset";
 
             //Get all auto results and Tag the validation code
-            List<SipperLcmsFeatureTargetedResultDTO> autoYES = SipperFilters.ApplyAutoValidationCodeF1TightFilter(autoResults);
+            SipperFilters.ApplyAutoValidationCodeF1TightFilter(autoResults);
 
-            var autoYESIDsOnly = autoYES.Where(p => p.ValidationCode == ValidationCode.Yes).Select(p => p.TargetID).ToList();
+            var autoYESIDsOnly = autoResults.Where(p => p.ValidationCode == ValidationCode.Yes).Select(p => p.TargetID).ToList();
             var manualResultsWithAutoYES = (from n in originalResults where autoYESIDsOnly.Contains(n.TargetID) select n).ToList();
             string outputFile = outputFolder + "\\" + Path.GetFileName(autoResultsFile).Replace("_results.txt", "_manual_But_AutoTightYES_results.txt");
             var exporter = new SipperResultToLcmsFeatureExporter(outputFile);
             exporter.ExportResults(manualResultsWithAutoYES);
 
-            autoYES = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(autoResults);
-            autoYESIDsOnly = autoYES.Where(p => p.ValidationCode == ValidationCode.Yes).Select(p => p.TargetID).ToList();
+            SipperFilters.ApplyAutoValidationCodeF2LooseFilter(autoResults);
+            autoYESIDsOnly = autoResults.Where(p => p.ValidationCode == ValidationCode.Yes).Select(p => p.TargetID).ToList();
             manualResultsWithAutoYES = (from n in originalResults where autoYESIDsOnly.Contains(n.TargetID) select n).ToList();
             outputFile = outputFolder + "\\" + Path.GetFileName(autoResultsFile).Replace("_results.txt", "_manual_But_AutoLooseYES_results.txt");
             exporter = new SipperResultToLcmsFeatureExporter(outputFile);
             exporter.ExportResults(manualResultsWithAutoYES);
 
-            autoYES =SipperFilters.ApplyAutoValidationCodeF1TightFilter(autoResults);
+            SipperFilters.ApplyAutoValidationCodeF1TightFilter(autoResults);
             outputFile = outputFolder + "\\" + Path.GetFileName(autoResultsFile).Replace("_results.txt", "_Auto_TightFilter_results.txt");
             exporter = new SipperResultToLcmsFeatureExporter(outputFile);
-            exporter.ExportResults(autoYES);
+            exporter.ExportResults(autoResults);
 
-            autoYES = SipperFilters.ApplyAutoValidationCodeF2LooseFilter(autoResults);
+            SipperFilters.ApplyAutoValidationCodeF2LooseFilter(autoResults);
             outputFile = outputFolder + "\\" + Path.GetFileName(autoResultsFile).Replace("_results.txt", "_Auto_LooseFilter_results.txt");
             exporter = new SipperResultToLcmsFeatureExporter(outputFile);
-            exporter.ExportResults(autoYES);
+            exporter.ExportResults(autoResults);
             
         }
    
@@ -339,9 +340,9 @@ namespace Sipper.Scripts.SipperPaper
 
 
             //Get all auto results and Tag the validation code
-            List<SipperLcmsFeatureTargetedResultDTO> autoYES = SipperFilters.ApplyAutoValidationCodeF1TightFilter(autoResults);
+            SipperFilters.ApplyAutoValidationCodeF1TightFilter(autoResults);
 
-            var autoYESIDsOnly = autoYES.Where(p => p.ValidationCode == ValidationCode.Yes).Select(p => p.TargetID).ToList();
+            var autoYESIDsOnly = autoResults.Where(p => p.ValidationCode == ValidationCode.Yes).Select(p => p.TargetID).ToList();
 
             var manualResultsWithAutoYES = (from n in originalResults where autoYESIDsOnly.Contains(n.TargetID) select n).ToList();
 

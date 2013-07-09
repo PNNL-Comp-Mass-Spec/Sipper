@@ -7,6 +7,7 @@ using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 using NUnit.Framework;
+using Sipper.Model;
 
 namespace Sipper.Scripts.SipperPaper
 {
@@ -73,12 +74,12 @@ namespace Sipper.Scripts.SipperPaper
                     SipperResultFromTextImporter importer = new SipperResultFromTextImporter(fileInfo.FullName);
                     var results = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-                    var tightFilterResults = SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
+                    SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
 
-                    var numDetected = tightFilterResults.Count(p => p.ValidationCode == ValidationCode.Yes);
+                    var numDetected = results.Count(p => p.ValidationCode == ValidationCode.Yes);
                     sb.Append(numDetected);
 
-                    allResults.AddRange(tightFilterResults);
+                    allResults.AddRange(results);
                 }
                 else
                 {

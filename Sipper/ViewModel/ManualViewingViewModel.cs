@@ -48,6 +48,8 @@ namespace Sipper.ViewModel
             var workflowParameters = new SipperTargetedWorkflowParameters();
             Workflow = new SipperTargetedWorkflow(workflowParameters);
             ChromGraphXWindowWidth = 600;
+
+            ShowFileAndResultsList = true;
         }
 
 
@@ -487,10 +489,6 @@ namespace Sipper.ViewModel
 
         public XYData LabelDistributionXYData { get; set; }
 
-
-
-
-
         private XYData _theorProfileXYData;
 
 
@@ -519,7 +517,14 @@ namespace Sipper.ViewModel
             }
         }
 
-
+        private bool _showFileAndResultsList;
+        public bool ShowFileAndResultsList
+        {
+            get { return _showFileAndResultsList; }
+            set { _showFileAndResultsList = value;
+            OnPropertyChanged("ShowFileAndResultsList");
+            }
+        }
 
         #endregion
 
@@ -596,6 +601,8 @@ namespace Sipper.ViewModel
 
         public void ExecuteWorkflow()
         {
+            if (Run == null) return;
+
             GeneralStatusMessage = ".......";
 
             SetCurrentWorkflowTarget(CurrentResult);
@@ -618,7 +625,7 @@ namespace Sipper.ViewModel
 
 
 
-            UpdateGraphRelatedProperties();
+            //UpdateGraphRelatedProperties();
 
 
 
@@ -1423,10 +1430,10 @@ namespace Sipper.ViewModel
 
 
 
-            //if (CurrentResult != null)
+            //if (CurrentResultInfo != null)
             //{
-            //    MSGraphMinX = CurrentResult.MonoMZ - 1.75;
-            //    MSGraphMaxX = CurrentResult.MonoMZ + MassSpecVisibleWindowWidth;
+            //    MSGraphMinX = CurrentResultInfo.MonoMZ - 1.75;
+            //    MSGraphMaxX = CurrentResultInfo.MonoMZ + MassSpecVisibleWindowWidth;
             //}
             //else
             //{

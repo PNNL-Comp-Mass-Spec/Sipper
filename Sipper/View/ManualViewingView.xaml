@@ -112,65 +112,71 @@
         </WrapPanel>
       </Grid>
     </Border>
-    <Border Name="leftBorder" DockPanel.Dock="Left" Background="White">
+
+        <Expander ExpandDirection="Right" IsExpanded="{Binding ShowFileAndResultsList}" >
+            <Border Name="leftBorder" DockPanel.Dock="Left" Background="White">
       <TabControl MaxWidth="500" Margin="6" Background="White" BorderBrush="SlateGray">
         <TabItem AllowDrop="True" Drop="FileDropHandler" Name="setupTab" Header="Setup" Background="#A9C8D8E5"
                  BorderBrush="SlateGray" BorderThickness="20">
-          <StackPanel>
+         
+            <StackPanel>
 
-            <StackPanel.Resources>
-              <Style TargetType="TextBox">
-                <Setter Property="Control.BorderBrush" Value="SlateGray" />
-                <Setter Property="Control.VerticalAlignment" Value="Stretch" />
-                <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
-                <Setter Property="Control.Margin" Value="3,3,3,3" />
-                <Setter Property="Control.Height" Value="60" />
-                <Setter Property="Control.AllowDrop" Value="True" />
-                <Setter Property="TextBox.TextWrapping" Value="Wrap" />
+              <StackPanel.Resources>
+                <Style TargetType="TextBox">
+                  <Setter Property="Control.BorderBrush" Value="SlateGray" />
+                  <Setter Property="Control.VerticalAlignment" Value="Stretch" />
+                  <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+                  <Setter Property="Control.Margin" Value="3,3,3,3" />
+                  <Setter Property="Control.Height" Value="60" />
+                  <Setter Property="Control.AllowDrop" Value="True" />
+                  <Setter Property="TextBox.TextWrapping" Value="Wrap" />
 
-              </Style>
-            </StackPanel.Resources>
+                </Style>
+              </StackPanel.Resources>
 
 
-            <StackPanel Orientation="Horizontal">
-              <Label Name="label1" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Center"
-                     Content="Raw data file" Padding="0" />
-              <TextBlock Name="runStatusLabel" HorizontalAlignment="Left" Margin="25,10,0,0" VerticalAlignment="Center"
-                         Foreground="#FFA77171" Padding="0" Text="{Binding Path=DataContext.RunStatusText, ElementName=window, Mode=OneWay}" />
+              <StackPanel Orientation="Horizontal">
+                <Label Name="label1" HorizontalAlignment="Left" Margin="6,10,0,0"
+                       VerticalAlignment="Center" Content="Raw data file" Padding="0" />
+                <TextBlock Name="runStatusLabel" HorizontalAlignment="Left" Margin="25,10,0,0"
+                           VerticalAlignment="Center" Foreground="#FFA77171" Padding="0"
+                           Text="{Binding Path=DataContext.RunStatusText, ElementName=window, Mode=OneWay}" />
+              </StackPanel>
+              <TextBox PreviewDragOver="TextBox_PreviewDragOver"
+                       Text="{Binding Path=DataContext.DatasetFilePath, ElementName=window, Mode=TwoWay}"></TextBox>
+              <ProgressBar Margin="5,0" Height="8" Foreground="#FF4DB146" Background="#FFE5EDFC"
+                           BorderBrush="#FF436396" Value="{Binding Path=DataContext.PercentProgress, ElementName=window, Mode=OneWay}"></ProgressBar>
+
+              <StackPanel Orientation="Horizontal">
+                <Label Name="label2" HorizontalAlignment="Left" Margin="6,10,0,0"
+                       VerticalAlignment="Center" Content="Parameter file" Padding="0" />
+                <TextBlock Name="parameterFileStatusLabel" HorizontalAlignment="Left" Margin="6,10,0,0"
+                           VerticalAlignment="Center" Foreground="#FFA77171" Padding="0"
+                           Text="{Binding Path=DataContext.ParameterFileStatusText, ElementName=window, Mode=OneWay}" />
+              </StackPanel>
+              <TextBox PreviewDragOver="TextBox_PreviewDragOver" Name="txtWorkflowParameterFilepath"
+                       Text="{Binding Path=DataContext.FileInputs.ParameterFilePath, ElementName=window, Mode=TwoWay}"
+                       TextChanged="txtWorkflowParameterFilepath_TextChanged" />
+
+              <StackPanel Orientation="Horizontal">
+                <Label Name="label3" HorizontalAlignment="Left" Margin="6,10,0,0"
+                       VerticalAlignment="Center" Content="Results source file" Padding="0" />
+                <TextBlock Name="TargetsFileStatusLabel" HorizontalAlignment="Left" Margin="6,10,0,0"
+                           VerticalAlignment="Center" Foreground="#FFA77171" Padding="0"
+                           Text="{Binding Path=DataContext.TargetsFileStatusText, ElementName=window, Mode=OneWay}" />
+              </StackPanel>
+              <TextBox Name="txtResultsFilePath" DragOver="txtResultsFilePath_DragOver"
+                       PreviewDragOver="TextBox_PreviewDragOver"
+                       Text="{Binding Path=DataContext.FileInputs.TargetsFilePath, ElementName=window, Mode=TwoWay}" />
+
+              <Label Name="label4" HorizontalAlignment="Left" Margin="6,10,0,0"
+                     VerticalAlignment="Center" Content="Results save path" Padding="0" />
+              <TextBox Name="txtResultsSavePath" DragOver="txtResultsFilePath_DragOver"
+                       PreviewDragOver="TextBox_PreviewDragOver"
+                       Text="{Binding Path=DataContext.FileInputs.ResultsSaveFilePath, ElementName=window, Mode=TwoWay}" />
             </StackPanel>
-            <TextBox PreviewDragOver="TextBox_PreviewDragOver"
-                     Text="{Binding Path=DataContext.DatasetFilePath, ElementName=window, Mode=TwoWay}"></TextBox>
-            <ProgressBar Margin="5,0" Height="8" Foreground="#FF4DB146" Background="#FFE5EDFC" BorderBrush="#FF436396"
-                         Value="{Binding Path=DataContext.PercentProgress, ElementName=window, Mode=OneWay}"></ProgressBar>
+         
 
-            <StackPanel Orientation="Horizontal">
-              <Label Name="label2" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Center"
-                     Content="Parameter file" Padding="0" />
-              <TextBlock Name="parameterFileStatusLabel" HorizontalAlignment="Left" Margin="6,10,0,0"
-                         VerticalAlignment="Center" Foreground="#FFA77171" Padding="0"
-                         Text="{Binding Path=DataContext.ParameterFileStatusText, ElementName=window, Mode=OneWay}" />
-            </StackPanel>
-            <TextBox PreviewDragOver="TextBox_PreviewDragOver" Name="txtWorkflowParameterFilepath"
-                     Text="{Binding Path=DataContext.FileInputs.ParameterFilePath, ElementName=window, Mode=TwoWay}"
-                     TextChanged="txtWorkflowParameterFilepath_TextChanged" />
-
-            <StackPanel Orientation="Horizontal">
-              <Label Name="label3" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Center"
-                     Content="Results source file" Padding="0" />
-              <TextBlock Name="TargetsFileStatusLabel" HorizontalAlignment="Left" Margin="6,10,0,0"
-                         VerticalAlignment="Center" Foreground="#FFA77171" Padding="0"
-                         Text="{Binding Path=DataContext.TargetsFileStatusText, ElementName=window, Mode=OneWay}" />
-            </StackPanel>
-            <TextBox Name="txtResultsFilePath" DragOver="txtResultsFilePath_DragOver"
-                     PreviewDragOver="TextBox_PreviewDragOver"
-                     Text="{Binding Path=DataContext.FileInputs.TargetsFilePath, ElementName=window, Mode=TwoWay}" />
-
-            <Label Name="label4" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Center"
-                   Content="Results save path" Padding="0" />
-            <TextBox Name="txtResultsSavePath" DragOver="txtResultsFilePath_DragOver"
-                     PreviewDragOver="TextBox_PreviewDragOver"
-                     Text="{Binding Path=DataContext.FileInputs.ResultsSaveFilePath, ElementName=window, Mode=TwoWay}" />
-          </StackPanel>
         </TabItem>
         <TabItem Name="resultsTab" Header="Results" Background="#819CAAC1">
           <DockPanel>
@@ -233,7 +239,8 @@
         </TabItem>
       </TabControl>
     </Border>
-    <Border Name="RightBorder" DockPanel.Dock="Right">
+        </Expander>
+        <Border Name="RightBorder" DockPanel.Dock="Right">
       <StackPanel Background="White">
 
         <Border Margin="6">
@@ -371,7 +378,7 @@
               </Grid>
             </StackPanel>
           </Border>
-       
+
 
         </StackPanel>
       </StackPanel>
@@ -468,43 +475,44 @@
               </Grid>
             </StackPanel>
           </Border>
-                    <Border>
-                        <StackPanel Margin="3">
-                            <TextBlock Style="{StaticResource ResourceKey= catagoryHeaderStyle }">Quality metrics</TextBlock>
-                            <Rectangle />
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition></ColumnDefinition>
-                                    <ColumnDefinition></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
+          <Border>
+            <StackPanel Margin="3">
+              <TextBlock Style="{StaticResource ResourceKey= catagoryHeaderStyle }">Quality metrics</TextBlock>
+              <Rectangle />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition></ColumnDefinition>
+                  <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
 
-                                <Grid.RowDefinitions>
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                    <RowDefinition />
+                <Grid.RowDefinitions>
+                  <RowDefinition />
+                  <RowDefinition />
+                  <RowDefinition />
+                  <RowDefinition />
+                  <RowDefinition />
 
-                                </Grid.RowDefinitions>
+                </Grid.RowDefinitions>
 
-                                <TextBlock Grid.Column="0" Grid.Row="0" Text="FitScore - unlabeled"></TextBlock>
-                                <TextBlock Grid.Column="1" Grid.Row="0"
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="FitScore - unlabeled"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="0"
                            Text="{Binding Path=CurrentResult.FitScore, StringFormat=0.000}" />
-                                <TextBlock Grid.Column="0" Grid.Row="1" Text="FitScore - labeled"></TextBlock>
-                                <TextBlock Grid.Column="1" Grid.Row="1"
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="FitScore - labeled"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="1"
                            Text="{Binding Path=CurrentResult.FitScoreLabeledProfile, StringFormat=0.000}" />
-                                <TextBlock Grid.Column="0" Grid.Row="2" Text="I_score"></TextBlock>
-                                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Path=CurrentResult.IScore, StringFormat=0.00}" />
-                                <TextBlock Grid.Column="0" Grid.Row="4" Text="ChromCorr_Median"></TextBlock>
-                                <TextBlock Grid.Column="1" Grid.Row="4"
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="I_score"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="2"
+                           Text="{Binding Path=CurrentResult.IScore, StringFormat=0.00}" />
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="ChromCorr_Median"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="4"
                            Text="{Binding Path=CurrentResult.ChromCorrelationMedian, StringFormat=0.000}" />
 
 
-                            </Grid>
-                        </StackPanel>
-                    </Border>
+              </Grid>
+            </StackPanel>
+          </Border>
 
-                </StackPanel>
+        </StackPanel>
 
       </Grid>
     </Border>

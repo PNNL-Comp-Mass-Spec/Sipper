@@ -68,6 +68,7 @@
                 <TextBlock FontSize="15" VerticalAlignment="Top" HorizontalAlignment="Left">Status info:</TextBlock>
                 <TextBlock FontSize="12"  Foreground= "#764F4F" Margin="6,3,3,3" VerticalAlignment="Top" 
                            TextWrapping="Wrap" Text="{Binding Path=DataContext.GeneralStatusMessage, ElementName=window, Mode=OneWay}"  ></TextBlock>
+                <Button Name="btnCreateImages" Click="btnCreateImagesClick">Create Images</Button>
                 <Button Name="btnSaveResults" Click="btnSaveResultsClick">Save results</Button>
                 <Button Name="btnGenerateHtmlReport" Click="btnGenerateHtmlReport_Click">Generate HTML report</Button>
                 <Button Name="btnOpenHtmlReport" Click="btnOpenHtmlReport_Click">Open HTML report</Button>
@@ -103,6 +104,17 @@
                                 </Style>
                             </StackPanel.Resources>
 
+                            <StackPanel Orientation="Horizontal">
+                                <Label
+                                    HorizontalAlignment="Left"
+                                    Margin="6,10,0,0"
+                                    VerticalAlignment="Center"
+                                    Content="Dataset Folder"
+                                    Padding="0"/>
+                               
+                            </StackPanel>
+                            <TextBox Drop="FileDropHandler" PreviewDragOver="TextBox_PreviewDragOver" Name="txtDatasetDirectory"
+                                     Text="{Binding Path=DataContext.FileInputs.DatasetParentFolder, ElementName=window, Mode=TwoWay}"  />
                             <StackPanel Orientation="Horizontal">
                                 <Label
                                     Name="label2"

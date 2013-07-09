@@ -215,10 +215,16 @@ namespace Sipper.Model
 
         private void OutputImages()
         {
-            if (!Directory.Exists(_fileInputs.ResultsSaveFilePath))
-                Directory.CreateDirectory(_fileInputs.ResultsSaveFilePath);
 
-            string subfolderPath = _fileInputs.ResultsSaveFilePath + Path.DirectorySeparatorChar+ "dir" +
+            if (string.IsNullOrEmpty(_fileInputs.ResultImagesFolderPath))
+            {
+                
+            }
+
+            if (!Directory.Exists(_fileInputs.ResultImagesFolderPath))
+                Directory.CreateDirectory(_fileInputs.ResultImagesFolderPath);
+
+            string subfolderPath = _fileInputs.ResultImagesFolderPath + Path.DirectorySeparatorChar + "dir" +
                                    _subFolderCounter.ToString().PadLeft(2, '0');
 
             if (!Directory.Exists(subfolderPath)) Directory.CreateDirectory(subfolderPath);

@@ -1,4 +1,5 @@
 ﻿
+using DeconTools.Backend.Core;
 using Sipper.Model;
 
 namespace Sipper.ViewModel
@@ -23,7 +24,7 @@ namespace Sipper.ViewModel
 
         public Project SipperProject { get; set; }
 
-
+        public Run Run { get; set; }
         #endregion
 
     

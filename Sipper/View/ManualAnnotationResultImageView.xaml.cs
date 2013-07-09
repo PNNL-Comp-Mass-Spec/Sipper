@@ -106,6 +106,13 @@ namespace Sipper.View
 
         }
 
+        private void btnCreateImagesClick(object sender, RoutedEventArgs e)
+        {
+            ViewModel.CreateImages();
+        }
+
+
+
         private void btnSaveResultsClick(object sender, RoutedEventArgs e)
         {
             ViewModel.SaveResults();
@@ -115,6 +122,8 @@ namespace Sipper.View
         {
 
         }
+
+       
 
         private void btnOpenHtmlReport_Click(object sender, RoutedEventArgs e)
         {
@@ -156,7 +165,9 @@ namespace Sipper.View
             CanExecuteRoutedEventArgs e) 
         { 
             e.CanExecute = true; 
-        } 
-        
+        }
+
+     
+      
     }
 }

@@ -34,9 +34,9 @@ namespace Sipper.View
         {
             var graphUserControl = (GWSGraphLibrary.MSGraphControl)(graphHost.Child);
 
-            var xvals = ViewModel.CurrentResult.MassSpectrumXYData.Xvalues;
+            var xvals = ViewModel.CurrentResultInfo.MassSpectrumXYData.Xvalues;
 
-            var yvals = ViewModel.CurrentResult.MassSpectrumXYData.Yvalues;
+            var yvals = ViewModel.CurrentResultInfo.MassSpectrumXYData.Yvalues;
 
             if (xvals==null || xvals.Length<2)
             {

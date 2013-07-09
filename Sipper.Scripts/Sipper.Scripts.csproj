@@ -112,7 +112,6 @@
     <Compile Include="SipperPaper\Script_OptimizeFilters.cs" />
     <Compile Include="SipperPaper\Script_OutputMassSpecImagesForLcmsFeatures.cs" />
     <Compile Include="SipperPaper\Script_proteinLevelInfoForAllResults.cs" />
-    <Compile Include="SipperPaper\SipperFilters.cs" />
     <Compile Include="SipperPaper\SipperPaperScripts.cs" />
     <Compile Include="SipperPaper\SipperResultWithProteinInfo.cs" />
     <Compile Include="SipperPaper\SupplFigureXX_TheorLabeledProfiles.cs" />

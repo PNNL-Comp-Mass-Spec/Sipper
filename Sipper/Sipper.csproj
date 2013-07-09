@@ -93,6 +93,7 @@
     <Compile Include="Model\ResultFilteringUtilities.cs" />
     <Compile Include="Model\ResultImageOutputter.cs" />
     <Compile Include="Model\ResultWithImageInfo.cs" />
+    <Compile Include="Model\SipperFilters.cs" />
     <Compile Include="ViewModel\FileInputsViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\ManualViewingWithoutRawDataViewModel.cs" />

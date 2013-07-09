@@ -169,6 +169,21 @@ namespace Sipper.ViewModel
 
         #region Public Methods
 
+        public void CreateImages()
+        {
+            if (string.IsNullOrEmpty(FileInputs.DatasetParentFolder))
+            {
+                GeneralStatusMessage = "Cannot create images. Dataset directory has not been defined. Please enter a path to the directory that contains the dataset.";
+                return;
+            }
+
+            var imageOutputter = new ResultImageOutputter(_fileInputsInfo);
+            
+
+            imageOutputter.Execute();
+        }
+
+
         public void OpenHTMLReport()
         {
             if (IsImageFilesLoaded && _resultRepositorySource.Results.Count > 0)
@@ -347,5 +362,6 @@ namespace Sipper.ViewModel
 
         #endregion
 
+     
     }
 }

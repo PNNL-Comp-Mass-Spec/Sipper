@@ -23,6 +23,7 @@ namespace Sipper.View
         {
 
             var childWindow = new View.ManualViewingView(ViewModel.SipperProject);
+            childWindow.ViewModel.Run = ViewModel.SipperProject.Run;
 
             childWindow.ShowDialog();
 
@@ -34,9 +35,10 @@ namespace Sipper.View
         private void btnAutoprocess_Click(object sender, RoutedEventArgs e)
         {
             var childWindow = new View.AutoprocessorWindow(ViewModel.SipperProject);
-            childWindow.Show();
+            childWindow.ViewModel.Run = ViewModel.SipperProject.Run;
+            childWindow.ShowDialog();
 
-            
+            ViewModel.SipperProject.Run = childWindow.ViewModel.Run;
         }
 
         private void btnStaticModeAnnotation_Click(object sender, RoutedEventArgs e)
