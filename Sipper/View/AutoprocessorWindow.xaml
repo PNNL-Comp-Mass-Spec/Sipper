@@ -5,13 +5,19 @@
    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:graphLib="clr-namespace:GWSGraphLibrary;assembly=GWSGraphLibrary"
-   AllowDrop="True"
+    xmlns:graphLib="clr-namespace:GWSGraphLibrary;assembly=GWSGraphLibrary" xmlns:oxy="http://oxyplot.codeplex.com"
+   xmlns:VM="clr-namespace:Sipper.ViewModel" AllowDrop="True"
    d:DesignWidth="599"
    Drop="FileDropHandler"
    SizeToContent="WidthAndHeight"
    Title="AutoprocessorWindow"
-   mc:Ignorable="d" d:DesignHeight="836">
+
+    mc:Ignorable="d" d:DesignHeight="836">
+
+    <Window.DataContext>
+        <VM:AutoprocessorViewModel></VM:AutoprocessorViewModel>
+    </Window.DataContext>
+    
     <Grid Name="grid1" Width="auto" Height="auto" HorizontalAlignment="Stretch">
         <StackPanel>
             <TabControl Name="tabControl1" Width="Auto" Height="Auto" Canvas.Left="12" Canvas.Top="12">
@@ -100,12 +106,8 @@
                 <TabItem Header="LiveView" Name="tabItem3">
                     <StackPanel>
                         <TextBlock Margin="6,6,6,0" Text="Latest result:" ></TextBlock>
-                        <WindowsFormsHost Margin="25,10,25,10" Height="200" Name="graphHost" >
-                            <graphLib:MSGraphControl Name="msgraph">
+                        <oxy:Plot Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6,10,0,0" Model="{Binding ObservedIsoPlot }" />
 
-                            </graphLib:MSGraphControl>
-                        </WindowsFormsHost>
- 
                         <TextBlock Margin="6,6,6,0" Text="C13-enriched peptides found:" ></TextBlock>
                         <ListView 
                         Margin="6,6,6,0" ItemsSource="{Binding Path=DataContext.ProgressInfos, ElementName=window, Mode=OneWay}"

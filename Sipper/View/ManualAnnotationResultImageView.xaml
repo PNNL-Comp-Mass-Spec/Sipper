@@ -294,7 +294,7 @@
                         <GridViewColumn Header="Extracted ion chromatogram">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Image Source="{Binding Path=ChromImageFilePath}"  />
+                                    <Image MaxHeight="300" MaxWidth="300" Source="{Binding Path=ChromImageFilePath}"  />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -302,7 +302,7 @@
                         <GridViewColumn Header="Theoretical MS">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Image  Source="{Binding Path=TheorMSImageFilePath}"  />
+                                    <Image MaxHeight="300" MaxWidth="300"  Source="{Binding Path=TheorMSImageFilePath}"  />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -310,7 +310,7 @@
                         <GridViewColumn Header="Observed MS">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Image  Source="{Binding Path=MSImageFilePath}"  />
+                                    <Image MaxHeight="300" MaxWidth="300" Source="{Binding Path=MSImageFilePath}"  />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

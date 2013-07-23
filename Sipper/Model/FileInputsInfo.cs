@@ -47,8 +47,6 @@ namespace Sipper.Model
         #region Public Methods
         public void AddDatasetPath(string fileOrFolderPath)
         {
-
-           
             DatasetPathsList.Add(fileOrFolderPath);
         }
 

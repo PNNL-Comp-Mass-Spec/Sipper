@@ -8,7 +8,7 @@
         d:DesignWidth="1200" Closing="window_Closing">
 
   <Window.DataContext>
-    <VM:ManualViewingViewModel></VM:ManualViewingViewModel>
+    <VM:ViewAndAnnotateViewModel></VM:ViewAndAnnotateViewModel>
   </Window.DataContext>
 
   <Window.Resources>
@@ -113,12 +113,12 @@
       </Grid>
     </Border>
 
-        <Expander ExpandDirection="Right" IsExpanded="{Binding ShowFileAndResultsList}" >
-            <Border Name="leftBorder" DockPanel.Dock="Left" Background="White">
-      <TabControl MaxWidth="500" Margin="6" Background="White" BorderBrush="SlateGray">
-        <TabItem AllowDrop="True" Drop="FileDropHandler" Name="setupTab" Header="Setup" Background="#A9C8D8E5"
-                 BorderBrush="SlateGray" BorderThickness="20">
-         
+    <Expander ExpandDirection="Right" IsExpanded="{Binding ShowFileAndResultsList}">
+      <Border Name="leftBorder" DockPanel.Dock="Left" Background="White">
+        <TabControl MaxWidth="500" Margin="6" Background="White" BorderBrush="SlateGray">
+          <TabItem AllowDrop="True" Drop="FileDropHandler" Name="setupTab" Header="Setup" Background="#A9C8D8E5"
+                   BorderBrush="SlateGray" BorderThickness="20">
+
             <StackPanel>
 
               <StackPanel.Resources>
@@ -136,111 +136,111 @@
 
 
               <StackPanel Orientation="Horizontal">
-                <Label Name="label1" HorizontalAlignment="Left" Margin="6,10,0,0"
-                       VerticalAlignment="Center" Content="Raw data file" Padding="0" />
+                <Label Name="label1" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Center"
+                       Content="Raw data file" Padding="0" />
                 <TextBlock Name="runStatusLabel" HorizontalAlignment="Left" Margin="25,10,0,0"
                            VerticalAlignment="Center" Foreground="#FFA77171" Padding="0"
-                           Text="{Binding Path=DataContext.RunStatusText, ElementName=window, Mode=OneWay}" />
+                           Text="{Binding RunStatusText}" />
               </StackPanel>
               <TextBox PreviewDragOver="TextBox_PreviewDragOver"
-                       Text="{Binding Path=DataContext.DatasetFilePath, ElementName=window, Mode=TwoWay}"></TextBox>
+                       Text="{Binding DatasetFilePath}"></TextBox>
               <ProgressBar Margin="5,0" Height="8" Foreground="#FF4DB146" Background="#FFE5EDFC"
-                           BorderBrush="#FF436396" Value="{Binding Path=DataContext.PercentProgress, ElementName=window, Mode=OneWay}"></ProgressBar>
+                           BorderBrush="#FF436396" Value="{Binding PercentProgress}"></ProgressBar>
 
               <StackPanel Orientation="Horizontal">
-                <Label Name="label2" HorizontalAlignment="Left" Margin="6,10,0,0"
-                       VerticalAlignment="Center" Content="Parameter file" Padding="0" />
+                <Label Name="label2" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Center"
+                       Content="Parameter file" Padding="0" />
                 <TextBlock Name="parameterFileStatusLabel" HorizontalAlignment="Left" Margin="6,10,0,0"
                            VerticalAlignment="Center" Foreground="#FFA77171" Padding="0"
-                           Text="{Binding Path=DataContext.ParameterFileStatusText, ElementName=window, Mode=OneWay}" />
+                           Text="{Binding ParameterFileStatusText}" />
               </StackPanel>
               <TextBox PreviewDragOver="TextBox_PreviewDragOver" Name="txtWorkflowParameterFilepath"
-                       Text="{Binding Path=DataContext.FileInputs.ParameterFilePath, ElementName=window, Mode=TwoWay}"
+                       Text="{Binding FileInputs.ParameterFilePath}"
                        TextChanged="txtWorkflowParameterFilepath_TextChanged" />
 
               <StackPanel Orientation="Horizontal">
-                <Label Name="label3" HorizontalAlignment="Left" Margin="6,10,0,0"
-                       VerticalAlignment="Center" Content="Results source file" Padding="0" />
+                <Label Name="label3" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Center"
+                       Content="Results source file" Padding="0" />
                 <TextBlock Name="TargetsFileStatusLabel" HorizontalAlignment="Left" Margin="6,10,0,0"
                            VerticalAlignment="Center" Foreground="#FFA77171" Padding="0"
-                           Text="{Binding Path=DataContext.TargetsFileStatusText, ElementName=window, Mode=OneWay}" />
+                           Text="{Binding TargetsFileStatusText}" />
               </StackPanel>
               <TextBox Name="txtResultsFilePath" DragOver="txtResultsFilePath_DragOver"
                        PreviewDragOver="TextBox_PreviewDragOver"
-                       Text="{Binding Path=DataContext.FileInputs.TargetsFilePath, ElementName=window, Mode=TwoWay}" />
+                       Text="{Binding FileInputs.TargetsFilePath}" />
 
-              <Label Name="label4" HorizontalAlignment="Left" Margin="6,10,0,0"
-                     VerticalAlignment="Center" Content="Results save path" Padding="0" />
+              <Label Name="label4" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Center"
+                     Content="Results save path" Padding="0" />
               <TextBox Name="txtResultsSavePath" DragOver="txtResultsFilePath_DragOver"
                        PreviewDragOver="TextBox_PreviewDragOver"
-                       Text="{Binding Path=DataContext.FileInputs.ResultsSaveFilePath, ElementName=window, Mode=TwoWay}" />
+                       Text="{Binding FileInputs.ResultsSaveFilePath}" />
             </StackPanel>
-         
 
-        </TabItem>
-        <TabItem Name="resultsTab" Header="Results" Background="#819CAAC1">
-          <DockPanel>
-            <Border BorderThickness="1" DockPanel.Dock="Bottom">
-              <StackPanel>
-                <TextBlock Margin="5,3,5,0">Targets to filter on</TextBlock>
-                <DockPanel>
-                  <StackPanel DockPanel.Dock="Right">
-                    <Button Margin="0,0,5,0" VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                            Name="btnClearTargetFilter" Click="btnClearTargetFilterClick">Clear</Button>
-                  </StackPanel>
 
-                  <TextBox Name="txtTargetFilterString" Margin="5,0,5,0" Height="100"
-                           Text="{Binding Path=DataContext.TargetFilterString, ElementName=window, Mode=TwoWay  }" HorizontalAlignment="Stretch"
-                           TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" FontSize="9"
-                           TextChanged="TxtTargetFilterStringChanged" DataContext="{Binding}"></TextBox>
+          </TabItem>
+          <TabItem Name="resultsTab" Header="Results" Background="#819CAAC1">
+            <DockPanel>
+              <Border BorderThickness="1" DockPanel.Dock="Bottom">
+                <StackPanel>
+                  <TextBlock Margin="5,3,5,0">Targets to filter on</TextBlock>
+                  <DockPanel>
+                    <StackPanel DockPanel.Dock="Right">
+                      <Button Margin="0,0,5,0" VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                              Name="btnClearTargetFilter" Click="btnClearTargetFilterClick">Clear</Button>
+                    </StackPanel>
 
-                </DockPanel>
-              </StackPanel>
-            </Border>
+                    <TextBox Name="txtTargetFilterString" Margin="5,0,5,0" Height="100"
+                             Text="{Binding TargetFilterString}" HorizontalAlignment="Stretch"
+                             TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" FontSize="9"
+                             TextChanged="TxtTargetFilterStringChanged" DataContext="{Binding}"></TextBox>
 
-            <ListView DockPanel.Dock="Top" Name="resultsListView" MinHeight="200" Margin="6,6,6,0"
-                      ItemsSource="{Binding Path=DataContext.Results, ElementName=window, Mode= TwoWay}" SelectionMode="Single"
-                      SelectionChanged="ListView_SelectionChanged" KeyDown="StackPanel_KeyDown">
-              <ListView.View>
+                  </DockPanel>
+                </StackPanel>
+              </Border>
 
-                <GridView>
-                  <GridViewColumn Header="TargetID" DisplayMemberBinding="{Binding Path=TargetID}" />
-                  <GridViewColumn Header="MassTagID" DisplayMemberBinding="{Binding Path=MatchedMassTagID}" />
-                  <GridViewColumn Header="z" DisplayMemberBinding="{Binding Path=ChargeState}" />
-                  <GridViewColumn Header="MonoMZ" DisplayMemberBinding="{Binding Path=MonoMZ, StringFormat=0.0000}" />
-                  <GridViewColumn Header="Sequence" DisplayMemberBinding="{Binding Path=Code}" />
-                  <GridViewColumn Header="Intensity" DisplayMemberBinding="{Binding Path=Intensity}" />
-                  <!--<GridViewColumn Header="AreaMetric" DisplayMemberBinding="{Binding Path=Result.AreaUnderRatioCurveRevised, StringFormat=0.0}"/>
+              <ListView DockPanel.Dock="Top" Name="resultsListView" MinHeight="200" Margin="6,6,6,0"
+                        ItemsSource="{Binding Results}" SelectionMode="Single"
+                        SelectionChanged="ListView_SelectionChanged" KeyDown="StackPanel_KeyDown">
+                <ListView.View>
+
+                  <GridView>
+                    <GridViewColumn Header="TargetID" DisplayMemberBinding="{Binding TargetID}" />
+                    <GridViewColumn Header="MassTagID" DisplayMemberBinding="{Binding MatchedMassTagID}" />
+                    <GridViewColumn Header="z" DisplayMemberBinding="{Binding ChargeState}" />
+                    <GridViewColumn Header="MonoMZ" DisplayMemberBinding="{Binding MonoMZ, StringFormat=0.0000}" />
+                    <GridViewColumn Header="Sequence" DisplayMemberBinding="{Binding Code}" />
+                    <GridViewColumn Header="Intensity" DisplayMemberBinding="{Binding Intensity}" />
+                    <!--<GridViewColumn Header="AreaMetric" DisplayMemberBinding="{Binding Path=Result.AreaUnderRatioCurveRevised, StringFormat=0.0}"/>
                                                  <GridViewColumn Header="Corr_Avg" DisplayMemberBinding="{Binding Path=Result.ChromCorrelationAverage, StringFormat=0.000}"/>
                                                  <GridViewColumn Header="Corr_Median" DisplayMemberBinding="{Binding Path=Result.ChromCorrelationMedian, StringFormat=0.000}"/>
                                                  <GridViewColumn Header="R_val" DisplayMemberBinding="{Binding Path=Result.RSquaredValForRatioCurve, StringFormat=0.000}"/>-->
 
 
-                </GridView>
-              </ListView.View>
+                  </GridView>
+                </ListView.View>
 
-            </ListView>
-
-
-          </DockPanel>
+              </ListView>
 
 
-        </TabItem>
-        <TabItem Header="Options" Name="tabItem1" Background="#FFB6C1D3">
-          <StackPanel>
-            <StackPanel Orientation="Horizontal">
-              <TextBlock>
-                Mass Spec viewing width
-              </TextBlock>
-              <TextBox Text="{Binding Path=DataContext.MassSpecVisibleWindowWidth, ElementName=window, Mode= TwoWay}"
-                       Margin="10,0,0,0" MinWidth="25"></TextBox>
+            </DockPanel>
+
+
+          </TabItem>
+          <TabItem Header="Options" Name="tabItem1" Background="#FFB6C1D3">
+            <StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock>
+                  Mass Spec viewing width
+                </TextBlock>
+                <TextBox Text="{Binding MassSpecVisibleWindowWidth}"
+                         Margin="10,0,0,0" MinWidth="25"></TextBox>
+              </StackPanel>
             </StackPanel>
-          </StackPanel>
-        </TabItem>
-      </TabControl>
-    </Border>
-        </Expander>
-        <Border Name="RightBorder" DockPanel.Dock="Right">
+          </TabItem>
+        </TabControl>
+      </Border>
+    </Expander>
+    <Border Name="RightBorder" DockPanel.Dock="Right">
       <StackPanel Background="White">
 
         <Border Margin="6">
@@ -273,19 +273,19 @@
                        FontSize="14">m/z range</TextBlock>
             <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
               <TextBox Name="txtMsGraphMinX" VerticalAlignment="Center" Margin="8,8,2,8" FontSize="14"
-                       Text="{Binding Path=DataContext.MSGraphMinX, ElementName=window, Mode=TwoWay, StringFormat=0.00}"
+                       Text="{Binding MsGraphMinX, StringFormat=0.00}"
                        MouseWheel="MsGraphMinMouseWheelEvent"></TextBox>
               <TextBlock VerticalAlignment="Center" Margin="0,8,2,8">-</TextBlock>
               <TextBox Name="txtMsGraphMaxX" VerticalAlignment="Center" Margin="2,8" FontSize="14"
-                       Text="{Binding Path=DataContext.MSGraphMaxX, ElementName=window, Mode=TwoWay, StringFormat=0.00}"
+                       Text="{Binding MsGraphMaxX, StringFormat=0.00}"
                        MouseWheel="MsGraphMaxMouseWheelEvent"></TextBox>
 
             </StackPanel>
             <TextBox Name="txtCurrentScan" VerticalAlignment="Center" Grid.Column="2" Grid.Row="0" Grid.RowSpan="1"
-                     Margin="8" FontSize="14" Text="{Binding Path=DataContext.CurrentLCScan, ElementName=window, Mode=TwoWay}"
+                     Margin="8" FontSize="14" Text="{Binding CurrentLcScan}"
                      LostFocus="NavigateToSpecificScanEvent" MouseWheel="TextBox_MouseWheel"></TextBox>
-            <Slider Name="slider" Value="{Binding Path=DataContext.CurrentLCScan, ElementName=window, Mode=TwoWay}"
-                    Minimum="{Binding Path=DataContext.MinLCScan}" Maximum="{Binding Path=DataContext.MaxLCScan}" Grid.Row="2"
+            <Slider Name="slider" Value="{Binding CurrentLcScan}"
+                    Minimum="{Binding MinLcScan}" Maximum="{Binding MaxLcScan}" Grid.Row="2"
                     Grid.Column="0" Grid.ColumnSpan="3" Margin="10" ValueChanged="slider_ValueChanged"></Slider>
 
           </Grid>
@@ -298,7 +298,7 @@
             <TextBlock Margin="6,6,6,0" FontSize="13" TextTrimming="None">Annotation:</TextBlock>
             <ListBox Margin="9,3,9,6" FontSize="13"
                      ItemsSource="{Binding Source={StaticResource ResourceKey=ValidationCodeValues }}"
-                     SelectedValue="{Binding Path=DataContext.CurrentResultValidationCode, ElementName=window, Mode= TwoWay}"
+                     SelectedValue="{Binding CurrentResultValidationCode}"
                      BorderBrush="{x:Null}" ItemContainerStyle="{StaticResource ResourceKey=ContainerStyle}"></ListBox>
           </StackPanel>
         </Border>
@@ -360,21 +360,21 @@
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="Dataset"></TextBlock>
                 <TextBlock MaxWidth="160" TextWrapping="Wrap" Grid.Column="1" Grid.Row="0"
-                           Text="{Binding Path=CurrentResult.DatasetName}" />
+                           Text="{Binding CurrentResult.DatasetName}" />
                 <TextBlock Grid.Column="0" Grid.Row="1" Text="ID"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Path=CurrentResult.TargetID}" />
+                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding CurrentResult.TargetID}" />
                 <TextBlock Grid.Column="0" Grid.Row="2" Text="MassTag"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Path=CurrentResult.MatchedMassTagID}" />
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding CurrentResult.MatchedMassTagID}" />
                 <TextBlock Grid.Column="0" Grid.Row="3" Text="Code/sequence"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding Path=CurrentResult.Code}" />
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding CurrentResult.Code}" />
                 <TextBlock Grid.Column="0" Grid.Row="4" Text="Scan"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Path=CurrentResult.ScanLC}" />
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding CurrentResult.ScanLC}" />
                 <TextBlock Grid.Column="0" Grid.Row="5" Text="Intensity"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Path=CurrentResult.Intensity}" />
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding CurrentResult.Intensity}" />
                 <TextBlock Grid.Column="0" Grid.Row="6" Text="m/z"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding Path=CurrentResult.MonoMZ, StringFormat=0.0000}" />
+                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding CurrentResult.MonoMZ, StringFormat=0.0000}" />
                 <TextBlock Grid.Column="0" Grid.Row="7" Text="z"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="7" Text="{Binding Path=CurrentResult.ChargeState}" />
+                <TextBlock Grid.Column="1" Grid.Row="7" Text="{Binding CurrentResult.ChargeState}" />
               </Grid>
             </StackPanel>
           </Border>
@@ -461,16 +461,16 @@
 
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="Sum Of Ratios"></TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="0"
-                           Text="{Binding Path=CurrentResult.AreaUnderRatioCurveRevised, StringFormat=0.00}" />
+                           Text="{Binding CurrentResult.AreaUnderRatioCurveRevised, StringFormat=0.00}" />
                 <TextBlock Grid.Column="0" Grid.Row="1" Text="Contig score"></TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="1"
-                           Text="{Binding Path=CurrentResult.ContiguousnessScore, StringFormat=0}" />
+                           Text="{Binding CurrentResult.ContiguousnessScore, StringFormat=0}" />
                 <TextBlock Grid.Column="0" Grid.Row="4" Text="% incorporation"></TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="4"
-                           Text="{Binding Path=CurrentResult.PercentCarbonsLabelled, StringFormat=0.00}" />
+                           Text="{Binding CurrentResult.PercentCarbonsLabelled, StringFormat=0.00}" />
                 <TextBlock Grid.Column="0" Grid.Row="5" Text="% peptides labeled"></TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="5"
-                           Text="{Binding Path=CurrentResult.PercentPeptideLabelled, StringFormat=0.00}" />
+                           Text="{Binding CurrentResult.PercentPeptideLabelled, StringFormat=0.00}" />
 
               </Grid>
             </StackPanel>
@@ -496,16 +496,15 @@
 
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="FitScore - unlabeled"></TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="0"
-                           Text="{Binding Path=CurrentResult.FitScore, StringFormat=0.000}" />
+                           Text="{Binding CurrentResult.FitScore, StringFormat=0.000}" />
                 <TextBlock Grid.Column="0" Grid.Row="1" Text="FitScore - labeled"></TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="1"
-                           Text="{Binding Path=CurrentResult.FitScoreLabeledProfile, StringFormat=0.000}" />
+                           Text="{Binding CurrentResult.FitScoreLabeledProfile, StringFormat=0.000}" />
                 <TextBlock Grid.Column="0" Grid.Row="2" Text="I_score"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="2"
-                           Text="{Binding Path=CurrentResult.IScore, StringFormat=0.00}" />
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding CurrentResult.IScore, StringFormat=0.00}" />
                 <TextBlock Grid.Column="0" Grid.Row="4" Text="ChromCorr_Median"></TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="4"
-                           Text="{Binding Path=CurrentResult.ChromCorrelationMedian, StringFormat=0.000}" />
+                           Text="{Binding CurrentResult.ChromCorrelationMedian, StringFormat=0.000}" />
 
 
               </Grid>

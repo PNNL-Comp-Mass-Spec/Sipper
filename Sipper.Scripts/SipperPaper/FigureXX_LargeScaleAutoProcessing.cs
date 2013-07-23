@@ -74,6 +74,8 @@ namespace Sipper.Scripts.SipperPaper
 
             //resultFolder = @"D:\Data\Sipper\HLP_Ana\Results";
 
+            resultFolder =
+                @"\\protoapps\DataPkgs\Public\2012\601_Sipper_paper_data_processing_and_analysis\Results\Results_2013_07_11\Results";
 
             StringBuilder sb = new StringBuilder();
 
@@ -92,11 +94,14 @@ namespace Sipper.Scripts.SipperPaper
                     SipperResultFromTextImporter importer = new SipperResultFromTextImporter(fileInfo.FullName);
                     var results = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
-                    SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
+                    //SipperFilters.ApplyAutoValidationCodeF1TightFilter(results);
+                    SipperFilters.ApplyAveragineBasedTightFilter(results);
 
                     int countTightFilterResults = results.Count(p => p.ValidationCode == ValidationCode.Yes);
 
-                    SipperFilters.ApplyAutoValidationCodeF2LooseFilter(results);
+                    //SipperFilters.ApplyAutoValidationCodeF2LooseFilter(results);
+                    SipperFilters.ApplyAveragineBasedLooseFilter(results);
+
                     int countLooseFilter = results.Count(p => p.ValidationCode == ValidationCode.Yes);
 
                     sb.Append(results.Count);

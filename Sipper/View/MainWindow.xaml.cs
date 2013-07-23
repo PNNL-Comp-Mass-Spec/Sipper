@@ -69,5 +69,14 @@ namespace Sipper.View
             Properties.Settings.Default.Save();
 
         }
+
+        private void btnOpenSimpleMsViewer(object sender, RoutedEventArgs e)
+        {
+            var childWindow = new SimpleMsViewerWindow(ViewModel.SipperProject);
+            childWindow.ViewModel.Run = ViewModel.SipperProject.Run;
+            childWindow.ShowDialog();
+
+            ViewModel.SipperProject.Run = childWindow.ViewModel.Run;
+        }
     }
 }

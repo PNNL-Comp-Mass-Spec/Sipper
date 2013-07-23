@@ -23,7 +23,7 @@ namespace Sipper.View
 
             ViewModel = new AutoprocessorViewModel(sipperProject.ResultRepository, sipperProject.FileInputs);
 
-            ViewModel.CurrentResultUpdated += new CurrentResultChangedHandler(ViewModel_CurrentResultUpdated); 
+            ViewModel.CurrentResultUpdated += ViewModel_CurrentResultUpdated; 
 
             DataContext = ViewModel;
 
@@ -32,10 +32,8 @@ namespace Sipper.View
 
         void ViewModel_CurrentResultUpdated(object sender, System.EventArgs e)
         {
-            var graphUserControl = (GWSGraphLibrary.MSGraphControl)(graphHost.Child);
-
+           
             var xvals = ViewModel.CurrentResultInfo.MassSpectrumXYData.Xvalues;
-
             var yvals = ViewModel.CurrentResultInfo.MassSpectrumXYData.Yvalues;
 
             if (xvals==null || xvals.Length<2)
@@ -50,11 +48,6 @@ namespace Sipper.View
 
 
             string titleString = ViewModel.GetInfoStringOnCurrentResult();
-
-            graphUserControl.GraphTitle = titleString;
-            graphUserControl.GenerateGraph(xvals, yvals, xvals.Min(), xvals.Max(), min, max);
-
-            graphUserControl.Refresh();
 
 
         }

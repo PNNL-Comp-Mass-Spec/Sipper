@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -11,7 +10,6 @@ using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.Results;
 using Sipper.Model;
 using Sipper.ViewModel;
-using ZedGraph;
 using Globals = DeconTools.Backend.Globals;
 
 namespace Sipper.View
@@ -35,7 +33,7 @@ namespace Sipper.View
             }
 
 
-            ViewModel = new ManualViewingViewModel(project.ResultRepository, project.FileInputs);
+            ViewModel = new ViewAndAnnotateViewModel(project.ResultRepository, project.FileInputs);
 
             LoadSettings();
 
@@ -43,7 +41,6 @@ namespace Sipper.View
 
 
             DataContext = ViewModel;
-
             ViewModel.Run = project.Run;
         }
 
@@ -55,7 +52,7 @@ namespace Sipper.View
 
         }
 
-        public ManualViewingViewModel ViewModel { get; set; }
+        public ViewAndAnnotateViewModel ViewModel { get; set; }
 
         private void FileDropHandler(object sender, DragEventArgs e)
         {
@@ -193,12 +190,12 @@ namespace Sipper.View
 
         private void btnCopyMSToClipboard_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.CopyMSDataToClipboard();
+            ViewModel.CopyMsDataToClipboard();
         }
 
         private void btnCopyTheorMSToClipboard_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.CopyTheorMSToClipboard();
+            ViewModel.CopyTheorMsToClipboard();
         }
 
         private void btnCopyChromatogramToClipboard_Click(object sender, RoutedEventArgs e)
@@ -303,14 +300,14 @@ namespace Sipper.View
 
         private void btnNavigateUpClick(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.ASCENDING);
+            ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.ASCENDING);
            
         }
 
 
         private void btnNavigateDownClick(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.DESCENDING);
+            ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.DESCENDING);
         }
 
         private void NavigateToSpecificScanEvent(object sender, RoutedEventArgs e)
@@ -319,16 +316,16 @@ namespace Sipper.View
             int currentScan;
              if (Int32.TryParse(txtCurrentScan.Text,out currentScan))
              {
-                 if (currentScan == ViewModel.CurrentLCScan) return;
+                 if (currentScan == ViewModel.CurrentLcScan) return;
 
-                 ViewModel.CurrentLCScan = currentScan;
+                 ViewModel.CurrentLcScan = currentScan;
              }
              else
              {
                  return;
              }
 
-            ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
+            ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
           
         }
 
@@ -336,35 +333,39 @@ namespace Sipper.View
         {
             if (e.Delta>0)
             {
-                ViewModel.NavigateToNextMS1MassSpectrum();
+                ViewModel.NavigateToNextMs1MassSpectrum();
             }
             else
             {
-                ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.DESCENDING);
+                ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.DESCENDING);
             }
         }
 
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            slider.Minimum = ViewModel.MinLCScan;
-            slider.Maximum = ViewModel.MaxLCScan;
+            if (ViewModel == null || ViewModel.Run == null) return;
+
+            slider.Minimum = ViewModel.MinLcScan;
+            slider.Maximum = ViewModel.MaxLcScan;
             
             int sliderScan = (int) e.NewValue;
-            if (ViewModel.CurrentLCScan == sliderScan) return;
-            ViewModel.CurrentLCScan = (int)e.NewValue;
-            ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
+            if (ViewModel.CurrentLcScan == sliderScan) return;
+            ViewModel.CurrentLcScan = (int)e.NewValue;
+            ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
          
         }
 
         private void MsGraphMinMouseWheelEvent(object sender, MouseWheelEventArgs e)
         {
+            if (ViewModel == null || ViewModel.Run == null) return;
+
             if (e.Delta>0)
             {
-                ViewModel.MSGraphMinX= ViewModel.MSGraphMinX + 1;
+                ViewModel.MsGraphMinX= ViewModel.MsGraphMinX + 1;
             }
             else
             {
-                ViewModel.MSGraphMinX = ViewModel.MSGraphMinX - 1;
+                ViewModel.MsGraphMinX = ViewModel.MsGraphMinX - 1;
             }
 
            
@@ -373,13 +374,15 @@ namespace Sipper.View
 
         private void MsGraphMaxMouseWheelEvent(object sender, MouseWheelEventArgs e)
         {
+            if (ViewModel == null || ViewModel.Run == null) return;
+
             if (e.Delta > 0)
             {
-                ViewModel.MSGraphMaxX = ViewModel.MSGraphMaxX + 1;
+                ViewModel.MsGraphMaxX = ViewModel.MsGraphMaxX + 1;
             }
             else
             {
-                ViewModel.MSGraphMaxX = ViewModel.MSGraphMaxX - 1;
+                ViewModel.MsGraphMaxX = ViewModel.MsGraphMaxX - 1;
             }
            
         }

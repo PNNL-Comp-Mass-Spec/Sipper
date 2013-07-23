@@ -33,13 +33,7 @@ namespace Sipper.Model
 
         #endregion
 
-        #region Public Methods
-
-        #endregion
-
-        #region Private Methods
-
-        #endregion
+    
 
     }
 }

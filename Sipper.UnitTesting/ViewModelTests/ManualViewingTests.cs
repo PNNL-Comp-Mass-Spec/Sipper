@@ -29,7 +29,7 @@ namespace Sipper.UnitTesting.ViewModelTests
             fileInputs.ParameterFilePath = testParameterFile;
             fileInputs.TargetsFilePath = testResultFile;
 
-            ManualViewingViewModel viewModel = new ManualViewingViewModel(fileInputs);
+            ViewAndAnnotateViewModel viewModel = new ViewAndAnnotateViewModel(fileInputs);
 
 
             viewModel.LoadResults(testResultFile);
@@ -47,7 +47,7 @@ namespace Sipper.UnitTesting.ViewModelTests
             FileInputsInfo fileInputs = new FileInputsInfo();
             fileInputs.ParameterFilePath = testParameterFile;
 
-            ManualViewingViewModel viewModel = new ManualViewingViewModel(fileInputs);
+            ViewAndAnnotateViewModel viewModel = new ViewAndAnnotateViewModel(fileInputs);
 
             Assert.IsNotNull(viewModel.Workflow.WorkflowParameters);
             Assert.AreEqual(2,((TargetedWorkflowParameters)(viewModel.Workflow.WorkflowParameters)).MSPeakDetectorPeakBR);
@@ -67,7 +67,7 @@ namespace Sipper.UnitTesting.ViewModelTests
             string testParameterFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
 
-            ManualViewingViewModel viewModel = new ManualViewingViewModel();
+            ViewAndAnnotateViewModel viewModel = new ViewAndAnnotateViewModel();
 
             viewModel.FileInputs.ParameterFilePath = testParameterFile;
             viewModel.FileInputs.TargetsFilePath = testResultFile;
@@ -80,23 +80,23 @@ namespace Sipper.UnitTesting.ViewModelTests
             Thread.Sleep(5000);  //need to wait for peaks to load.... 
             viewModel.ExecuteWorkflow();
 
-            Assert.IsNotNull(viewModel.MassSpecXYData);
-            Assert.IsNotNull(viewModel.ChromXYData);
-            Assert.IsNotNull(viewModel.TheorProfileXYData);
-            Assert.IsNotNull(viewModel.LabelDistributionXYData);
+            Assert.IsNotNull(viewModel.MassSpecXyData);
+            Assert.IsNotNull(viewModel.ChromXyData);
+            Assert.IsNotNull(viewModel.TheorProfileXyData);
+            Assert.IsNotNull(viewModel.LabelDistributionXyData);
 
 
             //TestUtilities.DisplayXYValues(viewModel.MassSpecXYData);
 
-            Console.WriteLine("CurrentScanSet= " + viewModel.CurrentLCScan);
+            Console.WriteLine("CurrentScanSet= " + viewModel.CurrentLcScan);
 
-            viewModel.NavigateToNextMS1MassSpectrum();
+            viewModel.NavigateToNextMs1MassSpectrum();
 
-            Console.WriteLine("After manual navigating... CurrentScanSet= " + viewModel.CurrentLCScan);
+            Console.WriteLine("After manual navigating... CurrentScanSet= " + viewModel.CurrentLcScan);
 
-            viewModel.NavigateToNextMS1MassSpectrum();
+            viewModel.NavigateToNextMs1MassSpectrum();
 
-            Console.WriteLine("After manual navigating... CurrentScanSet= " + viewModel.CurrentLCScan);
+            Console.WriteLine("After manual navigating... CurrentScanSet= " + viewModel.CurrentLcScan);
 
         }
 
@@ -113,7 +113,7 @@ namespace Sipper.UnitTesting.ViewModelTests
             string testParameterFile =
                 @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\SipperTargetedWorkflowParameters_Sum5.xml";
 
-            ManualViewingViewModel viewModel = new ManualViewingViewModel();
+            ViewAndAnnotateViewModel viewModel = new ViewAndAnnotateViewModel();
 
             viewModel.FileInputs.ParameterFilePath = testParameterFile;
             viewModel.FileInputs.TargetsFilePath = testResultFile;
@@ -131,9 +131,9 @@ namespace Sipper.UnitTesting.ViewModelTests
 
             viewModel.ExecuteWorkflow();
 
-            Assert.IsNotNull(viewModel.MassSpecXYData);
-            Assert.IsNotNull(viewModel.ChromXYData);
-            Assert.IsNotNull(viewModel.TheorProfileXYData);
+            Assert.IsNotNull(viewModel.MassSpecXyData);
+            Assert.IsNotNull(viewModel.ChromXyData);
+            Assert.IsNotNull(viewModel.TheorProfileXyData);
         }
 
     }

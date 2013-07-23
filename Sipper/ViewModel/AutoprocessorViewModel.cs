@@ -2,13 +2,18 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using DeconTools.Backend;
 using DeconTools.Backend.Core;
 using DeconTools.Backend.Core.Results;
 using DeconTools.Backend.Utilities;
+using DeconTools.Backend.Utilities.IqLogger;
 using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.Core;
 using DeconTools.Workflows.Backend.Results;
+using OxyPlot;
+using OxyPlot.Axes;
 using Sipper.Model;
+using Globals = DeconTools.Workflows.Backend.Globals;
 
 namespace Sipper.ViewModel
 {
@@ -27,7 +32,7 @@ namespace Sipper.ViewModel
 
         #region Constructors
 
-        public AutoprocessorViewModel(FileInputsInfo fileInputs = null)
+        public AutoprocessorViewModel()
         {
             ExecutorParameters = new SipperWorkflowExecutorParameters();
             ExecutorParameters.TargetType = Globals.TargetType.LcmsFeature;
@@ -36,7 +41,13 @@ namespace Sipper.ViewModel
             SipperWorkflowParameters = new SipperTargetedWorkflowParameters();
             StatusCollection = new ObservableCollection<string>();
             ProgressInfos = new ObservableCollection<TargetedWorkflowExecutorProgressInfo>();
+            
+            FileInputs = new FileInputsViewModel(null);
+        }
 
+
+        public AutoprocessorViewModel(FileInputsInfo fileInputs):this()
+        {
             
             FileInputs = new FileInputsViewModel(fileInputs);
         }
@@ -52,6 +63,18 @@ namespace Sipper.ViewModel
         #endregion
 
         #region Properties
+
+        private PlotModel _observedIsoPlot;
+        public PlotModel ObservedIsoPlot
+        {
+            get { return _observedIsoPlot; }
+            set
+            {
+                _observedIsoPlot = value;
+                OnPropertyChanged("ObservedIsoPlot");
+            }
+        }
+
 
         public Run Run { get; set; }
 
@@ -121,7 +144,9 @@ namespace Sipper.ViewModel
         }
 
         private TargetedWorkflowExecutorProgressInfo _currentResultInfo;
-        
+
+       
+
 
         public TargetedWorkflowExecutorProgressInfo CurrentResultInfo
         {
@@ -132,11 +157,93 @@ namespace Sipper.ViewModel
             set
             {
                 _currentResultInfo = value;
+                GetMassSpectrumForCurrentResult();
                 OnPropertyChanged("CurrentResultInfo");
-                OnCurrentResultUpdated(new EventArgs());
+                
             }
         }
 
+        private void GetMassSpectrumForCurrentResult()
+        {
+
+            if (ObservedIsoPlot==null)
+            {
+                ObservedIsoPlot=  CreateObservedIsoPlot();
+            }
+
+
+            XYData xydata = new XYData();
+
+            if (CurrentResultInfo.MassSpectrumXYData == null)
+            {
+                xydata.Xvalues = CurrentResultInfo.MassSpectrumXYData == null ? new double[] { 400, 1500 } : CurrentResultInfo.MassSpectrumXYData.Xvalues;
+                xydata.Yvalues = CurrentResultInfo.MassSpectrumXYData == null ? new double[] { 0, 0 } : CurrentResultInfo.MassSpectrumXYData.Yvalues;
+            }
+            else
+            {
+                xydata.Xvalues = CurrentResultInfo.MassSpectrumXYData.Xvalues;
+                xydata.Yvalues = CurrentResultInfo.MassSpectrumXYData.Yvalues;
+
+                xydata = xydata.TrimData(CurrentResultInfo.Result.Target.MZ - 2, CurrentResultInfo.Result.Target.MZ + 8);
+            }
+
+
+            double msGraphMaxY;
+            if (CurrentResultInfo.Result.IsotopicProfile != null)
+            {
+                msGraphMaxY = CurrentResultInfo.Result.IsotopicProfile.getMostIntensePeak().Height;
+            }
+            else
+            {
+                msGraphMaxY = (float)xydata.getMaxY();
+            }
+
+            string msGraphTitle = "TargetID= " + CurrentResultInfo.Result.Target.ID +   "; m/z " + CurrentResultInfo.Result.Target.MZ.ToString("0.0000") + "; z=" +
+                                  CurrentResultInfo.Result.Target.ChargeState + "; Scan= " + CurrentResultInfo.Result.ScanSet??"[No scan selected]";
+
+            ObservedIsoPlot.Series.Clear();
+
+            var series = new OxyPlot.Series.LineSeries();
+            series.MarkerSize = 1;
+            series.Color = OxyColors.Black;
+            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            {
+                series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
+            }
+
+            ObservedIsoPlot.Axes[1].Maximum = msGraphMaxY + msGraphMaxY * 0.05;
+            ObservedIsoPlot.Series.Add(series);
+           
+            
+        }
+
+        private PlotModel CreateObservedIsoPlot()
+        {
+            PlotModel plotModel = new PlotModel();
+
+
+            plotModel.TitleFontSize = 11;
+            plotModel.Padding = new OxyThickness(0);
+            plotModel.PlotMargins = new OxyThickness(0);
+            plotModel.PlotAreaBorderThickness = 0;
+
+            var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
+            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
+
+            yAxis.Minimum = 0;
+            yAxis.AbsoluteMinimum = 0;
+            xAxis.AxislineStyle = LineStyle.Solid;
+            xAxis.AxislineThickness = 1;
+            yAxis.AxislineStyle = LineStyle.Solid;
+            yAxis.AxislineThickness = 1;
+
+            plotModel.Axes.Add(xAxis);
+            plotModel.Axes.Add(yAxis);
+            
+
+            return plotModel;
+
+        }
 
         #endregion
 
@@ -231,7 +338,7 @@ namespace Sipper.ViewModel
             }
             else
             {
-                StatusMessageGeneral = "Processing COMPLETE.";
+                StatusMessageGeneral = "Processing COMPLETE. #chromatograms extracted= " + IqLogger.Counter1;
                 PercentProgress = 100;
             }
         }
