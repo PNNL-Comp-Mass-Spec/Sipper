@@ -80,7 +80,7 @@ namespace Sipper.UnitTesting.ViewModelTests
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
 
 
-            string expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\" +
+            string expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\Results\\" + 
                                          RunUtilities.GetDatasetName(testRawDataFile) + "_results.txt";
 
             if (File.Exists(expectedResultsFile)) File.Delete(expectedResultsFile);
