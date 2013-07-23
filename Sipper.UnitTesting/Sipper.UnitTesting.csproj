@@ -34,16 +34,16 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DeconTools.Backend, Version=1.0.4827.20569, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="DeconTools.Backend, Version=1.0.4951.22699, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DeconTools\DeconTools.Workflows\DeconTools.Workflows\bin\x86\Release\DeconTools.Backend.dll</HintPath>
+      <HintPath>..\Library\DeconTools.Backend.dll</HintPath>
     </Reference>
     <Reference Include="DeconTools.UnitTesting2">
       <HintPath>..\Library\DeconTools.UnitTesting2.dll</HintPath>
     </Reference>
-    <Reference Include="DeconTools.Workflows, Version=1.0.4827.20607, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="DeconTools.Workflows, Version=1.0.4951.22901, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DeconTools\DeconTools.Workflows\DeconTools.Workflows\bin\x86\Release\DeconTools.Workflows.dll</HintPath>
+      <HintPath>..\Library\DeconTools.Workflows.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
