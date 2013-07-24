@@ -110,8 +110,8 @@
     <Compile Include="View\ManualAnnotationResultImageView.xaml.cs">
       <DependentUpon>ManualAnnotationResultImageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\ManualViewingView.xaml.cs">
-      <DependentUpon>ManualViewingView.xaml</DependentUpon>
+    <Compile Include="View\ViewAndAnnotateView.xaml.cs">
+      <DependentUpon>ViewAndAnnotateView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\SimpleMsViewerWindow.xaml.cs">
       <DependentUpon>SimpleMsViewerWindow.xaml</DependentUpon>
@@ -147,7 +147,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ManualViewingView.xaml">
+    <Page Include="View\ViewAndAnnotateView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -15,15 +15,15 @@ using Globals = DeconTools.Backend.Globals;
 namespace Sipper.View
 {
     /// <summary>
-    /// Interaction logic for ManualViewingView.xaml
+    /// Interaction logic for ViewAndAnnotateView.xaml
     /// </summary>
-    public partial class ManualViewingView : Window
+    public partial class ViewAndAnnotateView : Window
     {
         private bool _graphsWereSetup = false;
         private int _counter;
 
 
-        public ManualViewingView(Project project = null)
+        public ViewAndAnnotateView(Project project = null)
         {
             InitializeComponent();
 

@@ -22,7 +22,7 @@ namespace Sipper.View
         private void btnBrowseAndAnnotate_Click(object sender, RoutedEventArgs e)
         {
 
-            var childWindow = new View.ManualViewingView(ViewModel.SipperProject);
+            var childWindow = new View.ViewAndAnnotateView(ViewModel.SipperProject);
             childWindow.ViewModel.Run = ViewModel.SipperProject.Run;
 
             childWindow.ShowDialog();
