@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using DeconTools.Backend;
 using DeconTools.Backend.Core;
 using DeconTools.Backend.ProcessingTasks;
 using DeconTools.Backend.ProcessingTasks.MSGenerators;
+using DeconTools.Backend.ProcessingTasks.PeakDetectors;
 using DeconTools.Backend.Runs;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -12,22 +15,30 @@ namespace Sipper.ViewModel
     public class SimpleMsViewerViewModel : ViewModelBase
     {
 
+        private bool _xAxisIsChangedInternally;
+
         private MSGenerator _msGenerator;
         private ScanSetFactory _scanSetFactory = new ScanSetFactory();
+
 
 
         #region Constructors
 
 
-        public SimpleMsViewerViewModel():this(null)
+        public SimpleMsViewerViewModel()
+            : this(null)
         {
-            
+
         }
 
 
         public SimpleMsViewerViewModel(Run run)
         {
             this.Run = run;
+
+            PeakDetector = new DeconToolsPeakDetectorV2();
+            Peaks = new List<Peak>();
+
             MSGraphMinX = 400;
             MSGraphMaxX = 1500;
             NumMSScansToSum = 1;
@@ -41,6 +52,22 @@ namespace Sipper.ViewModel
 
         #region Properties
 
+
+        public DeconToolsPeakDetectorV2 PeakDetector { get; set; }
+
+
+        private List<Peak> _peaks;
+        public List<Peak> Peaks
+        {
+            get { return _peaks; }
+            set
+            {
+                _peaks = value;
+                OnPropertyChanged("Peaks");
+            }
+        }
+
+
         private DeconTools.Backend.Core.Run _run;
         public DeconTools.Backend.Core.Run Run
         {
@@ -48,7 +75,7 @@ namespace Sipper.ViewModel
             set
             {
                 _run = value;
-                
+
             }
         }
 
@@ -136,7 +163,7 @@ namespace Sipper.ViewModel
         }
 
 
-        public string DatasetName 
+        public string DatasetName
         {
             get
             {
@@ -194,7 +221,7 @@ namespace Sipper.ViewModel
             {
                 GeneralStatusMessage = ex.Message;
             }
-            
+
 
 
             if (Run != null)
@@ -207,7 +234,7 @@ namespace Sipper.ViewModel
 
 
 
-    
+
 
         public void NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode selectionMode = Globals.ScanSelectionMode.ASCENDING)
         {
@@ -235,15 +262,19 @@ namespace Sipper.ViewModel
             var currentScanSet = _scanSetFactory.CreateScanSet(Run, CurrentLcScan, NumMSScansToSum);
             MassSpecXYData = _msGenerator.GenerateMS(Run, currentScanSet);
 
+            Peaks.Clear();
             if (MassSpecXYData != null)
             {
                 MassSpecXYData = MassSpecXYData.TrimData(MSGraphMinX - 20, MSGraphMaxX + 20);
+
+                Peaks= PeakDetector.FindPeaks(MassSpecXYData.Xvalues, MassSpecXYData.Yvalues);
+                
             }
 
             CreateMSPlotForScanByScanAnalysis(currentScanSet);
-
+            
             int numPoints = MassSpecXYData == null ? 0 : MassSpecXYData.Xvalues.Length;
-            GeneralStatusMessage = "Showing scan " + currentScanSet.PrimaryScanNumber; 
+            GeneralStatusMessage = "Showing scan " + currentScanSet.PrimaryScanNumber;
 
 
 
@@ -297,6 +328,7 @@ namespace Sipper.ViewModel
             //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
             yAxis.AxisChanged += OnYAxisChange;
 
+            xAxis.AxisChanged += OnXAxisChange;
 
 
             xAxis.AxislineStyle = LineStyle.Solid;
@@ -311,6 +343,22 @@ namespace Sipper.ViewModel
             ObservedIsoPlot = plotModel;
 
 
+
+
+
+
+        }
+
+        private void OnXAxisChange(object sender, AxisChangedEventArgs e)
+        {
+            LinearAxis axis = sender as LinearAxis;
+
+            _xAxisIsChangedInternally = true;
+
+            MSGraphMinX = axis.ActualMinimum;
+            MSGraphMaxX = axis.ActualMaximum;
+
+            _xAxisIsChangedInternally = false;
         }
 
         private void OnYAxisChange(object sender, AxisChangedEventArgs e)
