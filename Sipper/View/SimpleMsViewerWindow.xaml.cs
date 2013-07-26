@@ -97,8 +97,7 @@ namespace Sipper.View
         {
             if (ViewModel == null || ViewModel.Run == null) return;
 
-            slider.Minimum = ViewModel.MinLcScan;
-            slider.Maximum = ViewModel.MaxLcScan;
+            
 
             ViewModel.CurrentLcScan = (int)e.NewValue;
             ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
@@ -157,7 +156,26 @@ namespace Sipper.View
                 // Open document 
                 string filename = dlg.FileName;
                 ViewModel.LoadRun(filename);
+
+                slider.Minimum = ViewModel.MinLcScan;
+                slider.Maximum = ViewModel.MaxLcScan;
             }
+
+        }
+
+        private void txtNumMsSummed_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (ViewModel == null || ViewModel.Run == null) return;
+
+            if (e.Delta > 0)
+            {
+                ViewModel.NumMSScansToSum = ViewModel.NumMSScansToSum + 2;
+            }
+            else
+            {
+                ViewModel.NumMSScansToSum = ViewModel.NumMSScansToSum - 2;
+            }
+
 
         }
 

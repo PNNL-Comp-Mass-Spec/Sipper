@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using DeconTools.Backend;
 using DeconTools.Backend.Core;
+using DeconTools.Backend.Data;
 using DeconTools.Backend.ProcessingTasks;
 using DeconTools.Backend.ProcessingTasks.MSGenerators;
 using DeconTools.Backend.ProcessingTasks.PeakDetectors;
 using DeconTools.Backend.Runs;
+using DeconTools.Workflows.Backend.Core;
 using OxyPlot;
 using OxyPlot.Axes;
 
@@ -19,7 +24,9 @@ namespace Sipper.ViewModel
 
         private MSGenerator _msGenerator;
         private ScanSetFactory _scanSetFactory = new ScanSetFactory();
-
+        private BackgroundWorker _backgroundWorker;
+        private string _peaksFilename;
+        PeakChromatogramGenerator _peakChromatogramGenerator;
 
 
         #region Constructors
@@ -37,10 +44,14 @@ namespace Sipper.ViewModel
             this.Run = run;
 
             PeakDetector = new DeconToolsPeakDetectorV2();
+            _peakChromatogramGenerator=new PeakChromatogramGenerator();
             Peaks = new List<Peak>();
 
-            MSGraphMinX = 400;
+            //the order matters here. See the properties.
             MSGraphMaxX = 1500;
+            MSGraphMinX = 400;
+            ChromToleranceInPpm = 10;
+
             NumMSScansToSum = 1;
 
             NavigateToNextMS1MassSpectrum();
@@ -51,6 +62,8 @@ namespace Sipper.ViewModel
         #endregion
 
         #region Properties
+
+        public double ChromToleranceInPpm { get; set; }
 
 
         public DeconToolsPeakDetectorV2 PeakDetector { get; set; }
@@ -93,6 +106,14 @@ namespace Sipper.ViewModel
             }
         }
 
+        private ScanSet _currentScanSet;
+        public ScanSet CurrentScanSet
+        {
+            get { return _currentScanSet; }
+            set { _currentScanSet = value; }
+        }
+
+
         public int MinLcScan
         {
             get
@@ -134,8 +155,32 @@ namespace Sipper.ViewModel
             }
             set
             {
+                bool isEvenNumber = value % 2 == 0;
+                if (isEvenNumber)
+                {
+                    bool tryingToSumMore = value > _numMsScansToSum;
+                    if (tryingToSumMore)
+                    {
+                        value++;
+                    }
+                    else
+                    {
+                        value--;
+                    }
+                }
+
+                if (value < 1)
+                {
+                    value = 1;
+                }
+
                 _numMsScansToSum = value;
                 OnPropertyChanged("NumMSScansToSum");
+
+                if (!_xAxisIsChangedInternally)
+                {
+                    NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
+                }
             }
         }
 
@@ -146,15 +191,17 @@ namespace Sipper.ViewModel
             get { return _msGraphMaxX; }
             set
             {
+                if (value <= _msGraphMinX)
+                {
+                    value = _msGraphMinX + 0.001;
+                }
+
                 _msGraphMaxX = value;
                 OnPropertyChanged("MSGraphMaxX");
 
                 if (!_xAxisIsChangedInternally)
                 {
-                    if (ObservedIsoPlot!=null)
-                    {
-                        
-                    }
+                    NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
                 }
             }
         }
@@ -165,9 +212,18 @@ namespace Sipper.ViewModel
             get { return _msGraphMinX; }
             set
             {
+                if (value >= _msGraphMaxX)
+                {
+                    value = _msGraphMaxX - 0.001;
+                }
+
                 _msGraphMinX = value;
                 OnPropertyChanged("MSGraphMinX");
 
+                if (!_xAxisIsChangedInternally)
+                {
+                    NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
+                }
 
             }
         }
@@ -194,6 +250,15 @@ namespace Sipper.ViewModel
             }
         }
 
+
+        private PlotModel _chromatogramPlot;
+        public PlotModel ChromatogramPlot
+        {
+            get { return _chromatogramPlot; }
+            set { _chromatogramPlot = value;
+            OnPropertyChanged("ChromatogramPlot");}
+        }
+
         string _generalStatusMessage;
         public string GeneralStatusMessage
         {
@@ -208,6 +273,19 @@ namespace Sipper.ViewModel
             }
         }
 
+
+        private int _percentProgress;
+        public int PercentProgress
+        {
+            get { return _percentProgress; }
+            set
+            {
+                _percentProgress = value;
+                OnPropertyChanged("PercentProgress");
+            }
+        }
+
+        protected XYData ChromXyData { get; set; }
 
 
         #endregion
@@ -232,7 +310,11 @@ namespace Sipper.ViewModel
                 GeneralStatusMessage = ex.Message;
             }
 
+            if (Run != null)
+            {
+                LoadPeaksUsingBackgroundWorker();
 
+            }
 
             if (Run != null)
             {
@@ -243,7 +325,30 @@ namespace Sipper.ViewModel
         }
 
 
+        private void LoadPeaksUsingBackgroundWorker()
+        {
+            if (Run == null) return;
 
+            if (_backgroundWorker != null && _backgroundWorker.IsBusy)
+            {
+                GeneralStatusMessage = "Busy...";
+                return;
+
+            }
+
+            _backgroundWorker = new BackgroundWorker();
+            _backgroundWorker.WorkerSupportsCancellation = true;
+            _backgroundWorker.WorkerReportsProgress = true;
+            _backgroundWorker.RunWorkerCompleted += BackgroundWorkerCompleted;
+            _backgroundWorker.ProgressChanged += BackgroundWorkerProgressChanged;
+            _backgroundWorker.DoWork += BackgroundWorkerDoWork;
+
+            _backgroundWorker.RunWorkerAsync();
+
+
+        }
+
+   
 
 
         public void NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode selectionMode = Globals.ScanSelectionMode.ASCENDING)
@@ -255,9 +360,13 @@ namespace Sipper.ViewModel
             {
                 nextPossibleMs = CurrentLcScan - 1;
             }
-            else
+            else if (selectionMode == Globals.ScanSelectionMode.ASCENDING)
             {
                 nextPossibleMs = CurrentLcScan + 1;
+            }
+            else
+            {
+                nextPossibleMs = CurrentLcScan;
             }
 
             CurrentLcScan = Run.GetClosestMSScan(nextPossibleMs, selectionMode);
@@ -269,44 +378,122 @@ namespace Sipper.ViewModel
             }
 
 
-            var currentScanSet = _scanSetFactory.CreateScanSet(Run, CurrentLcScan, NumMSScansToSum);
-            MassSpecXYData = _msGenerator.GenerateMS(Run, currentScanSet);
+            CurrentScanSet = _scanSetFactory.CreateScanSet(Run, CurrentLcScan, NumMSScansToSum);
+            MassSpecXYData = _msGenerator.GenerateMS(Run, CurrentScanSet);
 
             Peaks = new List<Peak>();
             if (MassSpecXYData != null)
             {
+
+                //Trim the viewable mass spectrum, but leave some data so user can pan to the right and left
                 MassSpecXYData = MassSpecXYData.TrimData(MSGraphMinX - 20, MSGraphMaxX + 20);
 
+                //Use only the data within the viewing area for peak detection
                 var xydataForPeakDetector = MassSpecXYData.TrimData(MSGraphMinX, MSGraphMaxX);
                 Peaks = PeakDetector.FindPeaks(xydataForPeakDetector.Xvalues, xydataForPeakDetector.Yvalues);
-                
+
+
+
             }
 
-            CreateMSPlotForScanByScanAnalysis(currentScanSet);
-            
+            CreateMSPlotForScanByScanAnalysis();
+
+            CreateBasePeakChrom();
+
             int numPoints = MassSpecXYData == null ? 0 : MassSpecXYData.Xvalues.Length;
-            GeneralStatusMessage = "Showing scan " + currentScanSet.PrimaryScanNumber;
+            GeneralStatusMessage = "Showing scan " + CurrentScanSet.PrimaryScanNumber;
 
 
 
         }
 
+        private void CreateBasePeakChrom()
+        {
+            bool canGenerateChrom = Run != null && Run.ResultCollection.MSPeakResultList != null &&
+                                    Run.ResultCollection.MSPeakResultList.Count > 0 && Peaks!=null && Peaks.Count>0;
+
+            if (!canGenerateChrom) return;
+
+            double scanWindowWidth = 600;
+            int lowerScan = (int) Math.Round(Math.Max(MinLcScan, CurrentLcScan - scanWindowWidth/2));
+            int upperScan = (int) Math.Round(Math.Min(MaxLcScan, CurrentLcScan + scanWindowWidth/2));
+
+            var mostIntensePeak = Peaks.OrderByDescending(p => p.Height).First();
+
+
+            ChromXyData = _peakChromatogramGenerator.GenerateChromatogram(Run, lowerScan, upperScan,
+                                                                          mostIntensePeak.XValue, ChromToleranceInPpm);
+
+            if (ChromXyData==null)
+            {
+                ChromXyData = new XYData();
+                ChromXyData.Xvalues = new double[]{lowerScan,upperScan};
+                ChromXyData.Yvalues = new double[] { 0, 0 };
+
+            }
+
+            var maxY = (float)ChromXyData.getMaxY();
+           
+
+            string graphTitle = "XIC for most intense peak (m/z " + mostIntensePeak.XValue.ToString("0.000") + ")";
+
+            PlotModel plotModel = new PlotModel(graphTitle);
+            plotModel.TitleFontSize = 9;
+            plotModel.Padding = new OxyThickness(0);
+            plotModel.PlotMargins = new OxyThickness(0);
+            plotModel.PlotAreaBorderThickness = 0;
 
 
 
+            var series = new OxyPlot.Series.LineSeries();
+            series.MarkerSize = 1;
+            series.Color = OxyColors.Black;
+            for (int i = 0; i < ChromXyData.Xvalues.Length; i++)
+            {
+                series.Points.Add(new DataPoint(ChromXyData.Xvalues[i], ChromXyData.Yvalues[i]));
+            }
+
+            var xAxis = new LinearAxis(AxisPosition.Bottom, "scan");
+            xAxis.Minimum = lowerScan;
+            xAxis.Maximum = upperScan;
+
+            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
+            yAxis.Minimum = 0;
+            yAxis.AbsoluteMinimum = 0;
+            yAxis.Maximum = maxY + maxY * 0.05;
+            yAxis.AxisChanged += OnYAxisChange;
+            
+            xAxis.AxislineStyle = LineStyle.Solid;
+            xAxis.AxislineThickness = 1;
+            yAxis.AxislineStyle = LineStyle.Solid;
+            yAxis.AxislineThickness = 1;
+
+            plotModel.Series.Add(series);
+            plotModel.Axes.Add(xAxis);
+            plotModel.Axes.Add(yAxis);
+
+
+            ChromatogramPlot = plotModel;
+
+
+            
+
+        }
+
+        
 
         #endregion
 
         #region Private Methods
 
 
-        private void CreateMSPlotForScanByScanAnalysis(ScanSet scanSet)
+        private void CreateMSPlotForScanByScanAnalysis()
         {
             XYData xydata = new XYData();
             xydata.Xvalues = MassSpecXYData == null ? new double[] { 400, 1500 } : MassSpecXYData.Xvalues;
             xydata.Yvalues = MassSpecXYData == null ? new double[] { 0, 0 } : MassSpecXYData.Yvalues;
 
-            string msGraphTitle = "Observed MS - Scan: " + scanSet;
+            string msGraphTitle = "Observed MS - Scan: " + (CurrentScanSet == null ? "" : CurrentScanSet.ToString());
 
             var maxY = (float)xydata.getMaxY(MSGraphMinX, MSGraphMaxX);
 
@@ -348,8 +535,9 @@ namespace Sipper.ViewModel
             yAxis.AxislineThickness = 1;
 
             plotModel.Series.Add(series);
-            plotModel.Axes.Add(yAxis);
             plotModel.Axes.Add(xAxis);
+            plotModel.Axes.Add(yAxis);
+
 
             ObservedIsoPlot = plotModel;
 
@@ -359,6 +547,95 @@ namespace Sipper.ViewModel
 
 
         }
+
+        private void LoadPeaks()
+        {
+            try
+            {
+                _peaksFilename = this.Run.DataSetPath + "\\" + this.Run.DatasetName + "_peaks.txt";
+
+                if (!File.Exists(_peaksFilename))
+                {
+                    GeneralStatusMessage =
+                        "Creating chromatogram data (_peaks.txt file); this is only done once. It takes 1 - 5 min .......";
+
+                    var peakCreationParameters = new PeakDetectAndExportWorkflowParameters();
+                    peakCreationParameters.PeakBR = PeakDetector.PeakToBackgroundRatio;
+                    peakCreationParameters.PeakFitType = Globals.PeakFitType.QUADRATIC;
+                    peakCreationParameters.SigNoiseThreshold = PeakDetector.SignalToNoiseThreshold;
+
+                    var peakCreator = new PeakDetectAndExportWorkflow(Run, peakCreationParameters, _backgroundWorker);
+                    peakCreator.Execute();
+                }
+            }
+            catch (Exception ex)
+            {
+                GeneralStatusMessage = ex.Message;
+                return;
+            }
+
+            GeneralStatusMessage = "Loading chromatogram data (_peaks.txt file) .......";
+            try
+            {
+                PeakImporterFromText peakImporter = new PeakImporterFromText(_peaksFilename, _backgroundWorker);
+                peakImporter.ImportPeaks(this.Run.ResultCollection.MSPeakResultList);
+            }
+            catch (Exception ex)
+            {
+                GeneralStatusMessage = ex.Message;
+                return;
+                //throw new ApplicationException("Peaks failed to load. Maybe the details below will help... \n\n" + ex.Message + "\nStacktrace: " + ex.StackTrace, ex);
+            }
+
+            if (Run.ResultCollection.MSPeakResultList != null && Run.ResultCollection.MSPeakResultList.Count > 0)
+            {
+                int numPeaksLoaded = Run.ResultCollection.MSPeakResultList.Count;
+                GeneralStatusMessage = "Chromatogram data LOADED. (# peaks= " + numPeaksLoaded + ")";
+            }
+            else
+            {
+                GeneralStatusMessage = "No Chromatogram data!!! Check your _peaks.txt file for correct format.";
+            }
+
+        }
+
+        void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
+        {
+            var worker = (BackgroundWorker)sender;
+
+            LoadPeaks();
+
+
+            if (worker.CancellationPending)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void BackgroundWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                GeneralStatusMessage = "Cancelled";
+            }
+            else if (e.Error != null)
+            {
+                GeneralStatusMessage = "Error loading peaks. Contact a good friend.";
+            }
+            else
+            {
+                PercentProgress = 100;
+            }
+        }
+
+
+
+        private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            PercentProgress = e.ProgressPercentage;
+        }
+
+
 
         private void OnXAxisChange(object sender, AxisChangedEventArgs e)
         {

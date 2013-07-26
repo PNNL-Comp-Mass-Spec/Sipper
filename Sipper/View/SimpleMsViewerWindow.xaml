@@ -40,11 +40,13 @@
                        IsReadOnly="True" Background="{x:Null}" BorderBrush="{x:Null}" FontSize="10" CaretBrush="#4AB2CCB9"></TextBox>
             </StackPanel>
           </Button>
-          <TextBlock Margin="5" Text="{Binding GeneralStatusMessage}" TextWrapping="WrapWithOverflow"></TextBlock>
+                    <ProgressBar Margin="15,0,15,0" Height="8" Foreground="#FF4DB146" Background="#FFE5EDFC"
+                           BorderBrush="#FF436396" Value="{Binding PercentProgress}"></ProgressBar>
+                    <TextBlock Margin="15,0,15,5" Text="{Binding GeneralStatusMessage}" TextWrapping="WrapWithOverflow"></TextBlock>
         </StackPanel>
 
-
-        <Grid Name="grid1" Height="125" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Border>
+                    <Grid Name="grid1" Height="125" HorizontalAlignment="Left" VerticalAlignment="Top">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="40"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
@@ -87,7 +89,7 @@
           <TextBlock VerticalAlignment="Center" Grid.Column="1" Grid.Row="2" Grid.RowSpan="1" FontSize="14">Num Summed</TextBlock>
 
           <TextBox Name="txtNumMsSummed" VerticalAlignment="Center" Grid.Column="2" Grid.Row="2" Grid.RowSpan="1"
-                   FontSize="14" Text="{Binding NumMSScansToSum }" LostFocus="NavigateToSpecificScanEvent"></TextBox>
+                   FontSize="14" Text="{Binding NumMSScansToSum }" MouseWheel="txtNumMsSummed_MouseWheel"  LostFocus="NavigateToSpecificScanEvent"></TextBox>
 
 
           <Slider Name="slider" Value="{Binding CurrentLcScan}" Minimum="{Binding MinLcScan}"
@@ -95,14 +97,24 @@
 
 
         </Grid>
+                </Border>
 
                 <Border>
-                    <DataGrid MaxHeight="300" AutoGenerateColumns="False" ItemsSource="{Binding Path=Peaks}" >
+                    <Expander Header="MS Peaks" IsExpanded="True">
+                    <DataGrid MaxHeight="300" AutoGenerateColumns="False" ItemsSource="{Binding Path=Peaks}" HorizontalGridLinesBrush="SlateGray" VerticalGridLinesBrush="SlateGray">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Path=XValue, StringFormat=0.0000}" Header="m/z" />
                             <DataGridTextColumn Binding="{Binding Path=Height, StringFormat=0.0}" Header="intensity" />
                         </DataGrid.Columns>
                     </DataGrid>
+                    </Expander>
+                </Border>
+
+                <Border>
+                    <Expander Header="Extracted Ion Chromatogam" IsExpanded="True">
+                        <oxy:Plot Height="200" Margin="6,10,0,0" Model="{Binding ChromatogramPlot }" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        </oxy:Plot>
+                    </Expander>
                 </Border>
             </StackPanel>
 
