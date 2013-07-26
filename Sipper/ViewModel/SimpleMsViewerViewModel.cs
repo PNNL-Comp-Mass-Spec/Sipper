@@ -21,6 +21,7 @@ namespace Sipper.ViewModel
     {
 
         private bool _xAxisIsChangedInternally;
+        private bool _isInternalPeakListUpdate;
 
         private MSGenerator _msGenerator;
         private ScanSetFactory _scanSetFactory = new ScanSetFactory();
@@ -44,13 +45,13 @@ namespace Sipper.ViewModel
             this.Run = run;
 
             PeakDetector = new DeconToolsPeakDetectorV2();
-            _peakChromatogramGenerator=new PeakChromatogramGenerator();
+            _peakChromatogramGenerator = new PeakChromatogramGenerator();
             Peaks = new List<Peak>();
 
             //the order matters here. See the properties.
             MSGraphMaxX = 1500;
             MSGraphMinX = 400;
-            ChromToleranceInPpm = 10;
+            ChromToleranceInPpm = 20;
 
             NumMSScansToSum = 1;
 
@@ -111,6 +112,21 @@ namespace Sipper.ViewModel
         {
             get { return _currentScanSet; }
             set { _currentScanSet = value; }
+        }
+
+
+        private Peak _selectedPeak;
+        public Peak SelectedPeak
+        {
+            get { return _selectedPeak; }
+            set
+            {
+                _selectedPeak = value;
+
+
+                CreateChromatogram();
+
+            }
         }
 
 
@@ -255,8 +271,11 @@ namespace Sipper.ViewModel
         public PlotModel ChromatogramPlot
         {
             get { return _chromatogramPlot; }
-            set { _chromatogramPlot = value;
-            OnPropertyChanged("ChromatogramPlot");}
+            set
+            {
+                _chromatogramPlot = value;
+                OnPropertyChanged("ChromatogramPlot");
+            }
         }
 
         string _generalStatusMessage;
@@ -348,7 +367,7 @@ namespace Sipper.ViewModel
 
         }
 
-   
+
 
 
         public void NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode selectionMode = Globals.ScanSelectionMode.ASCENDING)
@@ -394,56 +413,50 @@ namespace Sipper.ViewModel
 
 
 
+
             }
 
             CreateMSPlotForScanByScanAnalysis();
 
-            CreateBasePeakChrom();
-
-            int numPoints = MassSpecXYData == null ? 0 : MassSpecXYData.Xvalues.Length;
-            GeneralStatusMessage = "Showing scan " + CurrentScanSet.PrimaryScanNumber;
-
-
+            _isInternalPeakListUpdate = true;
+            SelectedPeak = Peaks.OrderByDescending(p => p.Height).FirstOrDefault();  //this triggers an XIC
+            _isInternalPeakListUpdate = false;
 
         }
 
-        private void CreateBasePeakChrom()
+        private void CreateChromatogram()
         {
             bool canGenerateChrom = Run != null && Run.ResultCollection.MSPeakResultList != null &&
-                                    Run.ResultCollection.MSPeakResultList.Count > 0 && Peaks!=null && Peaks.Count>0;
+                                    Run.ResultCollection.MSPeakResultList.Count > 0 && Peaks != null && Peaks.Count > 0
+                                    && SelectedPeak != null;
 
             if (!canGenerateChrom) return;
 
             double scanWindowWidth = 600;
-            int lowerScan = (int) Math.Round(Math.Max(MinLcScan, CurrentLcScan - scanWindowWidth/2));
-            int upperScan = (int) Math.Round(Math.Min(MaxLcScan, CurrentLcScan + scanWindowWidth/2));
-
-            var mostIntensePeak = Peaks.OrderByDescending(p => p.Height).First();
-
+            int lowerScan = (int)Math.Round(Math.Max(MinLcScan, CurrentLcScan - scanWindowWidth / 2));
+            int upperScan = (int)Math.Round(Math.Min(MaxLcScan, CurrentLcScan + scanWindowWidth / 2));
 
             ChromXyData = _peakChromatogramGenerator.GenerateChromatogram(Run, lowerScan, upperScan,
-                                                                          mostIntensePeak.XValue, ChromToleranceInPpm);
+                                                                          SelectedPeak.XValue, ChromToleranceInPpm);
 
-            if (ChromXyData==null)
+            if (ChromXyData == null)
             {
                 ChromXyData = new XYData();
-                ChromXyData.Xvalues = new double[]{lowerScan,upperScan};
+                ChromXyData.Xvalues = new double[] { lowerScan, upperScan };
                 ChromXyData.Yvalues = new double[] { 0, 0 };
 
             }
 
             var maxY = (float)ChromXyData.getMaxY();
-           
 
-            string graphTitle = "XIC for most intense peak (m/z " + mostIntensePeak.XValue.ToString("0.000") + ")";
+
+            string graphTitle = "XIC for most intense peak (m/z " + SelectedPeak.XValue.ToString("0.000") + ")";
 
             PlotModel plotModel = new PlotModel(graphTitle);
             plotModel.TitleFontSize = 9;
             plotModel.Padding = new OxyThickness(0);
             plotModel.PlotMargins = new OxyThickness(0);
             plotModel.PlotAreaBorderThickness = 0;
-
-
 
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
@@ -462,7 +475,7 @@ namespace Sipper.ViewModel
             yAxis.AbsoluteMinimum = 0;
             yAxis.Maximum = maxY + maxY * 0.05;
             yAxis.AxisChanged += OnYAxisChange;
-            
+
             xAxis.AxislineStyle = LineStyle.Solid;
             xAxis.AxislineThickness = 1;
             yAxis.AxislineStyle = LineStyle.Solid;
@@ -476,11 +489,11 @@ namespace Sipper.ViewModel
             ChromatogramPlot = plotModel;
 
 
-            
+
 
         }
 
-        
+       
 
         #endregion
 
@@ -504,7 +517,7 @@ namespace Sipper.ViewModel
             plotModel.PlotMargins = new OxyThickness(0);
             plotModel.PlotAreaBorderThickness = 0;
 
-
+            plotModel.MouseDown += MouseButtonDown;    
 
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
@@ -659,6 +672,34 @@ namespace Sipper.ViewModel
             // Set the minimum to 0 and refresh the plot
             yAxis.Zoom(0, yAxis.ActualMaximum);
             yAxis.PlotModel.RefreshPlot(true);
+        }
+
+
+        private void MouseButtonDown(object sender, OxyMouseEventArgs e)
+        {
+            var plot = ObservedIsoPlot;
+
+            if (e.ChangedButton == OxyMouseButton.Left)
+            {
+                var position = e.Position;
+
+                var series = plot.GetSeriesFromPoint(position, 10);
+                if (series != null)
+                {
+                    var hitResult = series.GetNearestPoint(position, true);
+
+                    if (hitResult != null && hitResult.DataPoint != null)
+                    {
+                        var datapoint = hitResult.DataPoint;
+
+                        SelectedPeak = new Peak(datapoint.X, (float)datapoint.Y, 0);
+
+                        GeneralStatusMessage = "Selected point = " + datapoint.X.ToString("0.000") + ", " +
+                                       datapoint.Y.ToString("0.000");
+                    }
+                }
+            }
+
         }
 
 

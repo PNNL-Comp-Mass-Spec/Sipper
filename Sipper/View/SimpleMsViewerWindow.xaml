@@ -27,7 +27,13 @@
 
 
     </Style>
-  </Window.Resources>
+
+        <Style x:Key="CellRightAlign">
+            <Setter Property="Control.HorizontalAlignment"
+            Value="Right" />
+        </Style>
+
+    </Window.Resources>
   <DockPanel>
 
     <Border Margin="6">
@@ -101,10 +107,11 @@
 
                 <Border>
                     <Expander Header="MS Peaks" IsExpanded="True">
-                    <DataGrid MaxHeight="300" AutoGenerateColumns="False" ItemsSource="{Binding Path=Peaks}" HorizontalGridLinesBrush="SlateGray" VerticalGridLinesBrush="SlateGray">
+                    <DataGrid Name="msPeaksDatagrid" MaxHeight="300" AutoGenerateColumns="False" ItemsSource="{Binding Path=Peaks}" 
+                              HorizontalGridLinesBrush="SlateGray" VerticalGridLinesBrush="SlateGray" SelectionChanged="msPeaksDatagrid_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Path=XValue, StringFormat=0.0000}" Header="m/z" />
-                            <DataGridTextColumn Binding="{Binding Path=Height, StringFormat=0.0}" Header="intensity" />
+                                <DataGridTextColumn ElementStyle="{StaticResource CellRightAlign}" Binding="{Binding Path=Height, StringFormat=0.0}" Header="intensity" />
                         </DataGrid.Columns>
                     </DataGrid>
                     </Expander>
@@ -120,8 +127,8 @@
 
     </Border>
     <Border HorizontalAlignment="Stretch">
-      <oxy:Plot Margin="6,10,0,0" Model="{Binding ObservedIsoPlot }" VerticalAlignment="Stretch"
-                HorizontalAlignment="Stretch">
+      <oxy:Plot Name="msPlot" Margin="6,10,0,0" Model="{Binding ObservedIsoPlot }" VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch" >
         <oxy:Plot.Axes>
           <oxy:LinearAxis Position="Bottom" AbsoluteMinimum="{Binding MSGraphMinX}"></oxy:LinearAxis>
           <oxy:LinearAxis Position="Bottom" AbsoluteMaximum="{Binding MSGraphMaxX}"></oxy:LinearAxis>

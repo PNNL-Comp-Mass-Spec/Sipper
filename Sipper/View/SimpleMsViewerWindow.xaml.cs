@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using DeconTools.Backend;
+using DeconTools.Backend.Core;
 using Sipper.Model;
 using Sipper.ViewModel;
 
@@ -177,6 +178,25 @@ namespace Sipper.View
             }
 
 
+        }
+
+        private void msPeaksDatagrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ViewModel == null || ViewModel.Run == null) return;
+
+            if (e.AddedItems.Count > 0)
+            {
+                ViewModel.SelectedPeak = (Peak) e.AddedItems[0];
+            }
+           
+            
+        }
+
+        private void Plot_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var point = e.GetPosition(msPlot);
+
+            ViewModel.GeneralStatusMessage = "Mouse position = " + point.X.ToString("0.000") + ", " + point.Y.ToString("0.000") ;
         }
 
 
