@@ -148,6 +148,14 @@ namespace Sipper.ViewModel
             {
                 _msGraphMaxX = value;
                 OnPropertyChanged("MSGraphMaxX");
+
+                if (!_xAxisIsChangedInternally)
+                {
+                    if (ObservedIsoPlot!=null)
+                    {
+                        
+                    }
+                }
             }
         }
 
@@ -159,6 +167,8 @@ namespace Sipper.ViewModel
             {
                 _msGraphMinX = value;
                 OnPropertyChanged("MSGraphMinX");
+
+
             }
         }
 
@@ -262,12 +272,13 @@ namespace Sipper.ViewModel
             var currentScanSet = _scanSetFactory.CreateScanSet(Run, CurrentLcScan, NumMSScansToSum);
             MassSpecXYData = _msGenerator.GenerateMS(Run, currentScanSet);
 
-            Peaks.Clear();
+            Peaks = new List<Peak>();
             if (MassSpecXYData != null)
             {
                 MassSpecXYData = MassSpecXYData.TrimData(MSGraphMinX - 20, MSGraphMaxX + 20);
 
-                Peaks= PeakDetector.FindPeaks(MassSpecXYData.Xvalues, MassSpecXYData.Yvalues);
+                var xydataForPeakDetector = MassSpecXYData.TrimData(MSGraphMinX, MSGraphMaxX);
+                Peaks = PeakDetector.FindPeaks(xydataForPeakDetector.Xvalues, xydataForPeakDetector.Yvalues);
                 
             }
 
