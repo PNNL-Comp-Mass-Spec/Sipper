@@ -191,13 +191,7 @@ namespace Sipper.View
            
             
         }
-
-        private void Plot_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            var point = e.GetPosition(msPlot);
-
-            ViewModel.GeneralStatusMessage = "Mouse position = " + point.X.ToString("0.000") + ", " + point.Y.ToString("0.000") ;
-        }
+        
 
 
 
