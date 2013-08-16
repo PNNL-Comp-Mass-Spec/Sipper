@@ -10,6 +10,7 @@ using DeconTools.Backend.Data;
 using DeconTools.Backend.ProcessingTasks;
 using DeconTools.Backend.ProcessingTasks.MSGenerators;
 using DeconTools.Backend.ProcessingTasks.PeakDetectors;
+using DeconTools.Backend.ProcessingTasks.ZeroFillers;
 using DeconTools.Backend.Runs;
 using DeconTools.Workflows.Backend.Core;
 using OxyPlot;
@@ -28,7 +29,7 @@ namespace Sipper.ViewModel
         private BackgroundWorker _backgroundWorker;
         private string _peaksFilename;
         PeakChromatogramGenerator _peakChromatogramGenerator;
-
+        private bool _recreatePeaksFile;
 
         #region Constructors
 
@@ -53,8 +54,12 @@ namespace Sipper.ViewModel
             MSGraphMinX = 400;
             ChromToleranceInPpm = 20;
 
-            NumMSScansToSum = 1;
+            ChromSourcePeakDetectorSigNoise = 2;
+            ChromSourcePeakDetectorPeakBr = 3;
 
+            NumMSScansToSum = 1;
+            ShowMsMsSpectra = false;
+            
             NavigateToNextMS1MassSpectrum();
 
         }
@@ -66,8 +71,43 @@ namespace Sipper.ViewModel
 
         public double ChromToleranceInPpm { get; set; }
 
+        private bool _showMsMsSpectra;
+        public bool ShowMsMsSpectra
+        {
+            get { return _showMsMsSpectra; }
+            set
+            {
+                _showMsMsSpectra = value;
+                OnPropertyChanged("ShowMsMsSpectra");
+            }
+        }
+
 
         public DeconToolsPeakDetectorV2 PeakDetector { get; set; }
+
+        private double _chromSourcePeakDetectorPeakBr;
+        public double ChromSourcePeakDetectorPeakBr
+        {
+            get { return _chromSourcePeakDetectorPeakBr; }
+            set
+            {
+                _chromSourcePeakDetectorPeakBr = value;
+                OnPropertyChanged("ChromSourcePeakDetectorPeakBr");
+            }
+        }
+
+
+        private double _chromSourcePeakDetectorSigNoise;
+        public double ChromSourcePeakDetectorSigNoise
+        {
+            get { return _chromSourcePeakDetectorSigNoise; }
+            set
+            {
+                _chromSourcePeakDetectorSigNoise = value;
+                OnPropertyChanged("ChromSourcePeakDetectorSigNoise");
+            }
+        }
+
 
 
         private List<Peak> _peaks;
@@ -344,8 +384,11 @@ namespace Sipper.ViewModel
         }
 
 
-        private void LoadPeaksUsingBackgroundWorker()
+        public void LoadPeaksUsingBackgroundWorker(bool recreatePeaksFile = false)
         {
+
+            _recreatePeaksFile = recreatePeaksFile;
+
             if (Run == null) return;
 
             if (_backgroundWorker != null && _backgroundWorker.IsBusy)
@@ -388,7 +431,15 @@ namespace Sipper.ViewModel
                 nextPossibleMs = CurrentLcScan;
             }
 
-            CurrentLcScan = Run.GetClosestMSScan(nextPossibleMs, selectionMode);
+            if (!ShowMsMsSpectra)
+            {
+                CurrentLcScan = Run.GetClosestMSScan(nextPossibleMs, selectionMode);  
+            }
+            else
+            {
+                CurrentLcScan = nextPossibleMs;
+            }
+            
 
             if (_msGenerator == null)
             {
@@ -400,9 +451,17 @@ namespace Sipper.ViewModel
             CurrentScanSet = _scanSetFactory.CreateScanSet(Run, CurrentLcScan, NumMSScansToSum);
             MassSpecXYData = _msGenerator.GenerateMS(Run, CurrentScanSet);
 
+           
+
             Peaks = new List<Peak>();
             if (MassSpecXYData != null)
             {
+                if (Run.IsDataCentroided(CurrentLcScan))
+                {
+
+                    MassSpecXYData = ZeroFillCentroidData(MassSpecXYData);
+                }
+
 
                 //Trim the viewable mass spectrum, but leave some data so user can pan to the right and left
                 MassSpecXYData = MassSpecXYData.TrimData(MSGraphMinX - 20, MSGraphMaxX + 20);
@@ -410,9 +469,6 @@ namespace Sipper.ViewModel
                 //Use only the data within the viewing area for peak detection
                 var xydataForPeakDetector = MassSpecXYData.TrimData(MSGraphMinX, MSGraphMaxX);
                 Peaks = PeakDetector.FindPeaks(xydataForPeakDetector.Xvalues, xydataForPeakDetector.Yvalues);
-
-
-
 
             }
 
@@ -422,6 +478,35 @@ namespace Sipper.ViewModel
             SelectedPeak = Peaks.OrderByDescending(p => p.Height).FirstOrDefault();  //this triggers an XIC
             _isInternalPeakListUpdate = false;
 
+        }
+
+        private XYData ZeroFillCentroidData(XYData massSpecXyData)
+        {
+            List<double> newXValues = new List<double>();
+            List<double> newYValues = new List<double>();
+
+
+            for (int i = 0; i < massSpecXyData.Xvalues.Length; i++)
+            {
+                var currentXVal = massSpecXyData.Xvalues[i];
+                var currentYVal = massSpecXyData.Yvalues[i];
+
+                double zeroFillDistance=0.005;
+                double newXValBefore = currentXVal - zeroFillDistance;
+                double newXValAfter = currentXVal + zeroFillDistance;
+
+                newXValues.Add(newXValBefore);
+                newYValues.Add(0);
+
+                newXValues.Add(currentXVal);
+                newYValues.Add(currentYVal);
+
+                newXValues.Add(newXValAfter);
+                newYValues.Add(0);
+
+            }
+
+            return new XYData {Xvalues = newXValues.ToArray(), Yvalues = newYValues.ToArray()};
         }
 
         private void CreateChromatogram()
@@ -493,7 +578,7 @@ namespace Sipper.ViewModel
 
         }
 
-       
+
 
         #endregion
 
@@ -517,7 +602,7 @@ namespace Sipper.ViewModel
             plotModel.PlotMargins = new OxyThickness(0);
             plotModel.PlotAreaBorderThickness = 0;
 
-            plotModel.MouseDown += MouseButtonDown;    
+            plotModel.MouseDown += MouseButtonDown;
 
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
@@ -567,15 +652,19 @@ namespace Sipper.ViewModel
             {
                 _peaksFilename = this.Run.DataSetPath + "\\" + this.Run.DatasetName + "_peaks.txt";
 
-                if (!File.Exists(_peaksFilename))
+                if (_recreatePeaksFile || !File.Exists(_peaksFilename))
                 {
+                    _recreatePeaksFile = false;
+
+                    if (File.Exists(_peaksFilename)) File.Delete(_peaksFilename);
+
                     GeneralStatusMessage =
                         "Creating chromatogram data (_peaks.txt file); this is only done once. It takes 1 - 5 min .......";
 
                     var peakCreationParameters = new PeakDetectAndExportWorkflowParameters();
-                    peakCreationParameters.PeakBR = PeakDetector.PeakToBackgroundRatio;
+                    peakCreationParameters.PeakBR = ChromSourcePeakDetectorPeakBr;
                     peakCreationParameters.PeakFitType = Globals.PeakFitType.QUADRATIC;
-                    peakCreationParameters.SigNoiseThreshold = PeakDetector.SignalToNoiseThreshold;
+                    peakCreationParameters.SigNoiseThreshold = ChromSourcePeakDetectorSigNoise;
 
                     var peakCreator = new PeakDetectAndExportWorkflow(Run, peakCreationParameters, _backgroundWorker);
                     peakCreator.Execute();

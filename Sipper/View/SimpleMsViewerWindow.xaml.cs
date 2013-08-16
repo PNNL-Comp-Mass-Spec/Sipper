@@ -191,6 +191,15 @@ namespace Sipper.View
            
             
         }
+
+        private void btnReCreatePeaksFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel == null || ViewModel.Run == null) return;
+
+           
+            ViewModel.LoadPeaksUsingBackgroundWorker(true);
+            
+        }
         
 
 

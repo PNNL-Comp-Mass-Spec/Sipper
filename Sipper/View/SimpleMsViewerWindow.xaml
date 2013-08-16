@@ -37,7 +37,9 @@
   <DockPanel>
 
     <Border Margin="6">
-      <StackPanel>
+            <TabControl>
+                <TabItem Header="View data">
+                    <StackPanel>
         <StackPanel HorizontalAlignment="Stretch" MaxWidth="{Binding Path= Width, ElementName=grid1}">
           <Button Name="btnOpenDataset" Height="50" Margin="15,5,15,5" Click="btnOpenDataset_Click">
             <StackPanel>
@@ -124,8 +126,78 @@
                     </Expander>
                 </Border>
             </StackPanel>
+                </TabItem>
+                <TabItem Header="Options">
+                    <TabItem.Resources>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Control.BorderBrush" Value="SlateGray" />
+                            <Setter Property="Control.BorderThickness" Value="2" />
+                            <Setter Property="Control.VerticalAlignment" Value="Stretch" />
+                            <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="Control.Margin" Value="3,3,3,3" />
+                            <Setter Property="Border.CornerRadius" Value="5" />
 
-    </Border>
+                        </Style>
+
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Control.BorderBrush" Value="SlateGray" />
+                            <Setter Property="Control.BorderThickness" Value="1" />
+                            <Setter Property="Control.VerticalAlignment" Value="Center" />
+                            <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="Control.Margin" Value="3,3,3,3" />
+                            <Setter Property="Border.CornerRadius" Value="5" />
+
+                        </Style>
+
+                        <Style TargetType="CheckBox">
+                            <Setter Property="Control.BorderBrush" Value="SlateGray" />
+                            <Setter Property="Control.BorderThickness" Value="1" />
+                            <Setter Property="Control.VerticalAlignment" Value="Center" />
+                            <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="Control.Margin" Value="3,3,3,3" />
+                            <Setter Property="Border.CornerRadius" Value="5" />
+                        </Style>
+
+                    </TabItem.Resources>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>Show MS/MS data</TextBlock>
+                            <CheckBox IsChecked="{Binding ShowMsMsSpectra}"></CheckBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Line StrokeThickness="4"  HorizontalAlignment="Center" Width="50" Stroke="SlateGray" ></Line>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>ChromSourceCreatorPeakBR</TextBlock>
+                            <TextBox Text="{Binding ChromSourcePeakDetectorPeakBr}"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>ChromSourceCreatorSigNoiseThreshold</TextBlock>
+                            <TextBox Text="{Binding ChromSourcePeakDetectorSigNoise}"></TextBox>
+                        </StackPanel>
+                       
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>MS peak detector peak BR</TextBlock>
+                            <TextBox Text="{Binding PeakDetector.PeakToBackgroundRatio}"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>MS peak detector SigNoiseThreshold</TextBlock>
+                            <TextBox Text="{Binding PeakDetector.SignalToNoiseThreshold}"></TextBox>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Line StrokeThickness="4"  HorizontalAlignment="Center" Width="50" Stroke="SlateGray" ></Line>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Name="btnReCreatePeaksFile" HorizontalAlignment="Stretch" Click="btnReCreatePeaksFile_Click">Re-create peaks file</Button>
+                        </StackPanel>
+
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+        </Border>
     <Border HorizontalAlignment="Stretch">
       <oxy:Plot Name="msPlot" Margin="6,10,0,0" Model="{Binding ObservedIsoPlot }" VerticalAlignment="Stretch"
                 HorizontalAlignment="Stretch" >
