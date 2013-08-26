@@ -1086,6 +1086,12 @@ namespace Sipper.ViewModel
             xydata.Xvalues = TheorProfileXyData.Xvalues;
             xydata.Yvalues = TheorProfileXyData.Yvalues;
 
+            //scale to 100;
+            for (int i = 0; i < xydata.Yvalues.Length; i++)
+            {
+                xydata.Yvalues[i] = xydata.Yvalues[i]*100;
+            }
+
 
 
             string msGraphTitle = "Theoretical MS - m/z " +
@@ -1116,8 +1122,8 @@ namespace Sipper.ViewModel
             var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
             yAxis.Minimum = 0;
             yAxis.AbsoluteMinimum = 0;
-            yAxis.Maximum = 1.05;
-            yAxis.AbsoluteMaximum = 1.05;
+            yAxis.Maximum = 105;
+            yAxis.AbsoluteMaximum = 105;
             yAxis.StringFormat = "0.0E0";
 
 
