@@ -896,7 +896,7 @@ namespace Sipper.ViewModel
             var xAxis = new LinearAxis(AxisPosition.Bottom, "scan");
             xAxis.Minimum = ChromGraphMinX;
             xAxis.Maximum = ChromGraphMaxX;
-
+            
             var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
             yAxis.Minimum = 0;
             yAxis.AbsoluteMinimum = 0;
@@ -949,7 +949,7 @@ namespace Sipper.ViewModel
             var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
             xAxis.Minimum = MsGraphMinX;
             xAxis.Maximum = MsGraphMaxX;
-
+            
             var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
             yAxis.Minimum = 0;
             yAxis.AbsoluteMinimum = 0;
@@ -957,6 +957,7 @@ namespace Sipper.ViewModel
             //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
             //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
             yAxis.AxisChanged += OnYAxisChange;
+            yAxis.StringFormat = "0.0E0";
 
 
 
@@ -1024,11 +1025,13 @@ namespace Sipper.ViewModel
             var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
             xAxis.Minimum = MsGraphMinX;
             xAxis.Maximum = MsGraphMaxX;
+            
 
             var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
             yAxis.Minimum = 0;
             yAxis.AbsoluteMinimum = 0;
             yAxis.Maximum = MsGraphMaxY + MsGraphMaxY * 0.05;
+            yAxis.StringFormat = "0.0E0";
             //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
             //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
             yAxis.AxisChanged += OnYAxisChange;
@@ -1109,12 +1112,15 @@ namespace Sipper.ViewModel
             var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
             xAxis.Minimum = MsGraphMinX;
             xAxis.Maximum = MsGraphMaxX;
-
+            
             var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
             yAxis.Minimum = 0;
             yAxis.AbsoluteMinimum = 0;
             yAxis.Maximum = 1.05;
             yAxis.AbsoluteMaximum = 1.05;
+            yAxis.StringFormat = "0.0E0";
+
+
             //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
             //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
             yAxis.AxisChanged += OnYAxisChange;
