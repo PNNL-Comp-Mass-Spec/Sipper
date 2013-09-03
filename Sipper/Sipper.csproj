@@ -113,6 +113,10 @@
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\ManualViewingWithoutRawDataViewModel.cs" />
     <Compile Include="ViewModel\SimpleMsViewerViewModel.cs" />
+    <Compile Include="ViewModel\SipperParameterOptimizerViewModel.cs" />
+    <Compile Include="View\FilterParameterOptimizerWindow.xaml.cs">
+      <DependentUpon>FilterParameterOptimizerWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ManualAnnotationResultImageView.xaml.cs">
       <DependentUpon>ManualAnnotationResultImageView.xaml</DependentUpon>
     </Compile>
@@ -126,6 +130,10 @@
       <DependentUpon>Window1.xaml</DependentUpon>
     </Compile>
     <Page Include="View\AutoprocessorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\FilterParameterOptimizerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

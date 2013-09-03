@@ -59,7 +59,7 @@ namespace Sipper.Model
             sb.Append(delimiter);
             sb.Append(NumLabeledPassingFilter);
             sb.Append(delimiter);
-            sb.Append(FalsePositiveRate.ToString("0.###"));
+            sb.Append(double.IsNaN(FalsePositiveRate) ? "1.0":FalsePositiveRate.ToString("0.###"));
 
             return sb.ToString();
 

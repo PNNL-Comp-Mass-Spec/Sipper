@@ -1091,13 +1091,10 @@ namespace Sipper.ViewModel
             {
                 xydata.Yvalues[i] = xydata.Yvalues[i]*100;
             }
-
-
-
+            
             string msGraphTitle = "Theoretical MS - m/z " +
                                   Workflow.Result.Target.MZ.ToString("0.0000") + "; z=" +
                                   Workflow.Result.Target.ChargeState;
-
 
             PlotModel plotModel = new PlotModel(msGraphTitle);
             plotModel.TitleFontSize = 11;

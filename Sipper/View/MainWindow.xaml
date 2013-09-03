@@ -53,7 +53,7 @@
 
 
     </Border>
-        <Border Width="Auto" Height="auto" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"
+        <Border Width="Auto" Height="auto" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="1" HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch">
             <Button Content="Simple MS Viewer" Name="btnSimpleMsViewer" Click="btnOpenSimpleMsViewer"
               Width="Auto" Height="Auto" BorderBrush="{x:Null}" Background="{x:Null}" FontSize="15">
@@ -61,6 +61,16 @@
 
 
         </Border>
+
+        <Border Width="Auto" Height="auto" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="1" HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
+            <Button Content="Filter Optimizer" Name="btnFilterOptimizer" Click="btnFilterOptimizer_Click"
+              Width="Auto" Height="Auto" BorderBrush="{x:Null}" Background="{x:Null}" FontSize="15">
+            </Button>
+
+        </Border>
+
+
 
     </Grid>
 </Window>

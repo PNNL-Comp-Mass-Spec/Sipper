@@ -78,5 +78,11 @@ namespace Sipper.View
 
             ViewModel.SipperProject.Run = childWindow.ViewModel.Run;
         }
+
+        private void btnFilterOptimizer_Click(object sender, RoutedEventArgs e)
+        {
+            var childWindow = new FilterParameterOptimizerWindow(ViewModel.SipperProject);
+            childWindow.ShowDialog();
+        }
     }
 }
