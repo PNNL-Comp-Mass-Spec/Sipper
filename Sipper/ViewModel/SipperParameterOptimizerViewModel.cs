@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using DeconTools.Backend;
 using DeconTools.Utilities;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -20,6 +21,7 @@ namespace Sipper.ViewModel
         public SipperParameterOptimizerViewModel()
         {
             _filterOptimizer = new SipperFilterOptimizer();
+            AllParameterResults = new List<ParameterOptimizationResult>();
             MaxAllowedFalsePositiveRate = 0.1;
         }
 
@@ -85,6 +87,12 @@ namespace Sipper.ViewModel
         }
 
 
+        private XYData _rocCurve;
+        public XYData RocCurve
+        {
+            get { return _rocCurve; }
+            set { _rocCurve = value; }
+        }
 
 
         private void UpdateOutputFileName()
@@ -130,8 +138,79 @@ namespace Sipper.ViewModel
         }
 
 
-        public double MaxAllowedFalsePositiveRate { get; set; }
+        private double _maxAllowedFalsePositiveRate;
+        public double MaxAllowedFalsePositiveRate
+        {
+            get { return _maxAllowedFalsePositiveRate; }
+            set
+            {
+                _maxAllowedFalsePositiveRate = value;
+                OnPropertyChanged("MaxAllowedFalsePositiveRate");
 
+
+                UpdateFilteredParameters();
+
+            }
+        }
+
+
+        private ParameterOptimizationResult _selectedFilterParameter;
+        /// <summary>
+        /// This is parameter set that represents the best filter set and will be used in the autoprocessor and/or the viewer.
+        /// </summary>
+        public ParameterOptimizationResult SelectedFilterParameter
+        {
+            get { return _selectedFilterParameter; }
+            set
+            {
+                _selectedFilterParameter = value;
+                OnPropertyChanged("SelectedFilterParameter");
+
+                SelectedFilterReportString = GenerateFilterReportString(SelectedFilterParameter);
+
+            }
+        }
+
+        private string _selectedFilterReportString;
+        public string SelectedFilterReportString
+        {
+            get { return _selectedFilterReportString; }
+            set
+            {
+                _selectedFilterReportString = value;
+                OnPropertyChanged("SelectedFilterReportString");
+            }
+        }
+
+
+        private ParameterOptimizationResult _currentFilterParameter;
+        /// <summary>
+        /// This is the currently selected FilterParameter when a user selects a parameter set from the table in the UI
+        /// </summary>
+        public ParameterOptimizationResult CurrentFilterParameter
+        {
+            get { return _currentFilterParameter; }
+            set
+            {
+                _currentFilterParameter = value;
+                OnPropertyChanged("CurrentFilterParameter");
+
+                CurrentFilterReportString = GenerateFilterReportString(CurrentFilterParameter);
+            }
+        }
+
+
+        private string _currentFilterReportString;
+        public string CurrentFilterReportString
+        {
+            get { return _currentFilterReportString; }
+            set
+            {
+                _currentFilterReportString = value;
+
+                OnPropertyChanged("CurrentFilterReportString");
+            }
+        }
 
         #endregion
 
@@ -139,7 +218,7 @@ namespace Sipper.ViewModel
 
         public void CreateRocCurve()
         {
-            var rocData = _filterOptimizer.GetRocCurve(AllParameterResults);
+            RocCurve = _filterOptimizer.GetRocCurve(AllParameterResults);
             string graphTitle = "ROC curve";
 
             PlotModel plotModel = new PlotModel(graphTitle);
@@ -151,15 +230,15 @@ namespace Sipper.ViewModel
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
             series.Color = OxyColors.Black;
-            for (int i = 0; i < rocData.Xvalues.Length; i++)
+            for (int i = 0; i < RocCurve.Xvalues.Length; i++)
             {
-                series.Points.Add(new DataPoint(rocData.Xvalues[i], rocData.Yvalues[i]));
+                series.Points.Add(new DataPoint(RocCurve.Xvalues[i], RocCurve.Yvalues[i]));
             }
 
-            var xAxis = new LinearAxis(AxisPosition.Bottom, "labeled count");
+            var xAxis = new LinearAxis(AxisPosition.Bottom, "unlabeled count");
             xAxis.Minimum = 0;
 
-            var yAxis = new LinearAxis(AxisPosition.Left, "unlabeled count");
+            var yAxis = new LinearAxis(AxisPosition.Left, "labeled count");
             yAxis.Minimum = 0;
 
             plotModel.Series.Add(series);
@@ -170,7 +249,41 @@ namespace Sipper.ViewModel
             RocPlot = plotModel;
 
 
+
         }
+
+        public void SaveRocCurve(string fileName)
+        {
+            using (StreamWriter writer=new StreamWriter(fileName))
+            {
+                string header = "numUnlabeled\tnumLabeled";
+                writer.WriteLine(header);
+
+                XYData xydata = new XYData();
+                
+                if (RocCurve==null|| RocCurve.Xvalues==null || RocCurve.Xvalues.Length==0)
+                {
+                    xydata.Xvalues=new double[0];
+                    xydata.Yvalues=new double[0];
+                }
+                else
+                {
+                    xydata.Xvalues = RocCurve.Xvalues;
+                    xydata.Yvalues = RocCurve.Yvalues;
+                }
+
+                for (int i = 0; i < xydata.Xvalues.Length; i++)
+                {
+                    writer.WriteLine(xydata.Xvalues[i] + "\t" + xydata.Yvalues[i]);
+                }
+
+
+            }
+
+
+            
+        }
+
 
         private PlotModel _rocPlot;
         public PlotModel RocPlot
@@ -201,11 +314,16 @@ namespace Sipper.ViewModel
             if (CanExecuteMainCalculation())
             {
                 AllParameterResults = _filterOptimizer.DoCalculationsOnAllFilterCombinations(OutputFileName);
-                FilteredParameters = _filterOptimizer.GetOptimizedFiltersByFalsePositiveRate(AllParameterResults,
-                                                                                             MaxAllowedFalsePositiveRate).Take(200).ToList();
+                UpdateFilteredParameters();
 
                 CreateRocCurve();
             }
+        }
+
+        private void UpdateFilteredParameters()
+        {
+            FilteredParameters = _filterOptimizer.GetOptimizedFiltersByFalsePositiveRate(AllParameterResults,
+                                                                                         MaxAllowedFalsePositiveRate).Take(200).ToList();
         }
 
         protected List<ParameterOptimizationResult> AllParameterResults { get; set; }
@@ -224,5 +342,31 @@ namespace Sipper.ViewModel
 
         #endregion
 
+        public string GenerateFilterReportString(ParameterOptimizationResult selectedResult)
+        {
+            if (selectedResult == null) return string.Empty;
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Labeled fit <= " + selectedResult.FitScoreLabelled.ToString("0.####"));
+            sb.Append(Environment.NewLine);
+            sb.Append("IScore <= " + selectedResult.Iscore.ToString("0.####"));
+            sb.Append(Environment.NewLine);
+            sb.Append("SumOfRatios >= " + selectedResult.SumOfRatios.ToString("0.#"));
+            sb.Append(Environment.NewLine);
+            sb.Append("ContigScore >= " + selectedResult.ContigScore.ToString("0"));
+            sb.Append(Environment.NewLine);
+            sb.Append("PercentIncorp >= " + selectedResult.PercentIncorp.ToString("0.####"));
+            sb.Append(Environment.NewLine);
+            sb.Append("PercentPeptide >= " + selectedResult.PercentPeptidePopulation.ToString("0.##"));
+            sb.Append(Environment.NewLine);
+            sb.Append("Num unlabeled results at this filter= " + selectedResult.NumUnlabelledPassingFilter);
+            sb.Append(Environment.NewLine);
+            sb.Append("Num labeled results at this filter= " + selectedResult.NumLabeledPassingFilter);
+            sb.Append(Environment.NewLine);
+            sb.Append("False positive rate = " + selectedResult.FalsePositiveRate.ToString("0.###"));
+
+            return sb.ToString();
+
+        }
     }
 }

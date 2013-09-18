@@ -603,6 +603,8 @@ namespace Sipper.ViewModel
             CreateChromCorrPlot();
             CreateObservedIsotopicProfilePlot();
 
+            SetupEventHandlersForObsAndTheor();
+
             if (Workflow.Success)
             {
                 TargetedWorkflowParameters workflowParameters = (TargetedWorkflowParameters)Workflow.WorkflowParameters;
@@ -617,6 +619,45 @@ namespace Sipper.ViewModel
 
             OnPropertyChanged("WorkflowStatusMessage");
             OnPropertyChanged("PeptideSequence");
+        }
+
+        private void SetupEventHandlersForObsAndTheor()
+        {
+            bool isInternalChange = false;
+
+            var observedXaxis = ObservedIsoPlot.Axes[0];
+            var theoreticalXaxis = TheorIsoPlot.Axes[0];
+
+            theoreticalXaxis.AxisChanged += (s, e) =>
+                                    {
+                                        if (isInternalChange)
+                                        {
+                                            return;
+                                        }
+                                        isInternalChange = true;
+                                        observedXaxis.Zoom(theoreticalXaxis.ActualMinimum,
+                                                           theoreticalXaxis.ActualMaximum);
+                                        ObservedIsoPlot.InvalidatePlot(false);
+                                        isInternalChange = false;
+
+                                    };
+
+            observedXaxis.AxisChanged += (s, e) =>
+                                 {
+                                     if (isInternalChange)
+                                     {
+                                         return;
+                                     }
+                                     isInternalChange = true;
+                                     theoreticalXaxis.Zoom(observedXaxis.ActualMinimum, observedXaxis.ActualMaximum);
+                                     TheorIsoPlot.InvalidatePlot(false);
+                                     isInternalChange = false;
+                                 };
+
+
+
+
+
         }
 
         public void LoadRun(string fileOrFolderPath)
@@ -913,8 +954,9 @@ namespace Sipper.ViewModel
 
 
             plotModel.Series.Add(series);
-            plotModel.Axes.Add(yAxis);
             plotModel.Axes.Add(xAxis);
+            plotModel.Axes.Add(yAxis);
+            
 
             ChromatogramPlot = plotModel;
         }
@@ -949,8 +991,8 @@ namespace Sipper.ViewModel
             var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
             xAxis.Minimum = MsGraphMinX;
             xAxis.Maximum = MsGraphMaxX;
-            
-            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
+
+         var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
             yAxis.Minimum = 0;
             yAxis.AbsoluteMinimum = 0;
             yAxis.Maximum = MsGraphMaxY + MsGraphMaxY * 0.05;
@@ -967,8 +1009,10 @@ namespace Sipper.ViewModel
             yAxis.AxislineThickness = 1;
 
             plotModel.Series.Add(series);
-            plotModel.Axes.Add(yAxis);
+            
             plotModel.Axes.Add(xAxis);
+            plotModel.Axes.Add(yAxis);
+            
 
             ObservedIsoPlot = plotModel;
 
@@ -1044,8 +1088,10 @@ namespace Sipper.ViewModel
             yAxis.AxislineThickness = 1;
 
             plotModel.Series.Add(series);
+
+            plotModel.Axes.Add(xAxis); 
             plotModel.Axes.Add(yAxis);
-            plotModel.Axes.Add(xAxis);
+            
 
             ObservedIsoPlot = plotModel;
 
@@ -1135,9 +1181,9 @@ namespace Sipper.ViewModel
 
 
             plotModel.Series.Add(series);
-            plotModel.Axes.Add(yAxis);
+            
             plotModel.Axes.Add(xAxis);
-
+            plotModel.Axes.Add(yAxis);
 
             TheorIsoPlot = plotModel;
 

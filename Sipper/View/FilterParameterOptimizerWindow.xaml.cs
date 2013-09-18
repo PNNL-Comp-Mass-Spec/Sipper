@@ -80,5 +80,32 @@ namespace Sipper.View
             }
         }
 
+        private void btnUpdateMaxFalsePos_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void filterDatagrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            
+        }
+
+
+        private void BtnSetFavoriteFilter_OnClick(object sender, RoutedEventArgs e)
+        {
+            ViewModel.SelectedFilterParameter = ViewModel.CurrentFilterParameter;
+        }
+
+        private void btnExportRocToFile_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            bool? result = saveFileDialog.ShowDialog();
+
+            if (result == true)
+            {
+                ViewModel.SaveRocCurve(saveFileDialog.FileName);
+            }
+        }
     }
 }

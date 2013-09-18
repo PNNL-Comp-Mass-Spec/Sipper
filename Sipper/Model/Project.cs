@@ -31,6 +31,8 @@ namespace Sipper.Model
 
         public Run Run { get; set; }
 
+        public ParameterOptimizationResult SelectedFilterSettings { get; set; }
+
         #endregion
 
     

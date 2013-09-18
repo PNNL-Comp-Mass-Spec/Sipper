@@ -82,7 +82,16 @@ namespace Sipper.View
         private void btnFilterOptimizer_Click(object sender, RoutedEventArgs e)
         {
             var childWindow = new FilterParameterOptimizerWindow(ViewModel.SipperProject);
+
+            childWindow.ViewModel.SelectedFilterParameter = ViewModel.SipperProject.SelectedFilterSettings;
+
             childWindow.ShowDialog();
+
+            if (childWindow.ViewModel.SelectedFilterParameter!=null)
+            {
+                ViewModel.SipperProject.SelectedFilterSettings = childWindow.ViewModel.SelectedFilterParameter;    
+            }
+            
         }
     }
 }
