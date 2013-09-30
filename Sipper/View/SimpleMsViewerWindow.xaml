@@ -113,7 +113,7 @@
                 </Border>
 
                 <Border>
-                    <Expander Header="MS Peaks" IsExpanded="True">
+                    <Expander Header="MS Peaks" IsExpanded="False">
                     <DataGrid Name="msPeaksDatagrid" MaxHeight="300" AutoGenerateColumns="False" ItemsSource="{Binding Path=Peaks}" 
                               HorizontalGridLinesBrush="SlateGray" VerticalGridLinesBrush="SlateGray" SelectionChanged="msPeaksDatagrid_SelectionChanged">
                         <DataGrid.Columns>
