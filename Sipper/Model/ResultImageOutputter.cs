@@ -7,6 +7,7 @@ using DeconTools.Backend.Core;
 using DeconTools.Backend.Data;
 using DeconTools.Backend.Runs;
 using DeconTools.Backend.Utilities.IsotopeDistributionCalculation;
+using DeconTools.Backend.Workflows;
 using DeconTools.Workflows.Backend.Core;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;

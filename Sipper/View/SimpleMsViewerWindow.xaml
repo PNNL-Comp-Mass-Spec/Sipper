@@ -1,5 +1,6 @@
 ﻿<Window x:Class="Sipper.View.SimpleMsViewerWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:oxy="http://oxyplot.codeplex.com"
+        xmlns:local="clr-namespace:Sipper"
         xmlns:VM="clr-namespace:Sipper.ViewModel" Title="SimpleMsViewerWindow" Name="window" mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="535" d:DesignWidth="1093"
@@ -9,7 +10,10 @@
   </Window.DataContext>
 
   <Window.Resources>
-    <Style TargetType="Border">
+        <!-- For info on converters, see http://wpftutorial.net/ValueConverters.html -->
+        <VM:BoolToVisibleOrHidden x:Key="BoolToVisConverter" Collapse="False" Reverse="False"/>
+      
+        <Style TargetType="Border">
       <Setter Property="Control.BorderBrush" Value="SlateGray" />
       <Setter Property="Control.BorderThickness" Value="3" />
       <Setter Property="Control.VerticalAlignment" Value="Stretch" />
@@ -40,16 +44,17 @@
             <TabControl>
                 <TabItem Header="View data">
                     <StackPanel>
-        <StackPanel HorizontalAlignment="Stretch" MaxWidth="{Binding Path= Width, ElementName=grid1}">
-          <Button Name="btnOpenDataset" Height="50" Margin="15,5,15,5" Click="btnOpenDataset_Click">
-            <StackPanel>
-              <TextBlock HorizontalAlignment="Center">Open a dataset</TextBlock>
+        <StackPanel HorizontalAlignment="Stretch" MaxWidth="{Binding Path= Width, ElementName=grid1}">                            
+                            <Button Name="btnOpenDataset" Height="50" Margin="15,5,15,5" Click="btnOpenDataset_Click">
+            <StackPanel>                                 
+                                        <TextBlock HorizontalAlignment="Center">Open a dataset</TextBlock>
               <TextBox HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding DatasetName, Mode=OneWay}"
                        IsReadOnly="True" Background="{x:Null}" BorderBrush="{x:Null}" FontSize="10" CaretBrush="#4AB2CCB9"></TextBox>
             </StackPanel>
           </Button>
-                    <ProgressBar Margin="15,0,15,0" Height="8" Foreground="#FF4DB146" Background="#FFE5EDFC"
-                           BorderBrush="#FF436396" Value="{Binding PercentProgress}"></ProgressBar>
+                            <ProgressBar Margin="15,0,15,0" Height="8" Foreground="#FF4DB146" Background="#FFE5EDFC"
+                           BorderBrush="#FF436396" Value="{Binding PercentProgress}" Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVisConverter}}">                              
+                            </ProgressBar>
                     <TextBlock Margin="15,0,15,5" Text="{Binding GeneralStatusMessage}" TextWrapping="WrapWithOverflow"></TextBlock>
         </StackPanel>
 

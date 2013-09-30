@@ -12,6 +12,7 @@ using DeconTools.Backend.ProcessingTasks.MSGenerators;
 using DeconTools.Backend.ProcessingTasks.PeakDetectors;
 using DeconTools.Backend.ProcessingTasks.ZeroFillers;
 using DeconTools.Backend.Runs;
+using DeconTools.Backend.Workflows;
 using DeconTools.Workflows.Backend.Core;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -37,7 +38,7 @@ namespace Sipper.ViewModel
         public SimpleMsViewerViewModel()
             : this(null)
         {
-
+			
         }
 
 
@@ -343,6 +344,17 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("PercentProgress");
             }
         }
+
+		private bool _isProgressVisible;
+		public bool IsProgressVisible
+		{
+			get { return _isProgressVisible; }
+			set
+			{
+				_isProgressVisible = value;
+				OnPropertyChanged("IsProgressVisible");
+			}
+		}
 
         protected XYData ChromXyData { get; set; }
 
@@ -650,21 +662,50 @@ namespace Sipper.ViewModel
         {
             try
             {
-                _peaksFilename = this.Run.DataSetPath + "\\" + this.Run.DatasetName + "_peaks.txt";
+                _peaksFilename = Path.Combine(this.Run.DataSetPath, this.Run.DatasetName + "_peaks.txt");
+				var fiPeaksFile = new FileInfo(_peaksFilename);
+				if (!fiPeaksFile.Exists)
+				{
+					var alternatePeaksFilePath = Path.Combine(System.IO.Path.GetTempPath(), this.Run.DatasetName + "_peaks.txt");
+					if (File.Exists(alternatePeaksFilePath))
+					{
+						_peaksFilename = alternatePeaksFilePath;
+						fiPeaksFile = new FileInfo(_peaksFilename);
+					}
+				}
 
-                if (_recreatePeaksFile || !File.Exists(_peaksFilename))
+				if (_recreatePeaksFile || !fiPeaksFile.Exists)
                 {
-                    _recreatePeaksFile = false;
+                    _recreatePeaksFile = false;					
 
-                    if (File.Exists(_peaksFilename)) File.Delete(_peaksFilename);
+					// Make sure we have write access to the folder with the dataset file
+					try
+					{
+						using (var swPeaksfile = new StreamWriter(new FileStream(fiPeaksFile.FullName, FileMode.Create, FileAccess.Write)))
+						{
+							swPeaksfile.WriteLine("Test");
+						}
+					}
+					catch (UnauthorizedAccessException)
+					{
+						// Create the _peaks.txt file in the user's temprorary folder
+						_peaksFilename = Path.Combine(System.IO.Path.GetTempPath(), this.Run.DatasetName + "_peaks.txt");
+						fiPeaksFile = new FileInfo(_peaksFilename);
+					}
+
+					fiPeaksFile.Refresh();
+					if (fiPeaksFile.Exists)
+						fiPeaksFile.Delete();
 
                     GeneralStatusMessage =
                         "Creating chromatogram data (_peaks.txt file); this is only done once. It takes 1 - 5 min .......";
+
 
                     var peakCreationParameters = new PeakDetectAndExportWorkflowParameters();
                     peakCreationParameters.PeakBR = ChromSourcePeakDetectorPeakBr;
                     peakCreationParameters.PeakFitType = Globals.PeakFitType.QUADRATIC;
                     peakCreationParameters.SigNoiseThreshold = ChromSourcePeakDetectorSigNoise;
+					peakCreationParameters.OutputFolder = fiPeaksFile.Directory.FullName;
 
                     var peakCreator = new PeakDetectAndExportWorkflow(Run, peakCreationParameters, _backgroundWorker);
                     peakCreator.Execute();
@@ -727,6 +768,7 @@ namespace Sipper.ViewModel
             else
             {
                 PercentProgress = 100;
+				IsProgressVisible = false;
             }
         }
 
@@ -734,6 +776,9 @@ namespace Sipper.ViewModel
 
         private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+			if (!IsProgressVisible)
+				IsProgressVisible = true;
+
             PercentProgress = e.ProgressPercentage;
         }
 
