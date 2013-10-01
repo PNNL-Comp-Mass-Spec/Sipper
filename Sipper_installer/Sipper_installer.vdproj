@@ -105,12 +105,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_3AEF45C66749A2E6BD0CF8129DAB3850"
-        "OwnerKey" = "8:_17A30B4D8C9B6C606DD6861FD396843B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_49C24D480DF878F664D094ED1DE0C1D3"
         "OwnerKey" = "8:_1CEFB92205F85C88225F95965CAC446A"
         "MsmSig" = "8:_UNDEFINED"
@@ -315,6 +309,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D63D21EBF4C34832B6D01335399F7417"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_DCCC282C930B8F45A2CD937FF96EC6D1"
         "OwnerKey" = "8:_C7C0D793720F909FAD6D5D6C31465A20"
         "MsmSig" = "8:_UNDEFINED"
@@ -395,6 +395,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_9BD1992E333C481BA52B0D004493432B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_17A30B4D8C9B6C606DD6861FD396843B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -529,12 +535,6 @@
         "OwnerKey" = "8:_B547060A71292CC390331AB1EA7D7580"
         "MsmSig" = "8:_UNDEFINED"
         }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_17A30B4D8C9B6C606DD6861FD396843B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
     }
     "Configurations"
     {
@@ -632,7 +632,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.0,Profile=Client"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.0"
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=131000"
                 }
@@ -904,26 +904,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3AEF45C66749A2E6BD0CF8129DAB3850"
-            {
-            "SourcePath" = "8:BDal.CXt.Lc.Interfaces.tlb"
-            "TargetName" = "8:BDal.CXt.Lc.Interfaces.tlb"
-            "Tag" = "8:"
-            "Folder" = "8:_3B74C07202A94EB59925D5487241211E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:2"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_49C24D480DF878F664D094ED1DE0C1D3"
@@ -1338,6 +1318,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D63D21EBF4C34832B6D01335399F7417"
+            {
+            "SourcePath" = "8:..\\Readme.txt"
+            "TargetName" = "8:Readme.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_3B74C07202A94EB59925D5487241211E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_DCCC282C930B8F45A2CD937FF96EC6D1"
             {
             "AssemblyRegister" = "3:1"
@@ -1581,7 +1581,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Sipper"
         "ProductCode" = "8:{5B32CF4A-5262-4CA6-837A-C608EBE0ECF2}"
-        "PackageCode" = "8:{E96DD45B-D4AE-48E1-AC9E-5DAA4D07465D}"
+        "PackageCode" = "8:{6F7F396A-D54D-43D6-9C01-3D7F994850A3}"
         "UpgradeCode" = "8:{96B0FF80-087D-4513-9AFB-B7EDB3878BF2}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
