@@ -119,9 +119,13 @@ namespace Sipper.View
                 return;
             }
 
-
+			// Make sure the file paths are up-to-date
+			// Note that settings are defined based on the file extension (.raw for raw data, .xml for the parameter file, and .txt for targets)
+	        ViewModel.FileInputs.CreateFileLinkage(txtRawDataFilepath.Text);
+	        ViewModel.FileInputs.CreateFileLinkage(txtTargetsFilePath.Text);
+			ViewModel.FileInputs.CreateFileLinkage(txtWorkflowParameterFilepath.Text);
+			
             ViewModel.Execute();
-
 
         }
 

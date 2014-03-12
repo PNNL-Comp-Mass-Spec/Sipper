@@ -1,4 +1,7 @@
 SIPPER C13 Detector Revision History
 
+Version 1.0.5184; March 12, 2014
+	- Updated AutoProcess form for support manually pasted file paths
+
 Version 1.0.5021; September 30, 2013
 	- Initial public release

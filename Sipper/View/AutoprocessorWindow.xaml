@@ -33,7 +33,7 @@
             </StackPanel>
 
             <TextBox Drop="FileDropHandler" DragOver="txtResultsFilePath_DragOver"
-                     PreviewDragOver="TextBox_PreviewDragOver" Height="44" Margin="6,0"
+                     PreviewDragOver="TextBox_PreviewDragOver" Name="txtRawDataFilepath" Height="44" Margin="6,0"
                      Text="{Binding Path=DataContext.FileInputs.DatasetPath, ElementName=window, Mode=OneWay}" TextWrapping="Wrap">
             </TextBox>
             <Label Name="label2" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Center"

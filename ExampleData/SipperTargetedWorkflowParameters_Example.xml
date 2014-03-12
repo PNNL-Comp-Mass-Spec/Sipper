@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WorkflowParameters>
+	<!-- Area of peak to sum, based on units of sigma. Eg a value of '2' means +/- 2 sigma; thus 4 sigma or ~ 95% of a gaussian peak will be summed -->
+  <AreaOfPeakToSumInDynamicSumming>2</AreaOfPeakToSumInDynamicSumming>
+  	<!-- Options are MZ_BASED, MONOISOTOPIC_PEAK, MOST_ABUNDANT_PEAK, TOP_N_PEAKS, O16O18_THREE_MONOPEAKS -->
+  <ChromGeneratorMode>MOST_ABUNDANT_PEAK</ChromGeneratorMode>
+  	<!-- The MS peak detection PeakBR that is used in forming the _peaks.txt file that 
+  	     contains the peak-level information on which extracted ion chromatograms are based -->
+  <ChromGenSourceDataPeakBR>1.75</ChromGenSourceDataPeakBR>
+	<!-- The MS peak detection signal to noise threshold that is used in forming the _peaks.txt file -->
+  <ChromGenSourceDataSigNoise>3</ChromGenSourceDataSigNoise>
+  	<!-- The tolerance for the normalized elution time, which is used in defining the range of the extracted 
+  	     ion chromatogram, and in the scoring and selection of the chromatographic peaks (ChromPeakSelector) -->
+  <ChromNETTolerance>0.025</ChromNETTolerance>
+  	<!-- Chromatographic peak detector PeakBR -->
+  <ChromPeakDetectorPeakBR>1</ChromPeakDetectorPeakBR>
+   	<!-- Chromatographic peak detector signal to noise threshold-->
+  <ChromPeakDetectorSigNoise>1</ChromPeakDetectorSigNoise>
+  	<!-- Options are Smart, ClosestToTarget, MostIntense, RelativeToOtherChromPeak, N15IntelligentMode, SmartUIMF -->
+  <ChromPeakSelectorMode>ClosestToTarget</ChromPeakSelectorMode>
+	<!-- Number of points in the chromatogram to smooth -->
+  <ChromSmootherNumPointsInSmooth>7</ChromSmootherNumPointsInSmooth>
+  <ChromToleranceInPPM>25</ChromToleranceInPPM>
+  <MaxScansSummedInDynamicSumming>100</MaxScansSummedInDynamicSumming>
+  <MSPeakDetectorPeakBR>2</MSPeakDetectorPeakBR>
+  <MSPeakDetectorSigNoise>2</MSPeakDetectorSigNoise>
+  <MSToleranceInPPM>10</MSToleranceInPPM>
+	<!-- When multiple high quality matches are found, if this is true then the most abundant match will be used
+	     If this is false, and there is more than one high quality match, then none of the matches will be considered -->
+  <MultipleHighQualityMatchesAreAllowed>true</MultipleHighQualityMatchesAreAllowed>
+
+	<!-- Number of chrom peaks allowed. For example if this is set to '5' 
+	     and 6 peaks were found within the tolerance, then the selected best peak is set to
+         null indicating a failed execution -->
+  <NumChromPeaksAllowedDuringSelection>20</NumChromPeaksAllowedDuringSelection>
+  <NumMSScansToSum>1</NumMSScansToSum>
+  	<!-- This should always be SIPPER_TARGETED_RESULT for Sipper analyses -->
+  <ResultType>SIPPER_TARGETED_RESULT</ResultType>
+  	<!-- Static or dynamic summing across an elution peak. E.g. in static mode the same number of scans are summed. 
+         In dynamic, the number of scans summed depends on the width of the peak -->
+  <SummingMode>SUMMINGMODE_STATIC</SummingMode>
+  	<!-- For Sipper, this should be SipperTargeted1 or SipperWorkflowExecutor1 -->
+  <WorkflowType>SipperTargeted1</WorkflowType>
+</WorkflowParameters>
