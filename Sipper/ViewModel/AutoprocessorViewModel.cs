@@ -23,32 +23,33 @@ namespace Sipper.ViewModel
     public class AutoprocessorViewModel : ViewModelBase
     {
         private BasicTargetedWorkflowExecutor _workflowExecutor;
-        private SipperTargetedWorkflow _sipperTargetedWorkflow;
+
+        // private SipperTargetedWorkflow _sipperTargetedWorkflow;
 
         private BackgroundWorker _backgroundWorker;
 
-        private TargetedResultRepository _resultRepository;
+        private readonly TargetedResultRepository _resultRepository;
 
 
         #region Constructors
 
         public AutoprocessorViewModel()
         {
-            ExecutorParameters = new SipperWorkflowExecutorParameters();
-            ExecutorParameters.TargetType = Globals.TargetType.LcmsFeature;
-
+            ExecutorParameters = new SipperWorkflowExecutorParameters {
+                TargetType = Globals.TargetType.LcmsFeature
+            };
 
             SipperWorkflowParameters = new SipperTargetedWorkflowParameters();
             StatusCollection = new ObservableCollection<string>();
             ProgressInfos = new ObservableCollection<TargetedWorkflowExecutorProgressInfo>();
-            
+
             FileInputs = new FileInputsViewModel(null);
         }
 
 
         public AutoprocessorViewModel(FileInputsInfo fileInputs):this()
         {
-            
+
             FileInputs = new FileInputsViewModel(fileInputs);
         }
 
@@ -145,7 +146,7 @@ namespace Sipper.ViewModel
 
         private TargetedWorkflowExecutorProgressInfo _currentResultInfo;
 
-       
+
 
 
         public TargetedWorkflowExecutorProgressInfo CurrentResultInfo
@@ -159,7 +160,7 @@ namespace Sipper.ViewModel
                 _currentResultInfo = value;
                 GetMassSpectrumForCurrentResult();
                 OnPropertyChanged("CurrentResultInfo");
-                
+
             }
         }
 
@@ -213,8 +214,8 @@ namespace Sipper.ViewModel
 
             ObservedIsoPlot.Axes[1].Maximum = msGraphMaxY + msGraphMaxY * 0.05;
             ObservedIsoPlot.Series.Add(series);
-           
-            
+
+
         }
 
         private PlotModel CreateObservedIsoPlot()
@@ -249,7 +250,7 @@ namespace Sipper.ViewModel
 
             plotModel.Axes.Add(xAxis);
             plotModel.Axes.Add(yAxis);
-            
+
 
             return plotModel;
 
@@ -316,7 +317,7 @@ namespace Sipper.ViewModel
         void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = (BackgroundWorker)sender;
-           
+
             _workflowExecutor = new BasicTargetedWorkflowExecutor(ExecutorParameters, FileInputs.DatasetPath, worker);
             _workflowExecutor.RunIsDisposed = false;
 
@@ -383,8 +384,8 @@ namespace Sipper.ViewModel
                     else
                     {
                         CurrentResultInfo = info;
-                        
-                        //HACK: need to convert to the other Sipper result type in order to use the filter. 
+
+                        //HACK: need to convert to the other Sipper result type in order to use the filter.
                         var sipperResult = (SipperLcmsFeatureTargetedResultDTO)ResultDTOFactory.CreateTargetedResult(CurrentResultInfo.Result);
                         SipperFilters.ApplyAutoValidationCodeF2LooseFilter(sipperResult);
                         if (sipperResult.ValidationCode==ValidationCode.Yes)
@@ -407,7 +408,7 @@ namespace Sipper.ViewModel
 
         }
 
-   
+
         public string GetInfoStringOnCurrentResult()
         {
             if (CurrentResultInfo == null || CurrentResultInfo.Result == null)
