@@ -38,7 +38,7 @@ namespace Sipper.ViewModel
         public SimpleMsViewerViewModel()
             : this(null)
         {
-			
+            
         }
 
 
@@ -345,16 +345,16 @@ namespace Sipper.ViewModel
             }
         }
 
-		private bool _isProgressVisible;
-		public bool IsProgressVisible
-		{
-			get { return _isProgressVisible; }
-			set
-			{
-				_isProgressVisible = value;
-				OnPropertyChanged("IsProgressVisible");
-			}
-		}
+        private bool _isProgressVisible;
+        public bool IsProgressVisible
+        {
+            get { return _isProgressVisible; }
+            set
+            {
+                _isProgressVisible = value;
+                OnPropertyChanged("IsProgressVisible");
+            }
+        }
 
         protected XYData ChromXyData { get; set; }
 
@@ -549,11 +549,14 @@ namespace Sipper.ViewModel
 
             string graphTitle = "XIC for most intense peak (m/z " + SelectedPeak.XValue.ToString("0.000") + ")";
 
-            PlotModel plotModel = new PlotModel(graphTitle);
-            plotModel.TitleFontSize = 9;
-            plotModel.Padding = new OxyThickness(0);
-            plotModel.PlotMargins = new OxyThickness(0);
-            plotModel.PlotAreaBorderThickness = 0;
+            PlotModel plotModel = new PlotModel
+            {
+                Title = graphTitle,
+                TitleFontSize = 9,
+                Padding = new OxyThickness(0),
+                PlotMargins = new OxyThickness(0),
+                PlotAreaBorderThickness = new OxyThickness(0)
+            };
 
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
@@ -563,14 +566,22 @@ namespace Sipper.ViewModel
                 series.Points.Add(new DataPoint(ChromXyData.Xvalues[i], ChromXyData.Yvalues[i]));
             }
 
-            var xAxis = new LinearAxis(AxisPosition.Bottom, "scan");
-            xAxis.Minimum = lowerScan;
-            xAxis.Maximum = upperScan;
+            var xAxis = new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "scan",
+                Minimum = lowerScan,
+                Maximum = upperScan
+            };
 
-            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
-            yAxis.Minimum = 0;
-            yAxis.AbsoluteMinimum = 0;
-            yAxis.Maximum = maxY + maxY * 0.05;
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Intensity",
+                Minimum = 0,
+                AbsoluteMinimum=0,
+                Maximum = maxY + maxY * 0.05
+            };
             yAxis.AxisChanged += OnYAxisChange;
 
             xAxis.AxislineStyle = LineStyle.Solid;
@@ -608,11 +619,14 @@ namespace Sipper.ViewModel
             var maxY = (float)xydata.getMaxY(MSGraphMinX, MSGraphMaxX);
 
 
-            PlotModel plotModel = new PlotModel(msGraphTitle);
-            plotModel.TitleFontSize = 11;
-            plotModel.Padding = new OxyThickness(0);
-            plotModel.PlotMargins = new OxyThickness(0);
-            plotModel.PlotAreaBorderThickness = 0;
+            PlotModel plotModel = new PlotModel
+            {
+                Title = msGraphTitle,
+                TitleFontSize = 11,
+                Padding = new OxyThickness(0),
+                PlotMargins = new OxyThickness(0),
+                PlotAreaBorderThickness = new OxyThickness(0)
+            };
 
             plotModel.MouseDown += MouseButtonDown;
 
@@ -624,14 +638,23 @@ namespace Sipper.ViewModel
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
 
-            var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
-            xAxis.Minimum = MSGraphMinX;
-            xAxis.Maximum = MSGraphMaxX;
+            var xAxis = new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "m/z",
+                Minimum = MSGraphMinX,
+                Maximum = MSGraphMaxX
+            };
 
-            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
-            yAxis.Minimum = 0;
-            yAxis.AbsoluteMinimum = 0;
-            yAxis.Maximum = maxY + maxY * 0.05;
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Intensity",
+                Minimum = 0,
+                AbsoluteMinimum = 0,
+                Maximum = maxY + maxY * 0.05,
+            };
+
             //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
             //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
             yAxis.AxisChanged += OnYAxisChange;
@@ -663,39 +686,39 @@ namespace Sipper.ViewModel
             try
             {
                 _peaksFilename = Path.Combine(this.Run.DataSetPath, this.Run.DatasetName + "_peaks.txt");
-				var fiPeaksFile = new FileInfo(_peaksFilename);
-				if (!fiPeaksFile.Exists)
-				{
-					var alternatePeaksFilePath = Path.Combine(System.IO.Path.GetTempPath(), this.Run.DatasetName + "_peaks.txt");
-					if (File.Exists(alternatePeaksFilePath))
-					{
-						_peaksFilename = alternatePeaksFilePath;
-						fiPeaksFile = new FileInfo(_peaksFilename);
-					}
-				}
+                var fiPeaksFile = new FileInfo(_peaksFilename);
+                if (!fiPeaksFile.Exists)
+                {
+                    var alternatePeaksFilePath = Path.Combine(System.IO.Path.GetTempPath(), this.Run.DatasetName + "_peaks.txt");
+                    if (File.Exists(alternatePeaksFilePath))
+                    {
+                        _peaksFilename = alternatePeaksFilePath;
+                        fiPeaksFile = new FileInfo(_peaksFilename);
+                    }
+                }
 
-				if (_recreatePeaksFile || !fiPeaksFile.Exists)
+                if (_recreatePeaksFile || !fiPeaksFile.Exists)
                 {
                     _recreatePeaksFile = false;					
 
-					// Make sure we have write access to the folder with the dataset file
-					try
-					{
-						using (var swPeaksfile = new StreamWriter(new FileStream(fiPeaksFile.FullName, FileMode.Create, FileAccess.Write)))
-						{
-							swPeaksfile.WriteLine("Test");
-						}
-					}
-					catch (UnauthorizedAccessException)
-					{
-						// Create the _peaks.txt file in the user's temprorary folder
-						_peaksFilename = Path.Combine(System.IO.Path.GetTempPath(), this.Run.DatasetName + "_peaks.txt");
-						fiPeaksFile = new FileInfo(_peaksFilename);
-					}
+                    // Make sure we have write access to the folder with the dataset file
+                    try
+                    {
+                        using (var swPeaksfile = new StreamWriter(new FileStream(fiPeaksFile.FullName, FileMode.Create, FileAccess.Write)))
+                        {
+                            swPeaksfile.WriteLine("Test");
+                        }
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        // Create the _peaks.txt file in the user's temprorary folder
+                        _peaksFilename = Path.Combine(System.IO.Path.GetTempPath(), this.Run.DatasetName + "_peaks.txt");
+                        fiPeaksFile = new FileInfo(_peaksFilename);
+                    }
 
-					fiPeaksFile.Refresh();
-					if (fiPeaksFile.Exists)
-						fiPeaksFile.Delete();
+                    fiPeaksFile.Refresh();
+                    if (fiPeaksFile.Exists)
+                        fiPeaksFile.Delete();
 
                     GeneralStatusMessage =
                         "Creating chromatogram data (_peaks.txt file); this is only done once. It takes 1 - 5 min .......";
@@ -705,7 +728,7 @@ namespace Sipper.ViewModel
                     peakCreationParameters.PeakBR = ChromSourcePeakDetectorPeakBr;
                     peakCreationParameters.PeakFitType = Globals.PeakFitType.QUADRATIC;
                     peakCreationParameters.SigNoiseThreshold = ChromSourcePeakDetectorSigNoise;
-					peakCreationParameters.OutputFolder = fiPeaksFile.Directory.FullName;
+                    peakCreationParameters.OutputFolder = fiPeaksFile.Directory.FullName;
 
                     var peakCreator = new PeakDetectAndExportWorkflow(Run, peakCreationParameters, _backgroundWorker);
                     peakCreator.Execute();
@@ -768,7 +791,7 @@ namespace Sipper.ViewModel
             else
             {
                 PercentProgress = 100;
-				IsProgressVisible = false;
+                IsProgressVisible = false;
             }
         }
 
@@ -776,8 +799,8 @@ namespace Sipper.ViewModel
 
         private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-			if (!IsProgressVisible)
-				IsProgressVisible = true;
+            if (!IsProgressVisible)
+                IsProgressVisible = true;
 
             PercentProgress = e.ProgressPercentage;
         }
@@ -805,7 +828,7 @@ namespace Sipper.ViewModel
 
             // Set the minimum to 0 and refresh the plot
             yAxis.Zoom(0, yAxis.ActualMaximum);
-            yAxis.PlotModel.RefreshPlot(true);
+            yAxis.PlotModel.InvalidatePlot(true);
         }
 
 
@@ -813,7 +836,10 @@ namespace Sipper.ViewModel
         {
             var plot = ObservedIsoPlot;
 
-            if (e.ChangedButton == OxyMouseButton.Left)
+            // var mouseButton = e.ChangedButton;
+            var mouseButton = OxyMouseButton.Left;
+
+            if (mouseButton == OxyMouseButton.Left)
             {
                 var position = e.Position;
 
@@ -822,7 +848,7 @@ namespace Sipper.ViewModel
                 {
                     var hitResult = series.GetNearestPoint(position, true);
 
-                    if (hitResult != null && hitResult.DataPoint != null)
+                    if (hitResult != null && hitResult.DataPoint.IsDefined())
                     {
                         var datapoint = hitResult.DataPoint;
 

@@ -100,7 +100,7 @@ namespace Sipper.ViewModel
 
             // Set the minimum to 0 and refresh the plot
             yAxis.Zoom(0, yAxis.ActualMaximum);
-            yAxis.PlotModel.RefreshPlot(true);
+            yAxis.PlotModel.InvalidatePlot(true);
         }
 
         void FileInputsPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -921,11 +921,14 @@ namespace Sipper.ViewModel
                                   Workflow.Result.Target.ChargeState;
 
 
-            PlotModel plotModel = new PlotModel(graphTitle);
-            plotModel.TitleFontSize = 11;
-            plotModel.Padding = new OxyThickness(0);
-            plotModel.PlotMargins = new OxyThickness(0);
-            plotModel.PlotAreaBorderThickness = 0;
+            PlotModel plotModel = new PlotModel
+            {
+                Title = graphTitle,
+                TitleFontSize = 11,
+                Padding = new OxyThickness(0),
+                PlotMargins = new OxyThickness(0),
+                PlotAreaBorderThickness = new OxyThickness(0)
+            };
 
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
@@ -935,13 +938,21 @@ namespace Sipper.ViewModel
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
 
-            var xAxis = new LinearAxis(AxisPosition.Bottom, "scan");
-            xAxis.Minimum = ChromGraphMinX;
-            xAxis.Maximum = ChromGraphMaxX;
-            
-            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
-            yAxis.Minimum = 0;
-            yAxis.AbsoluteMinimum = 0;
+            var xAxis = new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "scan",
+                Minimum = ChromGraphMinX,
+                Maximum = ChromGraphMaxX
+            };
+
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Intensity",
+                Minimum = 0,
+                AbsoluteMinimum = 0
+            };
 
 
             var maxY = xydata.getMaxY();
@@ -973,12 +984,14 @@ namespace Sipper.ViewModel
             MsGraphMaxY = (float)xydata.getMaxY(MsGraphMinX, MsGraphMaxX);
 
 
-            PlotModel plotModel = new PlotModel(msGraphTitle);
-            plotModel.TitleFontSize = 11;
-            plotModel.Padding = new OxyThickness(0);
-            plotModel.PlotMargins = new OxyThickness(0);
-            plotModel.PlotAreaBorderThickness = 0;
-
+            PlotModel plotModel = new PlotModel
+            {
+                Title = msGraphTitle,
+                TitleFontSize = 11,
+                Padding = new OxyThickness(0),
+                PlotMargins = new OxyThickness(0),
+                PlotAreaBorderThickness = new OxyThickness(0)
+            };
 
 
             var series = new OxyPlot.Series.LineSeries();
@@ -989,20 +1002,27 @@ namespace Sipper.ViewModel
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
 
-            var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
-            xAxis.Minimum = MsGraphMinX;
-            xAxis.Maximum = MsGraphMaxX;
+            var xAxis = new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "m/z",
+                Minimum = MsGraphMinX,
+                Maximum = MsGraphMaxX
+            };
 
-         var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
-            yAxis.Minimum = 0;
-            yAxis.AbsoluteMinimum = 0;
-            yAxis.Maximum = MsGraphMaxY + MsGraphMaxY * 0.05;
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Intensity",
+                Minimum = 0,
+                AbsoluteMinimum = 0,
+                Maximum = MsGraphMaxY + MsGraphMaxY * 0.05,
+            };
+
             //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
             //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
             yAxis.AxisChanged += OnYAxisChange;
             yAxis.StringFormat = "0.0E0";
-
-
 
             xAxis.AxislineStyle = LineStyle.Solid;
             xAxis.AxislineThickness = 1;
@@ -1051,11 +1071,14 @@ namespace Sipper.ViewModel
                                   Workflow.Result.Target.ChargeState;
 
 
-            PlotModel plotModel = new PlotModel(msGraphTitle);
-            plotModel.TitleFontSize = 11;
-            plotModel.Padding = new OxyThickness(0);
-            plotModel.PlotMargins = new OxyThickness(0);
-            plotModel.PlotAreaBorderThickness = 0;
+            PlotModel plotModel = new PlotModel
+            {
+                Title = msGraphTitle,
+                TitleFontSize = 11,
+                Padding = new OxyThickness(0),
+                PlotMargins = new OxyThickness(0),
+                PlotAreaBorderThickness = new OxyThickness(0)
+            };
 
 
 
@@ -1067,21 +1090,27 @@ namespace Sipper.ViewModel
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
 
-            var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
-            xAxis.Minimum = MsGraphMinX;
-            xAxis.Maximum = MsGraphMaxX;
-            
+            var xAxis = new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "m/z",
+                Minimum = MsGraphMinX,
+                Maximum = MsGraphMaxX
+            };
 
-            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
-            yAxis.Minimum = 0;
-            yAxis.AbsoluteMinimum = 0;
-            yAxis.Maximum = MsGraphMaxY + MsGraphMaxY * 0.05;
-            yAxis.StringFormat = "0.0E0";
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Intensity",
+                Minimum = 0,
+                AbsoluteMinimum = 0,
+                Maximum = MsGraphMaxY + MsGraphMaxY * 0.05,
+                StringFormat = "0.0E0"
+            };
+
             //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
             //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
             yAxis.AxisChanged += OnYAxisChange;
-
-
 
             xAxis.AxislineStyle = LineStyle.Solid;
             xAxis.AxislineThickness = 1;
@@ -1143,13 +1172,16 @@ namespace Sipper.ViewModel
                                   Workflow.Result.Target.MZ.ToString("0.0000") + "; z=" +
                                   Workflow.Result.Target.ChargeState;
 
-            PlotModel plotModel = new PlotModel(msGraphTitle);
-            plotModel.TitleFontSize = 11;
-            plotModel.Padding = new OxyThickness(0);
+            PlotModel plotModel = new PlotModel
+            {
+                Title = msGraphTitle,
+                TitleFontSize = 11,
+                Padding = new OxyThickness(0),
+                PlotMargins = new OxyThickness(50, 0, 0, 0),
+                PlotAreaBorderThickness = new OxyThickness(0),
+            };
 
 
-            plotModel.PlotMargins = new OxyThickness(50, 0, 0, 0);
-            plotModel.PlotAreaBorderThickness = 0;
 
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
@@ -1159,17 +1191,26 @@ namespace Sipper.ViewModel
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
 
-            var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
-            xAxis.Minimum = MsGraphMinX;
-            xAxis.Maximum = MsGraphMaxX;
-            
-            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
-            yAxis.Minimum = 0;
-            yAxis.AbsoluteMinimum = 0;
-            yAxis.Maximum = 105;
-            yAxis.AbsoluteMaximum = 105;
-            yAxis.StringFormat = "0.0E0";
 
+            var xAxis = new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "m/z",
+                Minimum = MsGraphMinX,
+                Maximum = MsGraphMaxX
+            };
+
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Intensity",
+                Minimum = 0,
+                AbsoluteMinimum = 0,
+                Maximum = 105,
+                AbsoluteMaximum = 105,
+                StringFormat = "0.0E0"
+            };
+            
 
             //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
             //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
@@ -1202,11 +1243,14 @@ namespace Sipper.ViewModel
             xydata.Yvalues = ChromCorrXYData.Yvalues;
 
             string graphTitle = "Isotope peak correlation data";
-            PlotModel plotModel = new PlotModel(graphTitle);
-            plotModel.TitleFontSize = 10;
-            plotModel.Padding = new OxyThickness(0);
-            plotModel.PlotMargins = new OxyThickness(0);
-            plotModel.PlotAreaBorderThickness = 0;
+            PlotModel plotModel = new PlotModel
+            {
+                Title = graphTitle,
+                TitleFontSize = 10,
+                Padding = new OxyThickness(0),
+                PlotMargins = new OxyThickness(0),
+                PlotAreaBorderThickness = new OxyThickness(0)
+            };
 
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 3;
@@ -1222,10 +1266,18 @@ namespace Sipper.ViewModel
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
 
-            var xAxis = new LinearAxis(AxisPosition.Bottom, "isotopic peak #");
+            var xAxis = new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "isotopic peak #"
+            };
 
 
-            var yAxis = new LinearAxis(AxisPosition.Left, "correlation");
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "correlation"
+            };
 
             xAxis.AxislineStyle = LineStyle.Solid;
             xAxis.AxislineThickness = 1;
@@ -1235,7 +1287,7 @@ namespace Sipper.ViewModel
 
             xAxis.FontSize = 8;
             xAxis.MajorStep = 1;
-            xAxis.ShowMinorTicks = false;
+            xAxis.MinorTickSize = 0;
             xAxis.MinorStep = 1;
             yAxis.FontSize = 8;
 

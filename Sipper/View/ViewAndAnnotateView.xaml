@@ -4,7 +4,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:backend="clr-namespace:DeconTools.Workflows.Backend;assembly=DeconTools.Workflows"
-        xmlns:VM="clr-namespace:Sipper.ViewModel" xmlns:oxy="http://oxyplot.codeplex.com" d:DesignHeight="800"
+        xmlns:VM="clr-namespace:Sipper.ViewModel" 
+        xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
+        d:DesignHeight="800"
         d:DesignWidth="1200" Closing="window_Closing">
 
   <Window.DataContext>
@@ -397,12 +399,12 @@
           <RowDefinition Height="296*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <oxy:Plot Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Margin="6,10,0,0"
+        <oxy:PlotView Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Margin="6,10,0,0"
                   Model="{Binding ChromatogramPlot }" />
-        <oxy:Plot Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1" Margin="6,10,0,0" Model="{Binding TheorIsoPlot }" />
-        <oxy:Plot Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6,10,0,0" Model="{Binding ObservedIsoPlot }" />
+        <oxy:PlotView Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1" Margin="6,10,0,0" Model="{Binding TheorIsoPlot }" />
+        <oxy:PlotView Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6,10,0,0" Model="{Binding ObservedIsoPlot }" />
 
-        <oxy:Plot Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="1" MinHeight="175" Margin="6,10,0,0"
+        <oxy:PlotView Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="1" MinHeight="175" Margin="6,10,0,0"
                   Model="{Binding ChromCorrelationPlot }" />
 
 

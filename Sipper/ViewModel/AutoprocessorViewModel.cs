@@ -219,19 +219,29 @@ namespace Sipper.ViewModel
 
         private PlotModel CreateObservedIsoPlot()
         {
-            PlotModel plotModel = new PlotModel();
+            PlotModel plotModel = new PlotModel
+            {
+                TitleFontSize = 11,
+                Padding = new OxyThickness(0),
+                PlotMargins = new OxyThickness(0),
+                PlotAreaBorderThickness = new OxyThickness(0)
+            };
 
 
-            plotModel.TitleFontSize = 11;
-            plotModel.Padding = new OxyThickness(0);
-            plotModel.PlotMargins = new OxyThickness(0);
-            plotModel.PlotAreaBorderThickness = 0;
 
-            var xAxis = new LinearAxis(AxisPosition.Bottom, "m/z");
-            var yAxis = new LinearAxis(AxisPosition.Left, "Intensity");
+            var xAxis = new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "m/z"
+            };
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Intensity",
+                Minimum = 0,
+                AbsoluteMinimum = 0
+            };
 
-            yAxis.Minimum = 0;
-            yAxis.AbsoluteMinimum = 0;
             xAxis.AxislineStyle = LineStyle.Solid;
             xAxis.AxislineThickness = 1;
             yAxis.AxislineStyle = LineStyle.Solid;

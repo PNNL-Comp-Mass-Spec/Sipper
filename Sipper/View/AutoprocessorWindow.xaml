@@ -3,8 +3,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:graphLib="clr-namespace:GWSGraphLibrary;assembly=GWSGraphLibrary" xmlns:oxy="http://oxyplot.codeplex.com"
-        xmlns:VM="clr-namespace:Sipper.ViewModel" AllowDrop="True" d:DesignWidth="599" Drop="FileDropHandler"
+        xmlns:graphLib="clr-namespace:GWSGraphLibrary;assembly=GWSGraphLibrary" 
+        xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
+        xmlns:VM="clr-namespace:Sipper.ViewModel"
+        AllowDrop="True" d:DesignWidth="599" Drop="FileDropHandler"
         SizeToContent="WidthAndHeight" Title="AutoprocessorWindow" mc:Ignorable="d" d:DesignHeight="836">
 
   <Window.DataContext>
@@ -60,7 +62,7 @@
         <TabItem Header="LiveView" Name="tabItem3">
           <StackPanel>
             <TextBlock Margin="6,6,6,0" Text="Latest result:"></TextBlock>
-            <oxy:Plot Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6,10,0,0"
+            <oxy:PlotView Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6,10,0,0"
                       Model="{Binding ObservedIsoPlot }" />
 
             <TextBlock Margin="6,6,6,0" Text="C13-enriched peptides found:"></TextBlock>

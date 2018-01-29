@@ -1,7 +1,9 @@
 ﻿<Window x:Class="Sipper.View.FilterParameterOptimizerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:VM="clr-namespace:Sipper.ViewModel"
-        xmlns:oxy="http://oxyplot.codeplex.com" Title="FilterParameterOptimizerWindow" Height="700" Width="979">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:VM="clr-namespace:Sipper.ViewModel"
+        xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
+        Title="FilterParameterOptimizerWindow" Height="700" Width="979">
 
   <Window.DataContext>
     <VM:SipperParameterOptimizerViewModel></VM:SipperParameterOptimizerViewModel>
@@ -100,13 +102,14 @@
                             <RowDefinition Height="10*"></RowDefinition>
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
-                        <oxy:Plot Name="rocPlot" Margin="6,10,0,0" Model="{Binding RocPlot }"
+                        <oxy:PlotView Name="rocPlot" Margin="6,10,0,0" Model="{Binding RocPlot }"
                       VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                            <oxy:Plot.Axes>
+<!--                        <oxy:Plot.Axes>
                                 <oxy:LinearAxis Position="Bottom"></oxy:LinearAxis>
                                 <oxy:LinearAxis Position="Bottom"></oxy:LinearAxis>
                             </oxy:Plot.Axes>
-                        </oxy:Plot>
+-->
+                            </oxy:PlotView>
                         <Button HorizontalAlignment="Left" Grid.Row="1" Name="btnExportRocToFile" Margin="10" Height="30" Width="200" Click="btnExportRocToFile_Click">Export ROC to text file</Button>
                         
                         

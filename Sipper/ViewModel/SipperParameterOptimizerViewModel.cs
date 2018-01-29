@@ -7,6 +7,7 @@ using DeconTools.Backend;
 using DeconTools.Utilities;
 using OxyPlot;
 using OxyPlot.Axes;
+using PRISM.Logging;
 using Sipper.Model;
 
 namespace Sipper.ViewModel
@@ -23,6 +24,10 @@ namespace Sipper.ViewModel
             _filterOptimizer = new SipperFilterOptimizer();
             AllParameterResults = new List<ParameterOptimizationResult>();
             MaxAllowedFalsePositiveRate = 0.1;
+
+            BaseLogger.TimestampFormat = LogMessage.TimestampFormatMode.YearMonthDay24hr;
+
+            FileLogger.ChangeLogFileBaseName(@"Logs\Sipper", appendDateToBaseName: true);
         }
 
 
@@ -221,11 +226,14 @@ namespace Sipper.ViewModel
             RocCurve = _filterOptimizer.GetRocCurve(AllParameterResults);
             string graphTitle = "ROC curve";
 
-            PlotModel plotModel = new PlotModel(graphTitle);
-            plotModel.TitleFontSize = 11;
-            plotModel.Padding = new OxyThickness(0);
-            plotModel.PlotMargins = new OxyThickness(0);
-            plotModel.PlotAreaBorderThickness = 0;
+            PlotModel plotModel = new PlotModel
+            {
+                Title = graphTitle,
+                TitleFontSize = 11,
+                Padding = new OxyThickness(0),
+                PlotMargins = new OxyThickness(0),
+                PlotAreaBorderThickness = new OxyThickness(0),
+            };
 
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
@@ -235,11 +243,19 @@ namespace Sipper.ViewModel
                 series.Points.Add(new DataPoint(RocCurve.Xvalues[i], RocCurve.Yvalues[i]));
             }
 
-            var xAxis = new LinearAxis(AxisPosition.Bottom, "unlabeled count");
-            xAxis.Minimum = 0;
+            var xAxis = new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "unlabeled count",
+                Minimum = 0
+            };
 
-            var yAxis = new LinearAxis(AxisPosition.Left, "labeled count");
-            yAxis.Minimum = 0;
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "labeled count",
+                Minimum = 0
+            };
 
             plotModel.Series.Add(series);
             plotModel.Axes.Add(xAxis);
@@ -260,7 +276,7 @@ namespace Sipper.ViewModel
                 writer.WriteLine(header);
 
                 XYData xydata = new XYData();
-                
+
                 if (RocCurve==null|| RocCurve.Xvalues==null || RocCurve.Xvalues.Length==0)
                 {
                     xydata.Xvalues=new double[0];
@@ -281,7 +297,7 @@ namespace Sipper.ViewModel
             }
 
 
-            
+
         }
 
 
