@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using DeconTools.Backend;
-using DeconTools.Backend.Utilities.IqLogger;
 using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
+using PRISM.Logging;
 
 namespace Sipper.Model
 {
@@ -137,7 +137,7 @@ namespace Sipper.Model
             var parameterOptimizationResults = new List<ParameterOptimizationResult>();
             int numCombinations = GetNumCombinations();
 
-            IqLogger.Log.Info("Filter optimizer - num combinations to analyze = "+ numCombinations);
+            FileLogger.WriteLog(BaseLogger.LogLevels.INFO, "Filter optimizer - num combinations to analyze = "+ numCombinations);
             StringBuilder sb = new StringBuilder();
 
             int comboCounter = 0;
@@ -154,7 +154,7 @@ namespace Sipper.Model
                                          where n.FitScoreLabeledProfile <= fitScoreLabelled
                                          select n).ToList();
 
-                IqLogger.Log.Info("Current filter combo: " + comboCounter +" out of " + numCombinations);
+                FileLogger.WriteLog(BaseLogger.LogLevels.INFO, "Current filter combo: " + comboCounter +" out of " + numCombinations);
                 
                 for (double area = SumOfRatiosLower; area < SumOfRatiosUpper; area = area + SumOfRatiosStep)
                 {
