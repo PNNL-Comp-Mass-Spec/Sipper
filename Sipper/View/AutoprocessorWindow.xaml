@@ -1,123 +1,209 @@
-﻿<Window x:Name="window" x:Class="Sipper.View.AutoprocessorWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:graphLib="clr-namespace:GWSGraphLibrary;assembly=GWSGraphLibrary" 
-        xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
-        xmlns:VM="clr-namespace:Sipper.ViewModel"
-        AllowDrop="True" d:DesignWidth="599" Drop="FileDropHandler"
-        SizeToContent="WidthAndHeight" Title="AutoprocessorWindow" mc:Ignorable="d" d:DesignHeight="836">
+﻿<Window
+    x:Class="Sipper.View.AutoprocessorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:VM="clr-namespace:Sipper.ViewModel"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:graphLib="clr-namespace:GWSGraphLibrary;assembly=GWSGraphLibrary"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
+    x:Name="window"
+    Title="AutoprocessorWindow"
+    d:DesignHeight="836"
+    d:DesignWidth="599"
+    AllowDrop="True"
+    Drop="FileDropHandler"
+    SizeToContent="WidthAndHeight"
+    mc:Ignorable="d">
 
-  <Window.DataContext>
-    <VM:AutoprocessorViewModel></VM:AutoprocessorViewModel>
-  </Window.DataContext>
+    <Window.DataContext>
+        <VM:AutoprocessorViewModel />
+    </Window.DataContext>
 
-  <Grid Name="grid1" Width="auto" Height="auto" HorizontalAlignment="Stretch">
-    <StackPanel>
-      <TabControl Name="tabControl1" Width="Auto" Height="Auto" Canvas.Left="12" Canvas.Top="12">
-        <TabItem Name="tabItem1" Header="Setup">
-          <StackPanel>
-            <Border Name="border1" Width="Auto" Height="Auto" Margin="25,10,25,10" BorderBrush="Silver"
-                    BorderThickness="4" CornerRadius="10" MinHeight="150" MinWidth="350">
-              <TextBlock Name="textBlock1" Width="196" Height="56" HorizontalAlignment="Center"
-                         Margin="0" VerticalAlignment="Center" FontFamily="Tahoma" FontSize="18" FontWeight="Bold" Foreground="#6B4D4D34"
-                         Text="Drag and drop files here..." TextWrapping="Wrap" />
-            </Border>
+    <Grid
+        Name="grid1"
+        Width="auto"
+        Height="auto"
+        HorizontalAlignment="Stretch">
+        <StackPanel>
+            <TabControl
+                Name="tabControl1"
+                Canvas.Left="12"
+                Canvas.Top="12"
+                Width="Auto"
+                Height="Auto">
+                <TabItem Name="tabItem1" Header="Setup">
+                    <StackPanel>
+                        <Border
+                            Name="border1"
+                            Width="Auto"
+                            Height="Auto"
+                            MinWidth="350"
+                            MinHeight="150"
+                            Margin="25,10,25,10"
+                            BorderBrush="Silver"
+                            BorderThickness="4"
+                            CornerRadius="10">
+                            <TextBlock
+                                Name="textBlock1"
+                                Width="196"
+                                Height="56"
+                                Margin="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="Tahoma"
+                                FontSize="18"
+                                FontWeight="Bold"
+                                Foreground="#6B4D4D34"
+                                Text="Drag and drop files here..."
+                                TextWrapping="Wrap" />
+                        </Border>
 
+                        <StackPanel Orientation="Horizontal">
+                            <Label
+                                Name="label1"
+                                Margin="6,10,0,0"
+                                Padding="0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Content="Raw data file" />
+                            <TextBlock
+                                Name="runStatusLabel"
+                                Margin="25,10,0,0"
+                                Padding="0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Foreground="#FFA77171"
+                                Text="{Binding Path=DataContext.FileInputs.RunStatusText, ElementName=window, Mode=OneWay}" />
+
+                        </StackPanel>
+
+                        <TextBox
+                            Name="txtRawDataFilepath"
+                            Height="44"
+                            Margin="6,0"
+                            DragOver="txtResultsFilePath_DragOver"
+                            Drop="FileDropHandler"
+                            PreviewDragOver="TextBox_PreviewDragOver"
+                            Text="{Binding Path=DataContext.FileInputs.DatasetPath, ElementName=window, Mode=OneWay}"
+                            TextWrapping="Wrap" />
+                        <Label
+                            Name="label2"
+                            Margin="6,10,0,0"
+                            Padding="0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Content="Parameter file" />
+                        <TextBox
+                            Name="txtWorkflowParameterFilepath"
+                            Height="44"
+                            Margin="6,0"
+                            DragOver="txtResultsFilePath_DragOver"
+                            Drop="FileDropHandler"
+                            PreviewDragOver="TextBox_PreviewDragOver"
+                            Text="{Binding Path=DataContext.FileInputs.ParameterFilePath, ElementName=window, Mode=OneWay}"
+                            TextWrapping="Wrap" />
+                        <Label
+                            Name="label3"
+                            Margin="6,10,0,0"
+                            Padding="0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Content="Targets" />
+                        <TextBox
+                            Name="txtTargetsFilePath"
+                            Height="44"
+                            Margin="6,0"
+                            DragOver="txtResultsFilePath_DragOver"
+                            Drop="FileDropHandler"
+                            PreviewDragOver="TextBox_PreviewDragOver"
+                            Text="{Binding Path=DataContext.FileInputs.TargetsFilePath, ElementName=window, Mode=OneWay}"
+                            TextWrapping="Wrap" />
+
+                    </StackPanel>
+                </TabItem>
+                <TabItem Name="tabItem2" Header="Feedback">
+
+                    <StackPanel>
+                        <ListBox
+                            Name="listBox1"
+                            Width="Auto"
+                            Height="Auto"
+                            MaxHeight="800"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            ItemsSource="{Binding Path=DataContext.StatusCollection, ElementName=window}" />
+                    </StackPanel>
+                </TabItem>
+                <TabItem Name="tabItem3" Header="LiveView">
+                    <StackPanel>
+                        <TextBlock Margin="6,6,6,0" Text="Latest result:" />
+                        <oxy:PlotView
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="1"
+                            Margin="6,10,0,0"
+                            Model="{Binding ObservedIsoPlot}" />
+
+                        <TextBlock Margin="6,6,6,0" Text="C13-enriched peptides found:" />
+                        <ListView
+                            MaxHeight="300"
+                            Margin="6,6,6,0"
+                            ItemsSource="{Binding Path=DataContext.ProgressInfos, ElementName=window, Mode=OneWay}"
+                            SelectionMode="Extended">
+                            <ListView.View>
+
+                                <GridView>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Path=Result.Target.ID}" Header="TargetID" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding Path=Result.Target.FeatureToMassTagID}" Header="MassTagID" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding Path=Result.IsotopicProfile.MonoIsotopicMass, StringFormat=0.0000}" Header="MonoMass" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding Path=Result.IsotopicProfile.ChargeState}" Header="z" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding Path=Result.IsotopicProfile.MonoPeakMZ, StringFormat=0.0000}" Header="MonoMZ" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding Path=Result.IsotopicProfile.IntensityAggregate}" Header="Intensity" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding Path=Result.AreaUnderRatioCurveRevised, StringFormat=0.0}" Header="AreaMetric" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding Path=Result.ChromCorrelationAverage, StringFormat=0.000}" Header="Corr_Avg" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding Path=Result.ChromCorrelationMedian, StringFormat=0.000}" Header="Corr_Median" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding Path=Result.RSquaredValForRatioCurve, StringFormat=0.000}" Header="R_val" />
+
+
+                                </GridView>
+                            </ListView.View>
+
+                        </ListView>
+
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
             <StackPanel Orientation="Horizontal">
-              <Label Name="label1" HorizontalAlignment="Left" Margin="6,10,0,0"
-                     VerticalAlignment="Center" Content="Raw data file" Padding="0" />
-              <TextBlock Name="runStatusLabel" HorizontalAlignment="Left" Margin="25,10,0,0"
-                         VerticalAlignment="Center" Text="{Binding Path=DataContext.FileInputs.RunStatusText, ElementName=window, Mode=OneWay}"
-                         Padding="0" Foreground="#FFA77171" />
-
+                <TextBlock Margin="6,6,6,0" Text="Progress:" />
+                <TextBlock Margin="6,6,6,0" Text="{Binding Path=DataContext.StatusMessageGeneral, ElementName=window, Mode=OneWay}" />
             </StackPanel>
+            <ProgressBar
+                Name="progressBar1"
+                Height="15"
+                Margin="6,0,6,0"
+                Value="{Binding Path=DataContext.PercentProgress, ElementName=window, Mode=OneWay}" />
+            <Grid VerticalAlignment="Center">
 
-            <TextBox Drop="FileDropHandler" DragOver="txtResultsFilePath_DragOver"
-                     PreviewDragOver="TextBox_PreviewDragOver" Name="txtRawDataFilepath" Height="44" Margin="6,0"
-                     Text="{Binding Path=DataContext.FileInputs.DatasetPath, ElementName=window, Mode=OneWay}" TextWrapping="Wrap">
-            </TextBox>
-            <Label Name="label2" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Center"
-                   Content="Parameter file" Padding="0" />
-            <TextBox Drop="FileDropHandler" DragOver="txtResultsFilePath_DragOver"
-                     PreviewDragOver="TextBox_PreviewDragOver" Name="txtWorkflowParameterFilepath" Height="44" Margin="6,0"
-                     Text="{Binding Path=DataContext.FileInputs.ParameterFilePath, ElementName=window, Mode=OneWay}" TextWrapping="Wrap" />
-            <Label Name="label3" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Center"
-                   Content="Targets" Padding="0" />
-            <TextBox Drop="FileDropHandler" DragOver="txtResultsFilePath_DragOver"
-                     PreviewDragOver="TextBox_PreviewDragOver" Name="txtTargetsFilePath" Height="44" Margin="6,0"
-                     Text="{Binding Path=DataContext.FileInputs.TargetsFilePath, ElementName=window, Mode=OneWay}" TextWrapping="Wrap" />
-
-          </StackPanel>
-        </TabItem>
-        <TabItem Name="tabItem2" Header="Feedback">
-
-          <StackPanel>
-            <ListBox Name="listBox1" Width="Auto" Height="Auto" HorizontalAlignment="Left"
-                     VerticalAlignment="Top" ItemsSource="{Binding Path=DataContext.StatusCollection, ElementName=window}" MaxHeight="800">
-            </ListBox>
-          </StackPanel>
-        </TabItem>
-        <TabItem Header="LiveView" Name="tabItem3">
-          <StackPanel>
-            <TextBlock Margin="6,6,6,0" Text="Latest result:"></TextBlock>
-            <oxy:PlotView Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="6,10,0,0"
-                      Model="{Binding ObservedIsoPlot }" />
-
-            <TextBlock Margin="6,6,6,0" Text="C13-enriched peptides found:"></TextBlock>
-            <ListView Margin="6,6,6,0"
-                      ItemsSource="{Binding Path=DataContext.ProgressInfos, ElementName=window, Mode=OneWay}" SelectionMode="Extended"
-                      MaxHeight="300">
-              <ListView.View>
-
-                <GridView>
-                  <GridViewColumn Header="TargetID"
-                                  DisplayMemberBinding="{Binding Path=Result.Target.ID}" />
-                  <GridViewColumn Header="MassTagID"
-                                  DisplayMemberBinding="{Binding Path=Result.Target.FeatureToMassTagID}" />
-                  <GridViewColumn Header="MonoMass"
-                                  DisplayMemberBinding="{Binding Path=Result.IsotopicProfile.MonoIsotopicMass, StringFormat=0.0000}" />
-                  <GridViewColumn Header="z"
-                                  DisplayMemberBinding="{Binding Path=Result.IsotopicProfile.ChargeState}" />
-                  <GridViewColumn Header="MonoMZ"
-                                  DisplayMemberBinding="{Binding Path=Result.IsotopicProfile.MonoPeakMZ, StringFormat=0.0000}" />
-                  <GridViewColumn Header="Intensity"
-                                  DisplayMemberBinding="{Binding Path=Result.IsotopicProfile.IntensityAggregate}" />
-                  <GridViewColumn Header="AreaMetric"
-                                  DisplayMemberBinding="{Binding Path=Result.AreaUnderRatioCurveRevised, StringFormat=0.0}" />
-                  <GridViewColumn Header="Corr_Avg"
-                                  DisplayMemberBinding="{Binding Path=Result.ChromCorrelationAverage, StringFormat=0.000}" />
-                  <GridViewColumn Header="Corr_Median"
-                                  DisplayMemberBinding="{Binding Path=Result.ChromCorrelationMedian, StringFormat=0.000}" />
-                  <GridViewColumn Header="R_val"
-                                  DisplayMemberBinding="{Binding Path=Result.RSquaredValForRatioCurve, StringFormat=0.000}" />
-
-
-                </GridView>
-              </ListView.View>
-
-            </ListView>
-
-          </StackPanel>
-        </TabItem>
-      </TabControl>
-      <StackPanel Orientation="Horizontal">
-        <TextBlock Margin="6,6,6,0" Text="Progress:" />
-        <TextBlock Margin="6,6,6,0"
-                   Text="{Binding Path=DataContext.StatusMessageGeneral, ElementName=window, Mode=OneWay}" />
-      </StackPanel>
-      <ProgressBar Name="progressBar1" Height="15" Margin="6,0,6,0"
-                   Value="{Binding Path=DataContext.PercentProgress, ElementName=window, Mode=OneWay}" />
-      <Grid VerticalAlignment="Center">
-
-        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-          <Button Name="btnCancel" Width="100" HorizontalAlignment="Right" Margin="0,15,25,15"
-                  Click="btnCancelClick" Content="Cancel" Padding="1,10" />
-          <Button Name="btnGo" Width="100" HorizontalAlignment="Right" Margin="0,15,25,15"
-                  Click="button1_Click" Content="Go!" Padding="1,10" />
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button
+                        Name="btnCancel"
+                        Width="100"
+                        Margin="0,15,25,15"
+                        Padding="1,10"
+                        HorizontalAlignment="Right"
+                        Click="btnCancelClick"
+                        Content="Cancel" />
+                    <Button
+                        Name="btnGo"
+                        Width="100"
+                        Margin="0,15,25,15"
+                        Padding="1,10"
+                        HorizontalAlignment="Right"
+                        Click="button1_Click"
+                        Content="Go!" />
+                </StackPanel>
+            </Grid>
         </StackPanel>
-      </Grid>
-    </StackPanel>
-  </Grid>
+    </Grid>
 </Window>

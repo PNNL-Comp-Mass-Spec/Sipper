@@ -1,193 +1,239 @@
-﻿<Window x:Class="Sipper.View.FilterParameterOptimizerWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-        xmlns:VM="clr-namespace:Sipper.ViewModel"
-        xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
-        Title="FilterParameterOptimizerWindow" Height="700" Width="979">
+﻿<Window
+    x:Class="Sipper.View.FilterParameterOptimizerWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:VM="clr-namespace:Sipper.ViewModel"
+    xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
+    Title="FilterParameterOptimizerWindow"
+    Width="979"
+    Height="700">
 
-  <Window.DataContext>
-    <VM:SipperParameterOptimizerViewModel></VM:SipperParameterOptimizerViewModel>
-  </Window.DataContext>
+    <Window.DataContext>
+        <VM:SipperParameterOptimizerViewModel />
+    </Window.DataContext>
 
-  <Window.Resources>
-    <Style TargetType="Border">
-      <Setter Property="Control.BorderBrush" Value="SlateGray" />
-      <Setter Property="Control.BorderThickness" Value="3" />
-      <Setter Property="Control.VerticalAlignment" Value="Stretch" />
-      <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
-      <Setter Property="Control.Margin" Value="3,3,3,3" />
-      <Setter Property="Border.CornerRadius" Value="5" />
-
-    </Style>
-
-
-    <Style x:Key="CellRightAlign">
-      <Setter Property="Control.HorizontalAlignment" Value="Right" />
-    </Style>
-
-  </Window.Resources>
-
-  <DockPanel>
-    <StackPanel DockPanel.Dock="Left" Width="200" MaxWidth="200">
-      <StackPanel.Resources>
-        <Style TargetType="Button">
-          <Setter Property="Control.BorderBrush" Value="SlateGray" />
-          <Setter Property="Control.VerticalAlignment" Value="Stretch" />
-          <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
-          <Setter Property="Control.Margin" Value="10,3,10,3" />
-
+    <Window.Resources>
+        <Style TargetType="Border">
+            <Setter Property="Control.BorderBrush" Value="SlateGray" />
+            <Setter Property="Control.BorderThickness" Value="3" />
+            <Setter Property="Control.VerticalAlignment" Value="Stretch" />
+            <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Control.Margin" Value="3,3,3,3" />
+            <Setter Property="Border.CornerRadius" Value="5" />
 
         </Style>
 
-      </StackPanel.Resources>
 
-      <Border>
-        <StackPanel Orientation="Vertical" Margin="5,0,5,0">
-          <Button Name="btnSelectUnlabeledFile" Click="btnSelectUnlabeledFile_Click">
-            <TextBlock TextWrapping="Wrap">
-              Select Unlabeled Results File
-            </TextBlock>
-          </Button>
-          <TextBox TextWrapping="Wrap" MinWidth="150" Text="{Binding UnlabeledFilePath, Mode=TwoWay}"></TextBox>
+        <Style x:Key="CellRightAlign">
+            <Setter Property="Control.HorizontalAlignment" Value="Right" />
+        </Style>
+
+    </Window.Resources>
+
+    <DockPanel>
+        <StackPanel
+            Width="200"
+            MaxWidth="200"
+            DockPanel.Dock="Left">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Control.BorderBrush" Value="SlateGray" />
+                    <Setter Property="Control.VerticalAlignment" Value="Stretch" />
+                    <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="Control.Margin" Value="10,3,10,3" />
+
+
+                </Style>
+
+            </StackPanel.Resources>
+
+            <Border>
+                <StackPanel Margin="5,0,5,0" Orientation="Vertical">
+                    <Button Name="btnSelectUnlabeledFile" Click="btnSelectUnlabeledFile_Click">
+                        <TextBlock TextWrapping="Wrap">
+                            Select Unlabeled Results File
+                        </TextBlock>
+                    </Button>
+                    <TextBox
+                        MinWidth="150"
+                        Text="{Binding UnlabeledFilePath, Mode=TwoWay}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Margin="5,15,5,0">
+                <StackPanel Margin="5,0,5,0" Orientation="Vertical">
+
+                    <Button Name="btnSelectLabeledFile" Click="btnSelectLabeledFile_Click">
+                        <TextBlock TextWrapping="Wrap">
+                            Select Labeled Results File
+                        </TextBlock>
+                    </Button>
+                    <TextBox
+                        MinWidth="150"
+                        Text="{Binding LabeledFilePath, Mode=TwoWay}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Margin="5,15,5,0">
+                <StackPanel Margin="5,0,5,0" Orientation="Vertical">
+
+                    <Button Name="btnSetOutputFileName" Click="btnSetOutputFileName_Click">
+                        <TextBlock TextWrapping="Wrap">Set output file name</TextBlock>
+
+                    </Button>
+
+                    <TextBox Text="{Binding OutputFileName, Mode=TwoWay}" TextWrapping="Wrap" />
+
+
+                </StackPanel>
+            </Border>
+
+
+            <Border Margin="5,15,5,0">
+                <StackPanel Margin="5,0,5,0" Orientation="Vertical">
+
+                    <Button Name="btnDoFilterOptimization" Click="btnDoFilterOptimization_Click">
+                        <TextBlock TextWrapping="Wrap">
+                            Do filter optimization
+                        </TextBlock>
+                    </Button>
+
+
+                </StackPanel>
+            </Border>
         </StackPanel>
-      </Border>
-
-      <Border Margin="5,15,5,0">
-        <StackPanel Orientation="Vertical" Margin="5,0,5,0">
-
-          <Button Name="btnSelectLabeledFile" Click="btnSelectLabeledFile_Click">
-            <TextBlock TextWrapping="Wrap">
-              Select Labeled Results File
-            </TextBlock>
-          </Button>
-          <TextBox MinWidth="150" TextWrapping="Wrap" Text="{Binding LabeledFilePath, Mode=TwoWay}"></TextBox>
-        </StackPanel>
-      </Border>
-
-      <Border Margin="5,15,5,0">
-        <StackPanel Orientation="Vertical" Margin="5,0,5,0">
-
-          <Button Name="btnSetOutputFileName" Click="btnSetOutputFileName_Click">
-            <TextBlock TextWrapping="Wrap">Set output file name</TextBlock>
-
-          </Button>
-
-          <TextBox TextWrapping="Wrap" Text="{Binding OutputFileName, Mode=TwoWay}"></TextBox>
 
 
-        </StackPanel>
-      </Border>
-
-
-      <Border Margin="5,15,5,0">
-        <StackPanel Orientation="Vertical" Margin="5,0,5,0">
-
-          <Button Name="btnDoFilterOptimization" Click="btnDoFilterOptimization_Click">
-            <TextBlock TextWrapping="Wrap">
-              Do filter optimization
-            </TextBlock>
-          </Button>
-
-
-        </StackPanel>
-      </Border>
-    </StackPanel>
-
-
-    <Border DockPanel.Dock="Right">
-      <TabControl>
-        <TabItem Header="ROC curve">
+        <Border DockPanel.Dock="Right">
+            <TabControl>
+                <TabItem Header="ROC curve">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="10*"></RowDefinition>
-                            <RowDefinition></RowDefinition>
+                            <RowDefinition Height="10*" />
+                            <RowDefinition />
                         </Grid.RowDefinitions>
-                        <oxy:PlotView Name="rocPlot" Margin="6,10,0,0" Model="{Binding RocPlot }"
-                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-<!--                        <oxy:Plot.Axes>
+                        <oxy:PlotView
+                            Name="rocPlot"
+                            Margin="6,10,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Model="{Binding RocPlot}">
+                            <!--                        <oxy:Plot.Axes>
                                 <oxy:LinearAxis Position="Bottom"></oxy:LinearAxis>
                                 <oxy:LinearAxis Position="Bottom"></oxy:LinearAxis>
-                            </oxy:Plot.Axes>
--->
-                            </oxy:PlotView>
-                        <Button HorizontalAlignment="Left" Grid.Row="1" Name="btnExportRocToFile" Margin="10" Height="30" Width="200" Click="btnExportRocToFile_Click">Export ROC to text file</Button>
-                        
-                        
+                            </oxy:Plot.Axes>                            -->
+                        </oxy:PlotView>
+                        <Button
+                            Name="btnExportRocToFile"
+                            Grid.Row="1"
+                            Width="200"
+                            Height="30"
+                            Margin="10"
+                            HorizontalAlignment="Left"
+                            Click="btnExportRocToFile_Click">
+                            Export ROC to text file
+                        </Button>
+
+
                     </Grid>
-              
-                        
-        </TabItem>
-
-        <TabItem Header="Table of filter settings">
-          <StackPanel>
-            <StackPanel Orientation="Horizontal">
-              <TextBlock VerticalAlignment="Center" Text="Maximum False positive rate to allow: "></TextBlock>
-              <TextBox VerticalAlignment="Center" Text="{Binding MaxAllowedFalsePositiveRate}"></TextBox>
-              <Button Name="btnUpdateMaxFalsePos" Height="20" FontSize="10" Margin="15,5,0,5"
-                      Click="btnUpdateMaxFalsePos_Click">Update</Button>
-            </StackPanel>
-
-            <DataGrid Name="filterDatagrid" MaxHeight="350" AutoGenerateColumns="False"
-                      ItemsSource="{Binding FilteredParameters}" VerticalScrollBarVisibility="Visible"
-                      SelectedItem="{Binding CurrentFilterParameter, Mode=TwoWay }" SelectionChanged="filterDatagrid_SelectionChanged">
 
 
-              <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Path=FitScoreLabelled, StringFormat=0.000}"
-                                    Header="FitScoreLabeled" />
-                <DataGridTextColumn Binding="{Binding Path=Iscore, StringFormat=0.00}" Header="IScore" />
-                <DataGridTextColumn Binding="{Binding Path=SumOfRatios, StringFormat=0.0}" Header="SumOfRatios" />
-                <DataGridTextColumn Binding="{Binding Path=ContigScore, StringFormat=0}" Header="ContigScore" />
-                <DataGridTextColumn Binding="{Binding Path=PercentIncorp, StringFormat=0.0}" Header="PercentIncorp" />
-                <DataGridTextColumn Binding="{Binding Path=PercentPeptidePopulation, StringFormat=0.0}"
-                                    Header="PercentPeptide" />
-                <DataGridTextColumn Binding="{Binding Path=NumUnlabelledPassingFilter, StringFormat=0}"
-                                    Header="NumUnlabeled" />
-                <DataGridTextColumn Binding="{Binding Path=NumLabeledPassingFilter, StringFormat=0}"
-                                    Header="NumLabeled" />
-                <DataGridTextColumn Binding="{Binding Path=FalsePositiveRate, StringFormat=0.000}"
-                                    Header="FalsePostiveRate" />
+                </TabItem>
+
+                <TabItem Header="Table of filter settings">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center" Text="Maximum False positive rate to allow: " />
+                            <TextBox VerticalAlignment="Center" Text="{Binding MaxAllowedFalsePositiveRate}" />
+                            <Button
+                                Name="btnUpdateMaxFalsePos"
+                                Height="20"
+                                Margin="15,5,0,5"
+                                Click="btnUpdateMaxFalsePos_Click"
+                                FontSize="10">
+                                Update
+                            </Button>
+                        </StackPanel>
+
+                        <DataGrid
+                            Name="filterDatagrid"
+                            MaxHeight="350"
+                            AutoGenerateColumns="False"
+                            ItemsSource="{Binding FilteredParameters}"
+                            SelectedItem="{Binding CurrentFilterParameter, Mode=TwoWay}"
+                            SelectionChanged="filterDatagrid_SelectionChanged"
+                            VerticalScrollBarVisibility="Visible">
 
 
-              </DataGrid.Columns>
-            </DataGrid>
-
-            <StackPanel Orientation="Horizontal">
-
-              <StackPanel>
-                <TextBlock Margin="15,15,15,0">
-                  Current Filter details:
-                </TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="15,0,15,0" Width="250" Height="200"
-                         VerticalScrollBarVisibility="Auto" IsReadOnly="True" Text="{Binding CurrentFilterReportString}"></TextBox>
-
-
-              </StackPanel>
-              <Button Name="btnSetFavoriteFilter" Height="40" Margin="10"
-                      Click="BtnSetFavoriteFilter_OnClick">Set favorite filter</Button>
-
-              <StackPanel>
-                <TextBlock Margin="15,15,15,0">
-                  Favorite filter:
-                </TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="15,0,15,0" Width="250" Height="200"
-                         VerticalScrollBarVisibility="Auto" IsReadOnly="True" Text="{Binding SelectedFilterReportString}">
-                </TextBox>
-              </StackPanel>
-
-            </StackPanel>
-
-          </StackPanel>
-        </TabItem>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Binding="{Binding Path=FitScoreLabelled, StringFormat=0.000}" Header="FitScoreLabeled" />
+                                <DataGridTextColumn Binding="{Binding Path=Iscore, StringFormat=0.00}" Header="IScore" />
+                                <DataGridTextColumn Binding="{Binding Path=SumOfRatios, StringFormat=0.0}" Header="SumOfRatios" />
+                                <DataGridTextColumn Binding="{Binding Path=ContigScore, StringFormat=0}" Header="ContigScore" />
+                                <DataGridTextColumn Binding="{Binding Path=PercentIncorp, StringFormat=0.0}" Header="PercentIncorp" />
+                                <DataGridTextColumn Binding="{Binding Path=PercentPeptidePopulation, StringFormat=0.0}" Header="PercentPeptide" />
+                                <DataGridTextColumn Binding="{Binding Path=NumUnlabelledPassingFilter, StringFormat=0}" Header="NumUnlabeled" />
+                                <DataGridTextColumn Binding="{Binding Path=NumLabeledPassingFilter, StringFormat=0}" Header="NumLabeled" />
+                                <DataGridTextColumn Binding="{Binding Path=FalsePositiveRate, StringFormat=0.000}" Header="FalsePostiveRate" />
 
 
-      </TabControl>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <StackPanel Orientation="Horizontal">
+
+                            <StackPanel>
+                                <TextBlock Margin="15,15,15,0">
+                                    Current Filter details:
+                                </TextBlock>
+                                <TextBox
+                                    Width="250"
+                                    Height="200"
+                                    Margin="15,0,15,0"
+                                    HorizontalAlignment="Left"
+                                    IsReadOnly="True"
+                                    Text="{Binding CurrentFilterReportString}"
+                                    VerticalScrollBarVisibility="Auto" />
 
 
-    </Border>
+                            </StackPanel>
+                            <Button
+                                Name="btnSetFavoriteFilter"
+                                Height="40"
+                                Margin="10"
+                                Click="BtnSetFavoriteFilter_OnClick">
+                                Set favorite filter
+                            </Button>
+
+                            <StackPanel>
+                                <TextBlock Margin="15,15,15,0">
+                                    Favorite filter:
+                                </TextBlock>
+                                <TextBox
+                                    Width="250"
+                                    Height="200"
+                                    Margin="15,0,15,0"
+                                    HorizontalAlignment="Left"
+                                    IsReadOnly="True"
+                                    Text="{Binding SelectedFilterReportString}"
+                                    VerticalScrollBarVisibility="Auto" />
+                            </StackPanel>
+
+                        </StackPanel>
+
+                    </StackPanel>
+                </TabItem>
 
 
-  </DockPanel>
+            </TabControl>
+
+
+        </Border>
+
+
+    </DockPanel>
 
 
 </Window>
