@@ -24,7 +24,7 @@ namespace Sipper.UnitTesting.ModelTests
             SipperResultFromTextImporter importer = new SipperResultFromTextImporter(resultFile);
                 var repo = importer.Import();
 
-           
+
 
 
             fileInputs.TargetsFilePath =

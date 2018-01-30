@@ -76,23 +76,23 @@ namespace Sipper.UnitTesting.ViewModelTests
         {
             AutoprocessorViewModel viewModel=new AutoprocessorViewModel();
 
-			// Instrument data file
+            // Instrument data file
             string testRawDataFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
 
-			
-            string expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\Results\\" + 
+
+            string expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\Results\\" +
                                          RunUtilities.GetDatasetName(testRawDataFile) + "_results.txt";
 
             if (File.Exists(expectedResultsFile)) File.Delete(expectedResultsFile);
 
 
-			// Parameter file
+            // Parameter file
             string testWorkflowFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
 
-			// Targets file
-			string testTargetFile1 =
+            // Targets file
+            string testTargetFile1 =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt";
 
             viewModel.FileInputs.CreateFileLinkage(testRawDataFile);
@@ -155,7 +155,7 @@ namespace Sipper.UnitTesting.ViewModelTests
             Assert.AreEqual(10091, testResult.TargetID);
             Assert.AreEqual(6185, testResult.ScanLC);
             Assert.AreEqual("C74H117N20O22S", testResult.EmpiricalFormula);
-            
+
 
         }
 

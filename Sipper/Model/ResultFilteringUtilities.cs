@@ -75,7 +75,7 @@ namespace Sipper.Model
                             }
 
                         }
-                        //all other results - 
+                        //all other results -
                         else if (result.RSquaredValForRatioCurve > 0.975 && result.IScore <= 0.25)
                         {
                             result.PassesFilter = true;
@@ -128,7 +128,7 @@ namespace Sipper.Model
                             }
 
                         }
-                        //all other results - 
+                        //all other results -
                         else if (result.RSquaredValForRatioCurve > 0.95 && result.IScore <= 0.25)
                         {
                             result.PassesFilter = true;

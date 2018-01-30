@@ -25,7 +25,7 @@ namespace Sipper.View
         public SimpleMsViewerWindow()
             : this(null)
         {
-            
+
         }
 
         public SimpleMsViewerWindow(Project sipperProject)
@@ -98,7 +98,7 @@ namespace Sipper.View
         {
             if (ViewModel == null || ViewModel.Run == null) return;
 
-            
+
 
             ViewModel.CurrentLcScan = (int)e.NewValue;
             ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
@@ -141,20 +141,20 @@ namespace Sipper.View
         private void btnOpenDataset_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            
-            // Set filter for file extension and default file extension 
+
+            // Set filter for file extension and default file extension
             dlg.DefaultExt = ".txt";
             dlg.Filter = "RAW Files (*.raw)|*.raw|UIMF (*.uimf)|*.uimf|All Files (*.*)|*.*";
 
 
-            // Display OpenFileDialog by calling ShowDialog method 
+            // Display OpenFileDialog by calling ShowDialog method
             Nullable<bool> result = dlg.ShowDialog();
 
 
-            // Get the selected file name and display in a TextBox 
+            // Get the selected file name and display in a TextBox
             if (result == true)
             {
-                // Open document 
+                // Open document
                 string filename = dlg.FileName;
                 ViewModel.LoadRun(filename);
 
@@ -188,19 +188,19 @@ namespace Sipper.View
             {
                 ViewModel.SelectedPeak = (Peak) e.AddedItems[0];
             }
-           
-            
+
+
         }
 
         private void btnReCreatePeaksFile_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel == null || ViewModel.Run == null) return;
 
-           
+
             ViewModel.LoadPeaksUsingBackgroundWorker(true);
-            
+
         }
-        
+
 
 
 

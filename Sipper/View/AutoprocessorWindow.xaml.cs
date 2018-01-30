@@ -23,16 +23,16 @@ namespace Sipper.View
 
             ViewModel = new AutoprocessorViewModel(sipperProject.ResultRepository, sipperProject.FileInputs);
 
-            ViewModel.CurrentResultUpdated += ViewModel_CurrentResultUpdated; 
+            ViewModel.CurrentResultUpdated += ViewModel_CurrentResultUpdated;
 
             DataContext = ViewModel;
 
-            
+
         }
 
         void ViewModel_CurrentResultUpdated(object sender, System.EventArgs e)
         {
-           
+
             var xvals = ViewModel.CurrentResultInfo.MassSpectrumXYData.Xvalues;
             var yvals = ViewModel.CurrentResultInfo.MassSpectrumXYData.Yvalues;
 
@@ -40,7 +40,7 @@ namespace Sipper.View
             {
                 return;
             }
-            
+
             var min = 0d;
 
 
@@ -60,8 +60,8 @@ namespace Sipper.View
 
             if (dataObject.ContainsFileDropList())
             {
-               
-                
+
+
                 var fileNamesStringCollection = dataObject.GetFileDropList();
                 StringBuilder bd = new StringBuilder();
 
@@ -69,8 +69,8 @@ namespace Sipper.View
                 var fileNames = fileNamesStringCollection.Cast<string>().ToList();
 
                 ViewModel.FileInputs.CreateFileLinkages(fileNames);
-                
-              
+
+
             }
         }
 
@@ -124,12 +124,12 @@ namespace Sipper.View
             ViewModel.FileInputs.CreateFileLinkage(txtRawDataFilepath.Text);
             ViewModel.FileInputs.CreateFileLinkage(txtTargetsFilePath.Text);
             ViewModel.FileInputs.CreateFileLinkage(txtWorkflowParameterFilepath.Text);
-            
+
             ViewModel.Execute();
 
         }
 
-    
+
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {

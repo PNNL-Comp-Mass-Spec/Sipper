@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using DeconTools.Backend.Core.Results;
-using DeconTools.UnitTesting2;
 using DeconTools.Workflows.Backend.Core;
 using NUnit.Framework;
 using Sipper.Model;
@@ -23,7 +22,7 @@ namespace Sipper.UnitTesting.ViewModelTests
             string testResultFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt";
 
-            
+
 
 
             FileInputsInfo fileInputs = new FileInputsInfo();
@@ -81,7 +80,7 @@ namespace Sipper.UnitTesting.ViewModelTests
 
             viewModel.LoadResults(testResultFile);
             viewModel.CurrentResult = viewModel.Results.First(p => p.TargetID == 5555);
-            
+
             viewModel.ExecuteWorkflow();
 
             Assert.IsNotNull(viewModel.Workflow.MassSpectrumXYData);

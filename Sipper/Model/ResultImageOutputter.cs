@@ -24,7 +24,7 @@ namespace Sipper.Model
         private TargetedWorkflowExecutorProgressInfo _progressInfo = new TargetedWorkflowExecutorProgressInfo();
         private const double DefaultMSPeakWidth = 0.01;
 
-       
+
         private int _subFolderCounter;   //keeps track of which folder images are being written to
 
 
@@ -57,7 +57,7 @@ namespace Sipper.Model
         {
             UpdateGraphRelatedProperties();
 
-            
+
             //something not working with the size - it's not being affected by this...
             _msGraph.zedGraphControl1.Width = 600;
             _msGraph.zedGraphControl1.Height = 400;
@@ -219,7 +219,7 @@ namespace Sipper.Model
 
             if (string.IsNullOrEmpty(_fileInputs.ResultImagesFolderPath))
             {
-                
+
             }
 
             if (!Directory.Exists(_fileInputs.ResultImagesFolderPath))
@@ -232,13 +232,13 @@ namespace Sipper.Model
 
 
             string baseFilename = subfolderPath + Path.DirectorySeparatorChar + CurrentResult.DatasetName + "_ID" + CurrentResult.TargetID;
-            
+
             string msfilename = baseFilename + "_MS.png";
             string theorMSFilename = baseFilename + "_theorMS.png";
             string chromFilename = baseFilename + "_chrom.png";
 
             UpdateGraphRelatedProperties();
-            
+
             _chromGraph.zedGraphControl1.GraphPane.GraphObjList.Clear();
             _chromGraph.GenerateGraph(ChromXYData.Xvalues, ChromXYData.Yvalues, ChromGraphMinX, ChromGraphMaxX);
 

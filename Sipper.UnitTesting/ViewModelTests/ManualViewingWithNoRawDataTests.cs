@@ -18,7 +18,7 @@ namespace Sipper.UnitTesting.ViewModelTests
 
             ManualViewingWithoutRawDataViewModel viewModel = new ManualViewingWithoutRawDataViewModel(fileInputs);
 
-        
+
             viewModel.LoadResults(viewModel.FileInputs.TargetsFilePath);
 
 

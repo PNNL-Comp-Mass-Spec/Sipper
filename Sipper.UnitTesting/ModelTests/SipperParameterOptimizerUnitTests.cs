@@ -28,7 +28,7 @@ namespace Sipper.UnitTesting.ModelTests
 
             filterOptimizer.LoadUnlabeledResults(unlabeledResultsFilePath);
             filterOptimizer.LoadLabeledResults(labeledResultsFilePath);
-            
+
 
             string outputFileName = @"D:\Data\Sipper\Yellow_C13_2009Study\SipperFilterOptimizationOutput.txt";
             var results = filterOptimizer.DoCalculationsOnAllFilterCombinations(outputFileName);

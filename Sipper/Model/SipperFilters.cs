@@ -9,7 +9,7 @@ namespace Sipper.Model
     {
         //Some history here... I reran the parameter optimization on 9/11/2013 (after getting feedback from reviewers)
         //So these are updated as of that date. See the 'OldApplyAutoValidationCodeF2LooseFilter' for the older settings
-       
+
 
         public static void ApplyAutoValidationCodeF2LooseFilter(List<SipperLcmsFeatureTargetedResultDTO> resultList)
         {
@@ -69,7 +69,7 @@ namespace Sipper.Model
                 resultDto.ValidationCode = ValidationCode.None;
             }
 
-            //NOTE: these are the same as the SIPPER paper, table 1. 
+            //NOTE: these are the same as the SIPPER paper, table 1.
             var peptidesPassingFilter = (from n in resultList
                                          where n.FitScoreLabeledProfile<=0.4 &&
                                          n.IScore <=0.4 &&
@@ -93,7 +93,7 @@ namespace Sipper.Model
                 resultDto.ValidationCode = ValidationCode.None;
             }
 
-            //NOTE: these correspond to a FalsePositive rate of '0' 
+            //NOTE: these correspond to a FalsePositive rate of '0'
             var peptidesPassingFilter = (from n in resultList
                                          where n.AreaUnderRatioCurveRevised >= 1 &&
                                                n.IScore <= 0.2 &&
@@ -114,7 +114,7 @@ namespace Sipper.Model
             var resultList = new List<SipperLcmsFeatureTargetedResultDTO>{result};
             ApplyAutoValidationCodeF1TightFilter(resultList);
         }
-        
+
         public static void ApplyAveragineBasedTightFilter(List<SipperLcmsFeatureTargetedResultDTO> resultList)
         {
             foreach (var resultDto in resultList)
@@ -122,7 +122,7 @@ namespace Sipper.Model
                 resultDto.ValidationCode = ValidationCode.None;
             }
 
-            //NOTE: these correspond to a FalsePositive rate of '0' 
+            //NOTE: these correspond to a FalsePositive rate of '0'
             var peptidesPassingFilter = (from n in resultList
                                          where n.AreaUnderRatioCurveRevised >= 1 &&
                                                n.IScore <= 0 &&
@@ -153,7 +153,7 @@ namespace Sipper.Model
                 resultDto.ValidationCode = ValidationCode.None;
             }
 
-            //NOTE: these correspond to a FalsePositive rate of '0' 
+            //NOTE: these correspond to a FalsePositive rate of '0'
             var peptidesPassingFilter = (from n in resultList
                                          where n.AreaUnderRatioCurveRevised >= 1 &&
                                                n.IScore <= 0.4 &&

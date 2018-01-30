@@ -74,7 +74,7 @@ namespace Sipper.Model
                                       select n).ToList();
 
             return filteredParameters;
-            
+
         }
 
 
@@ -155,7 +155,7 @@ namespace Sipper.Model
                                          select n).ToList();
 
                 FileLogger.WriteLog(BaseLogger.LogLevels.INFO, "Current filter combo: " + comboCounter +" out of " + numCombinations);
-                
+
                 for (double area = SumOfRatiosLower; area < SumOfRatiosUpper; area = area + SumOfRatiosStep)
                 {
                     var levelTwoC13Filter = (from n in levelOneC13Filter
@@ -296,6 +296,6 @@ namespace Sipper.Model
 
         public double PercentPeptidePopulationStep { get; set; }
 
-       
+
     }
 }
