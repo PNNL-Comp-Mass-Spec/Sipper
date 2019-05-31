@@ -11,11 +11,7 @@ J Proteome Res. 2014 Mar 7;13(3):1200-10. \
 
 ## Requirements
 
-In order to read Thermo .raw files, you must install Thermo MSFileReader v3.x
-* Create an account at [thermo.flexnetoperations.com](https://thermo.flexnetoperations.com/control/thmo/login)
-* Login and choose "Utility Software"
-* Look for MSFileReader 3.1 SP4 or similar.
-* Run the installer and install both the 32-bit and 64-bit versions.
+Uses ThermoFisher.CommonCore.RawFileReader.dll to read Thermo .raw files.
 
 ## Analysis Steps
 
@@ -62,3 +58,5 @@ Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/
 SIPPER is licensed under the Apache License, Version 2.0; you may not use this 
 file except in compliance with the License.  You may obtain a copy of the 
 License at https://opensource.org/licenses/Apache-2.0
+
+RawFileReader reading tool. Copyright © 2016 by Thermo Fisher Scientific, Inc. All rights reserved.
