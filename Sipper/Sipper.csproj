@@ -95,6 +95,15 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="ThermoFisher.CommonCore.Data">
+      <HintPath>..\Library\ThermoFisher.CommonCore.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="ThermoFisher.CommonCore.RawFileReader">
+      <HintPath>..\Library\ThermoFisher.CommonCore.RawFileReader.dll</HintPath>
+    </Reference>
+    <Reference Include="ThermoRawFileReader">
+      <HintPath>..\Library\ThermoRawFileReader.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
