@@ -173,7 +173,7 @@ namespace Sipper.ViewModel
             }
 
 
-            XYData xydata = new XYData();
+            var xydata = new XYData();
 
             if (CurrentResultInfo.MassSpectrumXYData == null)
             {
@@ -196,7 +196,7 @@ namespace Sipper.ViewModel
             }
             else
             {
-                msGraphMaxY = (float)xydata.getMaxY();
+                msGraphMaxY = (float)xydata.GetMaxY();
             }
 
             string msGraphTitle = "TargetID= " + CurrentResultInfo.Result.Target.ID +   "; m/z " + CurrentResultInfo.Result.Target.MZ.ToString("0.0000") + "; z=" +
@@ -349,7 +349,7 @@ namespace Sipper.ViewModel
             }
             else
             {
-                StatusMessageGeneral = "Processing COMPLETE. #chromatograms extracted= " + IqLogger.Counter1;
+                StatusMessageGeneral = "Processing COMPLETE. #chromatograms extracted=?";
                 PercentProgress = 100;
             }
         }

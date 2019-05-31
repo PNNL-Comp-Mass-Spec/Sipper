@@ -38,7 +38,7 @@ namespace Sipper.ViewModel
         public SimpleMsViewerViewModel()
             : this(null)
         {
-            
+
         }
 
 
@@ -60,7 +60,7 @@ namespace Sipper.ViewModel
 
             NumMSScansToSum = 1;
             ShowMsMsSpectra = false;
-            
+
             NavigateToNextMS1MassSpectrum();
 
         }
@@ -445,13 +445,13 @@ namespace Sipper.ViewModel
 
             if (!ShowMsMsSpectra)
             {
-                CurrentLcScan = Run.GetClosestMSScan(nextPossibleMs, selectionMode);  
+                CurrentLcScan = Run.GetClosestMSScan(nextPossibleMs, selectionMode);
             }
             else
             {
                 CurrentLcScan = nextPossibleMs;
             }
-            
+
 
             if (_msGenerator == null)
             {
@@ -463,7 +463,7 @@ namespace Sipper.ViewModel
             CurrentScanSet = _scanSetFactory.CreateScanSet(Run, CurrentLcScan, NumMSScansToSum);
             MassSpecXYData = _msGenerator.GenerateMS(Run, CurrentScanSet);
 
-           
+
 
             Peaks = new List<Peak>();
             if (MassSpecXYData != null)
@@ -544,7 +544,7 @@ namespace Sipper.ViewModel
 
             }
 
-            var maxY = (float)ChromXyData.getMaxY();
+            var maxY = (float)ChromXyData.GetMaxY();
 
 
             string graphTitle = "XIC for most intense peak (m/z " + SelectedPeak.XValue.ToString("0.000") + ")";
@@ -616,7 +616,7 @@ namespace Sipper.ViewModel
 
             string msGraphTitle = "Observed MS - Scan: " + (CurrentScanSet == null ? "" : CurrentScanSet.ToString());
 
-            var maxY = (float)xydata.getMaxY(MSGraphMinX, MSGraphMaxX);
+            var maxY = (float)xydata.GetMaxY(MSGraphMinX, MSGraphMaxX);
 
 
             PlotModel plotModel = new PlotModel
@@ -699,7 +699,7 @@ namespace Sipper.ViewModel
 
                 if (_recreatePeaksFile || !fiPeaksFile.Exists)
                 {
-                    _recreatePeaksFile = false;					
+                    _recreatePeaksFile = false;
 
                     // Make sure we have write access to the folder with the dataset file
                     try

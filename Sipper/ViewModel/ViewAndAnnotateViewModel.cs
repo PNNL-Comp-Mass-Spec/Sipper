@@ -955,7 +955,7 @@ namespace Sipper.ViewModel
             };
 
 
-            var maxY = xydata.getMaxY();
+            var maxY = xydata.GetMaxY();
             yAxis.Maximum = maxY + maxY * 0.05;
             yAxis.AxisChanged += OnYAxisChange;
 
@@ -981,7 +981,7 @@ namespace Sipper.ViewModel
 
             string msGraphTitle = "Observed MS - Scan: " + scanSet;
 
-            MsGraphMaxY = (float)xydata.getMaxY(MsGraphMinX, MsGraphMaxX);
+            MsGraphMaxY = (float)xydata.GetMaxY(MsGraphMinX, MsGraphMaxX);
 
 
             PlotModel plotModel = new PlotModel
@@ -1063,7 +1063,7 @@ namespace Sipper.ViewModel
             }
             else
             {
-                MsGraphMaxY = (float)xydata.getMaxY();
+                MsGraphMaxY = (float)xydata.GetMaxY();
             }
 
             string msGraphTitle = Workflow.Result.Target.Code + "; m/z " +
