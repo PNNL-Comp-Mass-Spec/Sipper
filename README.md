@@ -7,7 +7,7 @@ spectral data. Supports Thermo .Raw files, plus also mzXML, mzML, and mz5.
 
 For algorithm details, see manuscript "Automated data extraction from in situ protein-stable isotope probing studies.",
 J Proteome Res. 2014 Mar 7;13(3):1200-10. \
-[Abstract on PubMed](https://www.ncbi.nlm.nih.gov/pubmed/?term=24467184)
+[Abstract on PubMed](https://www.ncbi.nlm.nih.gov/pubmed/24467184)
 
 ## Requirements
 
