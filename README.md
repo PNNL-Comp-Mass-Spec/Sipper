@@ -13,6 +13,9 @@ J Proteome Res. 2014 Mar 7;13(3):1200-10. \
 
 Uses ThermoFisher.CommonCore.RawFileReader.dll to read Thermo .raw files.
 
+Use Proteowizard to read .mzML files
+* Download the Windows 64-bit installer from http://proteowizard.sourceforge.net/
+
 ## Analysis Steps
 
 1) Copy the Thermo .Raw file to a local folder
@@ -27,7 +30,7 @@ Uses ThermoFisher.CommonCore.RawFileReader.dll to read Thermo .raw files.
   * Dataset
   * MassTagID
 
-Note that the Scan number of the target will be matched to the data in the comparison dataset 
+Note that the scan number of the target will be matched to the data in the comparison dataset 
 using ChromNETTolerance, which is a value between 0 and 1. For example, a ChromNETTolerance 
 of 0.025 means +/- 2.5% in Normalized Elution Time, where NET is determined by transforming
 the observed scan numbers to a range of 0 to 1.
