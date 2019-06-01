@@ -47,7 +47,7 @@ namespace Sipper.View
             var max = yvals.Max();
 
 
-            string titleString = ViewModel.GetInfoStringOnCurrentResult();
+            var titleString = ViewModel.GetInfoStringOnCurrentResult();
 
 
         }
@@ -56,14 +56,14 @@ namespace Sipper.View
 
         private void FileDropHandler(object sender, DragEventArgs e)
         {
-            DataObject dataObject = e.Data as DataObject;
+            var dataObject = e.Data as DataObject;
 
             if (dataObject.ContainsFileDropList())
             {
 
 
                 var fileNamesStringCollection = dataObject.GetFileDropList();
-                StringBuilder bd = new StringBuilder();
+                var bd = new StringBuilder();
 
 
                 var fileNames = fileNamesStringCollection.Cast<string>().ToList();
@@ -76,13 +76,13 @@ namespace Sipper.View
 
         private void txtResultsFilePath_DragOver(object sender, DragEventArgs e)
         {
-            bool dropEnabled = true;
+            var dropEnabled = true;
 
             if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
             {
-                string[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+                var filenames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
 
-                foreach (string filename in filenames)
+                foreach (var filename in filenames)
                 {
                     if (System.IO.Path.GetExtension(filename).ToUpperInvariant() != ".TXT")
                     {

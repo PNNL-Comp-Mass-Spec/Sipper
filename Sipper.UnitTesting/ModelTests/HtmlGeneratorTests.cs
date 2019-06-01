@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DeconTools.Workflows.Backend.FileIO;
-using DeconTools.Workflows.Backend.Results;
+﻿using DeconTools.Workflows.Backend.FileIO;
 using NUnit.Framework;
 using Sipper.Model;
 
@@ -16,12 +11,12 @@ namespace Sipper.UnitTesting.ModelTests
         public void generateHtmlReportTest1()
         {
 
-            FileInputsInfo fileInputs = new FileInputsInfo();
+            var fileInputs = new FileInputsInfo();
             fileInputs.ResultImagesFolderPath = @"D:\Data\Temp\Results\Visuals";
 
-            string resultFile =  @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt";
+            var resultFile =  @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt";
 
-            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(resultFile);
+            var importer = new SipperResultFromTextImporter(resultFile);
                 var repo = importer.Import();
 
 
@@ -30,7 +25,7 @@ namespace Sipper.UnitTesting.ModelTests
             fileInputs.TargetsFilePath =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt";
 
-            HTMLReportGenerator reportGenerator = new HTMLReportGenerator(repo, fileInputs);
+            var reportGenerator = new HTMLReportGenerator(repo, fileInputs);
             reportGenerator.GenerateHTMLReport();
         }
     }

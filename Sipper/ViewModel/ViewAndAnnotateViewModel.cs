@@ -54,7 +54,7 @@ namespace Sipper.ViewModel
             ShowFileAndResultsList = true;
             MassSpecVisibleWindowWidth = 15;
         }
-        
+
         public ViewAndAnnotateViewModel(FileInputsInfo fileInputs)
             : this()
         {
@@ -78,7 +78,7 @@ namespace Sipper.ViewModel
             }
 
         }
-        
+
         #endregion
 
         #region Event-related
@@ -87,13 +87,13 @@ namespace Sipper.ViewModel
 
         public void OnAllDataLoadedAndReady(EventArgs e)
         {
-            AllDataLoadedAndReadyEventHandler handler = AllDataLoadedAndReadyEvent;
+            var handler = AllDataLoadedAndReadyEvent;
             if (handler != null) handler(this, e);
         }
-        
+
         private void OnYAxisChange(object sender, AxisChangedEventArgs e)
         {
-            LinearAxis yAxis = sender as LinearAxis;
+            var yAxis = sender as LinearAxis;
 
             // No need to update anything if the minimum is already <= 0
             if (yAxis.ActualMinimum <= 0) return;
@@ -413,7 +413,7 @@ namespace Sipper.ViewModel
             get { return _subtractedMassSpecXyData; }
             set { _subtractedMassSpecXyData = value; }
         }
-        
+
         private XYData _chromCorrXyData;
         public XYData ChromCorrXYData
         {
@@ -546,7 +546,7 @@ namespace Sipper.ViewModel
         #endregion
 
         #region Public Methods
-      
+
 
         public void NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode selectionMode = Globals.ScanSelectionMode.ASCENDING)
         {
@@ -582,7 +582,7 @@ namespace Sipper.ViewModel
             {
                 MassSpecXyData = MassSpecXyData.TrimData(MsGraphMinX - 20, MsGraphMaxX + 20);
             }
-            
+
             CreateMsPlotForScanByScanAnalysis(currentScanSet);
         }
 
@@ -608,7 +608,7 @@ namespace Sipper.ViewModel
 
             if (Workflow.Success)
             {
-                TargetedWorkflowParameters workflowParameters = (TargetedWorkflowParameters)Workflow.WorkflowParameters;
+                var workflowParameters = (TargetedWorkflowParameters)Workflow.WorkflowParameters;
                 CurrentLcScan = Workflow.Result.GetScanNum();
             }
 
@@ -624,7 +624,7 @@ namespace Sipper.ViewModel
 
         private void SetupEventHandlersForObsAndTheor()
         {
-            bool isInternalChange = false;
+            var isInternalChange = false;
 
             var observedXaxis = ObservedIsoPlot.Axes[0];
             var theoreticalXaxis = TheorIsoPlot.Axes[0];
@@ -742,7 +742,7 @@ namespace Sipper.ViewModel
             GeneralStatusMessage = "Loading chromatogram data (_peaks.txt file) .......";
             try
             {
-                PeakImporterFromText peakImporter = new PeakImporterFromText(_peaksFilename, _backgroundWorker);
+                var peakImporter = new PeakImporterFromText(_peaksFilename, _backgroundWorker);
                 peakImporter.ImportPeaks(this.Run.ResultCollection.MSPeakResultList);
             }
             catch (Exception ex)
@@ -754,7 +754,7 @@ namespace Sipper.ViewModel
 
             if (Run.ResultCollection.MSPeakResultList != null && Run.ResultCollection.MSPeakResultList.Count > 0)
             {
-                int numPeaksLoaded = Run.ResultCollection.MSPeakResultList.Count;
+                var numPeaksLoaded = Run.ResultCollection.MSPeakResultList.Count;
                 GeneralStatusMessage = "Chromatogram data LOADED. (# peaks= " + numPeaksLoaded + ")";
             }
             else
@@ -797,7 +797,7 @@ namespace Sipper.ViewModel
         {
             PercentProgress = e.ProgressPercentage;
         }
-  
+
         public void LoadParameters()
         {
             IsParametersLoaded = false;
@@ -811,7 +811,7 @@ namespace Sipper.ViewModel
             }
             else
             {
-                FileInfo fileInfo = new FileInfo(FileInputs.ParameterFilePath);
+                var fileInfo = new FileInfo(FileInputs.ParameterFilePath);
 
                 if (fileInfo.Exists)
                 {
@@ -843,11 +843,11 @@ namespace Sipper.ViewModel
 
             _resultRepositorySource.Results.Clear();
 
-            FileInfo fileInfo = new FileInfo(resultFile);
+            var fileInfo = new FileInfo(resultFile);
 
             if (fileInfo.Exists)
             {
-                SipperResultFromTextImporter importer = new SipperResultFromTextImporter(resultFile);
+                var importer = new SipperResultFromTextImporter(resultFile);
                 var tempResults = importer.Import();
 
                 _resultRepositorySource.Results.AddRange(tempResults.Results);
@@ -857,7 +857,7 @@ namespace Sipper.ViewModel
 
 
         }
-        
+
         public void SaveResults()
         {
             try
@@ -904,7 +904,7 @@ namespace Sipper.ViewModel
             ChromGraphMinX = centerScan - ChromGraphXWindowWidth / 2;
             ChromGraphMaxX = centerScan + ChromGraphXWindowWidth / 2;
 
-            XYData xydata = new XYData();
+            var xydata = new XYData();
             if (Workflow.ChromatogramXYData == null)
             {
                 xydata.Xvalues = Workflow.ChromatogramXYData == null ? new double[] { 1, Run.MaxLCScan } : Workflow.ChromatogramXYData.Xvalues;
@@ -916,12 +916,12 @@ namespace Sipper.ViewModel
                 xydata.Yvalues = Workflow.ChromatogramXYData.Yvalues;
             }
 
-            string graphTitle = "TargetID=" + Workflow.Result.Target.ID + "; m/z " +
+            var graphTitle = "TargetID=" + Workflow.Result.Target.ID + "; m/z " +
                                   Workflow.Result.Target.MZ.ToString("0.0000") + "; z=" +
                                   Workflow.Result.Target.ChargeState;
 
 
-            PlotModel plotModel = new PlotModel
+            var plotModel = new PlotModel
             {
                 Title = graphTitle,
                 TitleFontSize = 11,
@@ -933,7 +933,7 @@ namespace Sipper.ViewModel
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
             series.Color = OxyColors.Black;
-            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            for (var i = 0; i < xydata.Xvalues.Length; i++)
             {
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
@@ -968,23 +968,23 @@ namespace Sipper.ViewModel
             plotModel.Series.Add(series);
             plotModel.Axes.Add(xAxis);
             plotModel.Axes.Add(yAxis);
-            
+
 
             ChromatogramPlot = plotModel;
         }
 
         private void CreateMsPlotForScanByScanAnalysis(ScanSet scanSet)
         {
-            XYData xydata = new XYData();
+            var xydata = new XYData();
             xydata.Xvalues = MassSpecXyData == null ? new double[] { 400, 1500 } : MassSpecXyData.Xvalues;
             xydata.Yvalues = MassSpecXyData == null ? new double[] { 0, 0 } : MassSpecXyData.Yvalues;
 
-            string msGraphTitle = "Observed MS - Scan: " + scanSet;
+            var msGraphTitle = "Observed MS - Scan: " + scanSet;
 
             MsGraphMaxY = (float)xydata.GetMaxY(MsGraphMinX, MsGraphMaxX);
 
 
-            PlotModel plotModel = new PlotModel
+            var plotModel = new PlotModel
             {
                 Title = msGraphTitle,
                 TitleFontSize = 11,
@@ -997,7 +997,7 @@ namespace Sipper.ViewModel
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
             series.Color = OxyColors.Black;
-            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            for (var i = 0; i < xydata.Xvalues.Length; i++)
             {
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
@@ -1030,10 +1030,10 @@ namespace Sipper.ViewModel
             yAxis.AxislineThickness = 1;
 
             plotModel.Series.Add(series);
-            
+
             plotModel.Axes.Add(xAxis);
             plotModel.Axes.Add(yAxis);
-            
+
 
             ObservedIsoPlot = plotModel;
 
@@ -1042,7 +1042,7 @@ namespace Sipper.ViewModel
 
         private void CreateObservedIsotopicProfilePlot()
         {
-            XYData xydata = new XYData();
+            var xydata = new XYData();
 
             if (Workflow.MassSpectrumXYData == null)
             {
@@ -1066,12 +1066,12 @@ namespace Sipper.ViewModel
                 MsGraphMaxY = (float)xydata.GetMaxY();
             }
 
-            string msGraphTitle = Workflow.Result.Target.Code + "; m/z " +
+            var msGraphTitle = Workflow.Result.Target.Code + "; m/z " +
                                   Workflow.Result.Target.MZ.ToString("0.0000") + "; z=" +
                                   Workflow.Result.Target.ChargeState;
 
 
-            PlotModel plotModel = new PlotModel
+            var plotModel = new PlotModel
             {
                 Title = msGraphTitle,
                 TitleFontSize = 11,
@@ -1085,7 +1085,7 @@ namespace Sipper.ViewModel
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
             series.Color = OxyColors.Black;
-            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            for (var i = 0; i < xydata.Xvalues.Length; i++)
             {
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
@@ -1119,9 +1119,9 @@ namespace Sipper.ViewModel
 
             plotModel.Series.Add(series);
 
-            plotModel.Axes.Add(xAxis); 
+            plotModel.Axes.Add(xAxis);
             plotModel.Axes.Add(yAxis);
-            
+
 
             ObservedIsoPlot = plotModel;
 
@@ -1158,21 +1158,21 @@ namespace Sipper.ViewModel
 
             TheorProfileXyData = TheorXYDataCalculationUtilities.GetTheoreticalIsotopicProfileXYData(Workflow.Result.Target.IsotopicProfile, fwhm);
 
-            XYData xydata = new XYData();
+            var xydata = new XYData();
             xydata.Xvalues = TheorProfileXyData.Xvalues;
             xydata.Yvalues = TheorProfileXyData.Yvalues;
 
             //scale to 100;
-            for (int i = 0; i < xydata.Yvalues.Length; i++)
+            for (var i = 0; i < xydata.Yvalues.Length; i++)
             {
                 xydata.Yvalues[i] = xydata.Yvalues[i]*100;
             }
-            
-            string msGraphTitle = "Theoretical MS - m/z " +
+
+            var msGraphTitle = "Theoretical MS - m/z " +
                                   Workflow.Result.Target.MZ.ToString("0.0000") + "; z=" +
                                   Workflow.Result.Target.ChargeState;
 
-            PlotModel plotModel = new PlotModel
+            var plotModel = new PlotModel
             {
                 Title = msGraphTitle,
                 TitleFontSize = 11,
@@ -1186,7 +1186,7 @@ namespace Sipper.ViewModel
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
             series.Color = OxyColors.Black;
-            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            for (var i = 0; i < xydata.Xvalues.Length; i++)
             {
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
@@ -1210,7 +1210,7 @@ namespace Sipper.ViewModel
                 AbsoluteMaximum = 105,
                 StringFormat = "0.0E0"
             };
-            
+
 
             //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
             //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
@@ -1223,7 +1223,7 @@ namespace Sipper.ViewModel
 
 
             plotModel.Series.Add(series);
-            
+
             plotModel.Axes.Add(xAxis);
             plotModel.Axes.Add(yAxis);
 
@@ -1238,12 +1238,12 @@ namespace Sipper.ViewModel
             ChromCorrXYData.Xvalues = Workflow.ChromCorrelationRSquaredVals == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.ChromCorrelationRSquaredVals.Xvalues;
             ChromCorrXYData.Yvalues = Workflow.ChromCorrelationRSquaredVals == null ? new double[] { 0, 0, 0, 0, 0 } : Workflow.ChromCorrelationRSquaredVals.Yvalues;
 
-            XYData xydata = new XYData();
+            var xydata = new XYData();
             xydata.Xvalues = ChromCorrXYData.Xvalues;
             xydata.Yvalues = ChromCorrXYData.Yvalues;
 
-            string graphTitle = "Isotope peak correlation data";
-            PlotModel plotModel = new PlotModel
+            var graphTitle = "Isotope peak correlation data";
+            var plotModel = new PlotModel
             {
                 Title = graphTitle,
                 TitleFontSize = 10,
@@ -1261,7 +1261,7 @@ namespace Sipper.ViewModel
 
 
             series.Color = OxyColors.Black;
-            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            for (var i = 0; i < xydata.Xvalues.Length; i++)
             {
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
@@ -1358,7 +1358,7 @@ namespace Sipper.ViewModel
 
 
         }
-        
+
         private void SetCurrentWorkflowTarget(SipperLcmsFeatureTargetedResultDTO result)
         {
             TargetBase target = new LcmsFeatureTarget();
@@ -1380,18 +1380,18 @@ namespace Sipper.ViewModel
 
 
         }
-        
+
         private void CopyXyDataToClipboard(double[] xvals, double[] yvals)
         {
-            System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
+            var stringBuilder = new System.Text.StringBuilder();
 
-            int maxLength = 0;
+            var maxLength = 0;
             if (xvals.Length == 0 || yvals.Length == 0) return;
 
             if (xvals.Length >= yvals.Length) maxLength = yvals.Length;
             else maxLength = xvals.Length;
 
-            for (int i = 0; i < maxLength; i++)
+            for (var i = 0; i < maxLength; i++)
             {
                 stringBuilder.Append(xvals[i]);
                 stringBuilder.Append("\t");
@@ -1408,15 +1408,15 @@ namespace Sipper.ViewModel
 
         private string DetermineDelimiterInString(string targetFilterString)
         {
-            string[] delimitersToCheck = new string[] { "\t", ",", " ", Environment.NewLine };
-            string mostFrequentDelim = string.Empty;
+            var delimitersToCheck = new string[] { "\t", ",", " ", Environment.NewLine };
+            var mostFrequentDelim = string.Empty;
 
-            int maxCount = int.MinValue;
+            var maxCount = int.MinValue;
 
             foreach (var delim in delimitersToCheck)
             {
 
-                string[] tempStringArray = new[] { delim };
+                var tempStringArray = new[] { delim };
 
                 var count = targetFilterString.Split(tempStringArray, StringSplitOptions.RemoveEmptyEntries).Length - 1;
 
@@ -1453,13 +1453,13 @@ namespace Sipper.ViewModel
                 return;
             }
 
-            char[] delimitersToCheck = new char[] { '\t', ',', '\n', ' ' };
+            var delimitersToCheck = new char[] { '\t', ',', '\n', ' ' };
 
             var trimmedFilterString = TargetFilterString.Trim(delimitersToCheck);
 
-            string delimiter = DetermineDelimiterInString(trimmedFilterString);
+            var delimiter = DetermineDelimiterInString(trimmedFilterString);
 
-            List<string> filterList = new List<string>();
+            var filterList = new List<string>();
             if (!string.IsNullOrEmpty(delimiter))
             {
                 var parsedFilterStringArray = trimmedFilterString.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
@@ -1476,8 +1476,7 @@ namespace Sipper.ViewModel
             var filteredResults = new List<TargetedResultDTO>();
             foreach (var filter in filterList)
             {
-                int myInt;
-                bool isNumerical = int.TryParse(filter, out myInt);
+                var isNumerical = int.TryParse(filter, out var myInt);
 
 
 
@@ -1507,6 +1506,6 @@ namespace Sipper.ViewModel
 
         #endregion
 
-  
+
     }
 }

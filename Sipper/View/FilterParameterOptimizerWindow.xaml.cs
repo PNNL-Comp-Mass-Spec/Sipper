@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Microsoft.Win32;
 using Sipper.Model;
 using Sipper.ViewModel;
@@ -23,7 +13,7 @@ namespace Sipper.View
     {
         public FilterParameterOptimizerWindow():this(null)
         {
-            
+
 
         }
 
@@ -48,8 +38,8 @@ namespace Sipper.View
 
         private void btnSelectUnlabeledFile_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            bool? result = openFileDialog.ShowDialog();
+            var openFileDialog = new OpenFileDialog();
+            var result = openFileDialog.ShowDialog();
 
             if (result==true)
             {
@@ -60,8 +50,8 @@ namespace Sipper.View
 
         private void btnSelectLabeledFile_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            bool? result = openFileDialog.ShowDialog();
+            var openFileDialog = new OpenFileDialog();
+            var result = openFileDialog.ShowDialog();
 
             if (result == true)
             {
@@ -71,8 +61,8 @@ namespace Sipper.View
 
         private void btnSetOutputFileName_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            bool? result = saveFileDialog.ShowDialog();
+            var saveFileDialog = new SaveFileDialog();
+            var result = saveFileDialog.ShowDialog();
 
             if (result==true)
             {
@@ -88,7 +78,7 @@ namespace Sipper.View
         private void filterDatagrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-            
+
         }
 
 
@@ -99,8 +89,8 @@ namespace Sipper.View
 
         private void btnExportRocToFile_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            bool? result = saveFileDialog.ShowDialog();
+            var saveFileDialog = new SaveFileDialog();
+            var result = saveFileDialog.ShowDialog();
 
             if (result == true)
             {

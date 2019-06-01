@@ -18,7 +18,7 @@ namespace Sipper.ViewModel
         {
             _fileInputsInfo = new FileInputsInfo();
         }
-        
+
         public FileInputsViewModel(FileInputsInfo fileInputsInfo):this()
         {
             _fileInputsInfo = fileInputsInfo ?? new FileInputsInfo();
@@ -201,7 +201,7 @@ namespace Sipper.ViewModel
             }
             else
             {
-                string fileExtension = Path.GetExtension(fileOrFolderPath);
+                var fileExtension = Path.GetExtension(fileOrFolderPath);
 
                 if (fileExtension != null)
                 {
@@ -233,7 +233,7 @@ namespace Sipper.ViewModel
         public bool PathsAreValid()
         {
 
-            bool datasetPathIsOK = false;
+            var datasetPathIsOK = false;
             if (System.IO.Directory.Exists(DatasetPath))
             {
                 datasetPathIsOK = true;
@@ -247,9 +247,9 @@ namespace Sipper.ViewModel
                 datasetPathIsOK = false;
             }
 
-            bool parameterFilePathIsOK = File.Exists(ParameterFilePath);
+            var parameterFilePathIsOK = File.Exists(ParameterFilePath);
 
-            bool targetsFilePathIsOK = File.Exists(TargetsFilePath);
+            var targetsFilePathIsOK = File.Exists(TargetsFilePath);
 
 
             if (datasetPathIsOK && parameterFilePathIsOK && targetsFilePathIsOK)
@@ -280,10 +280,10 @@ namespace Sipper.ViewModel
         {
             if (String.IsNullOrEmpty(_fileInputsInfo.TargetsFilePath)) return;
 
-            string sourceResultsFileName = Path.GetFileNameWithoutExtension(_fileInputsInfo.TargetsFilePath);
-            string path = Path.GetDirectoryName(_fileInputsInfo.TargetsFilePath);
+            var sourceResultsFileName = Path.GetFileNameWithoutExtension(_fileInputsInfo.TargetsFilePath);
+            var path = Path.GetDirectoryName(_fileInputsInfo.TargetsFilePath);
 
-            string resultsSaveFileName = path + Path.DirectorySeparatorChar + sourceResultsFileName + "_validated.txt";
+            var resultsSaveFileName = path + Path.DirectorySeparatorChar + sourceResultsFileName + "_validated.txt";
             ResultsSaveFilePath = resultsSaveFileName;
 
         }

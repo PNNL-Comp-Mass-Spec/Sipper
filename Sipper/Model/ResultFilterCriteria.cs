@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Sipper.Model
+﻿namespace Sipper.Model
 {
     public class ResultFilterCriteria
     {
@@ -29,7 +24,7 @@ namespace Sipper.Model
 
         public static ResultFilterCriteria GetFilterScheme1()
         {
-            ResultFilterCriteria criteria=new ResultFilterCriteria();
+            var criteria=new ResultFilterCriteria();
             criteria.AreaUnderRatioCurveRevisedMin = double.Epsilon;
             criteria.AreaUnderRatioCurveRevisedMax = 1e10;  //set super high
             criteria.ChromCorrelationAverageMin = 0.9;

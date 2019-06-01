@@ -146,7 +146,7 @@ namespace Sipper.Model
         {
 
             //Load results
-            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(_fileInputs.TargetsFilePath);
+            var importer = new SipperResultFromTextImporter(_fileInputs.TargetsFilePath);
             _resultRepositorySource = importer.Import();
 
 
@@ -161,7 +161,7 @@ namespace Sipper.Model
 
             //iterate over results
 
-            int resultCounter = 0;
+            var resultCounter = 0;
 
             foreach (SipperLcmsFeatureTargetedResultDTO result in sortedDatasets)
             {
@@ -225,24 +225,24 @@ namespace Sipper.Model
             if (!Directory.Exists(_fileInputs.ResultImagesFolderPath))
                 Directory.CreateDirectory(_fileInputs.ResultImagesFolderPath);
 
-            string subfolderPath = _fileInputs.ResultImagesFolderPath + Path.DirectorySeparatorChar + "dir" +
+            var subfolderPath = _fileInputs.ResultImagesFolderPath + Path.DirectorySeparatorChar + "dir" +
                                    _subFolderCounter.ToString().PadLeft(2, '0');
 
             if (!Directory.Exists(subfolderPath)) Directory.CreateDirectory(subfolderPath);
 
 
-            string baseFilename = subfolderPath + Path.DirectorySeparatorChar + CurrentResult.DatasetName + "_ID" + CurrentResult.TargetID;
+            var baseFilename = subfolderPath + Path.DirectorySeparatorChar + CurrentResult.DatasetName + "_ID" + CurrentResult.TargetID;
 
-            string msfilename = baseFilename + "_MS.png";
-            string theorMSFilename = baseFilename + "_theorMS.png";
-            string chromFilename = baseFilename + "_chrom.png";
+            var msfilename = baseFilename + "_MS.png";
+            var theorMSFilename = baseFilename + "_theorMS.png";
+            var chromFilename = baseFilename + "_chrom.png";
 
             UpdateGraphRelatedProperties();
 
             _chromGraph.zedGraphControl1.GraphPane.GraphObjList.Clear();
             _chromGraph.GenerateGraph(ChromXYData.Xvalues, ChromXYData.Yvalues, ChromGraphMinX, ChromGraphMaxX);
 
-            string chromTitleText = "XIC m/z " + (CurrentResult == null ? "" : CurrentResult.MonoMZ.ToString("0.000"));
+            var chromTitleText = "XIC m/z " + (CurrentResult == null ? "" : CurrentResult.MonoMZ.ToString("0.000"));
             //_chromGraph.AddAnnotationRelativeAxis(chromTitleText, 0.5, 0, 8f);
 
 
@@ -260,7 +260,7 @@ namespace Sipper.Model
                 }
             }
 
-            string graphTitle = "Scan " + (CurrentResult == null ? "" : CurrentResult.ScanLC.ToString("0"));
+            var graphTitle = "Scan " + (CurrentResult == null ? "" : CurrentResult.ScanLC.ToString("0"));
             _msGraph.AddAnnotationRelativeAxis(graphTitle, 0.3, 0, 8f);
 
 
@@ -278,7 +278,7 @@ namespace Sipper.Model
             }
 
 
-            string theorGraphTitle = "Formula " + (CurrentResult == null ? "" : CurrentResult.EmpiricalFormula);
+            var theorGraphTitle = "Formula " + (CurrentResult == null ? "" : CurrentResult.EmpiricalFormula);
             _theorMSGraph.AddAnnotationRelativeAxis(theorGraphTitle, 0.3, 0, 8);
 
             _msGraph.SaveGraph(msfilename);
@@ -377,7 +377,7 @@ namespace Sipper.Model
             //opposed to datasets having a Folder reference (Agilent/Bruker)
 
 
-            DirectoryInfo dirInfo = new DirectoryInfo(_fileInputs.DatasetDirectory);
+            var dirInfo = new DirectoryInfo(_fileInputs.DatasetDirectory);
 
 
             var fileInfo = dirInfo.GetFiles(datasetName + ".*");
@@ -387,10 +387,10 @@ namespace Sipper.Model
                 throw new FileNotFoundException("Run could not be initialized. File not found");
             }
 
-            RunFactory rf = new RunFactory();
+            var rf = new RunFactory();
             Run = rf.CreateRun(fileInfo.First().FullName);
 
-            bool peaksFileExists = checkForPeaksFile();
+            var peaksFileExists = checkForPeaksFile();
             if (!peaksFileExists)
             {
                 ReportGeneralProgress("Creating extracted ion chromatogram (XIC) source data... takes 1-5 minutes.. only needs to be done once.");
@@ -403,12 +403,12 @@ namespace Sipper.Model
             string baseFileName;
             baseFileName = this.Run.DataSetPath + "\\" + this.Run.DatasetName;
 
-            string expectedPeaksFilename = baseFileName + "_peaks.txt";
+            var expectedPeaksFilename = baseFileName + "_peaks.txt";
 
             if (File.Exists(expectedPeaksFilename))
             {
 
-                PeakImporterFromText peakImporter = new PeakImporterFromText(expectedPeaksFilename, _backgroundWorker);
+                var peakImporter = new PeakImporterFromText(expectedPeaksFilename, _backgroundWorker);
 
                 peakImporter.ImportPeaks(this.Run.ResultCollection.MSPeakResultList);
             }
@@ -451,7 +451,7 @@ namespace Sipper.Model
             string baseFileName;
             baseFileName = this.Run.DataSetPath + "\\" + this.Run.DatasetName;
 
-            string possibleFilename1 = baseFileName + "_peaks.txt";
+            var possibleFilename1 = baseFileName + "_peaks.txt";
 
             if (File.Exists(possibleFilename1))
             {
@@ -466,13 +466,13 @@ namespace Sipper.Model
 
         private void CreatePeaksForChromSourceData()
         {
-            PeakDetectAndExportWorkflowParameters parameters = new PeakDetectAndExportWorkflowParameters();
-            TargetedWorkflowParameters deconParam = (TargetedWorkflowParameters)this._workflowParameters;
+            var parameters = new PeakDetectAndExportWorkflowParameters();
+            var deconParam = (TargetedWorkflowParameters)this._workflowParameters;
 
             parameters.PeakBR = deconParam.ChromGenSourceDataPeakBR;
             parameters.PeakFitType = DeconTools.Backend.Globals.PeakFitType.QUADRATIC;
             parameters.SigNoiseThreshold = deconParam.ChromGenSourceDataSigNoise;
-            PeakDetectAndExportWorkflow peakCreator = new PeakDetectAndExportWorkflow(this.Run, parameters, _backgroundWorker);
+            var peakCreator = new PeakDetectAndExportWorkflow(this.Run, parameters, _backgroundWorker);
             peakCreator.Execute();
         }
         #endregion

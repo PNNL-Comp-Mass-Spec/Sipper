@@ -16,7 +16,7 @@ namespace Sipper.View
             LoadSettings();
         }
 
-       
+
         protected MainWindowViewModel ViewModel { get; set; }
 
         private void btnBrowseAndAnnotate_Click(object sender, RoutedEventArgs e)
@@ -64,7 +64,7 @@ namespace Sipper.View
 
             Properties.Settings.Default.WorkflowParameterFilepath =ViewModel.SipperProject.FileInputs.ParameterFilePath ?? "";
             //Properties.Settings.Default.ResultFilepath = ViewModel.SipperProject.FileInputs.TargetsFilePath ?? "";
-            
+
 
             Properties.Settings.Default.Save();
 
@@ -89,9 +89,9 @@ namespace Sipper.View
 
             if (childWindow.ViewModel.SelectedFilterParameter!=null)
             {
-                ViewModel.SipperProject.SelectedFilterSettings = childWindow.ViewModel.SelectedFilterParameter;    
+                ViewModel.SipperProject.SelectedFilterSettings = childWindow.ViewModel.SelectedFilterParameter;
             }
-            
+
         }
     }
 }

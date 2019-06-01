@@ -44,7 +44,7 @@ namespace Sipper.View
             ViewModel.Run = project.Run;
         }
 
-        
+
         private void ViewModel_AllDataLoadedAndReadyEvent(object sender, EventArgs e)
         {
             resultsTab.Focus();
@@ -56,14 +56,14 @@ namespace Sipper.View
 
         private void FileDropHandler(object sender, DragEventArgs e)
         {
-            DataObject dataObject = e.Data as DataObject;
+            var dataObject = e.Data as DataObject;
 
             if (dataObject.ContainsFileDropList())
             {
 
 
                 var fileNamesStringCollection = dataObject.GetFileDropList();
-                StringBuilder bd = new StringBuilder();
+                var bd = new StringBuilder();
 
 
                 var fileNames = fileNamesStringCollection.Cast<string>().ToList();
@@ -81,13 +81,13 @@ namespace Sipper.View
 
         private void txtResultsFilePath_DragOver(object sender, DragEventArgs e)
         {
-            bool dropEnabled = true;
+            var dropEnabled = true;
 
             if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
             {
-                string[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+                var filenames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
 
-                foreach (string filename in filenames)
+                foreach (var filename in filenames)
                 {
                     if (System.IO.Path.GetExtension(filename).ToUpperInvariant() != ".TXT")
                     {
@@ -127,9 +127,9 @@ namespace Sipper.View
 
             xMin = 0.5;
 
-            bool dataIsEmpty = labelDistributionXYData == null || labelDistributionXYData.Xvalues == null;
+            var dataIsEmpty = labelDistributionXYData == null || labelDistributionXYData.Xvalues == null;
 
-            bool dataIsLimited = dataIsEmpty || labelDistributionXYData.Xvalues.Length < 5;
+            var dataIsLimited = dataIsEmpty || labelDistributionXYData.Xvalues.Length < 5;
 
             if (dataIsEmpty || dataIsLimited)
             {
@@ -153,7 +153,7 @@ namespace Sipper.View
             {
 
 
-                bool dataIsMostlyUnlabelled = labelDistributionXYData.Yvalues.First() > 0.98;
+                var dataIsMostlyUnlabelled = labelDistributionXYData.Yvalues.First() > 0.98;
 
                 if (dataIsMostlyUnlabelled)
                 {
@@ -162,7 +162,7 @@ namespace Sipper.View
                 else
                 {
                     yMax = 0;
-                    for (int i = 1; i < labelDistributionXYData.Yvalues.Length; i++)
+                    for (var i = 1; i < labelDistributionXYData.Yvalues.Length; i++)
                     {
                         var currentVal = labelDistributionXYData.Yvalues[i];
 
@@ -211,30 +211,30 @@ namespace Sipper.View
             if (e.Key==Key.Y)
             {
                 ViewModel.CurrentResultValidationCode = ValidationCode.Yes;
-                
-                
+
+
             }
             else if (e.Key==Key.N)
             {
                 ViewModel.CurrentResultValidationCode = ValidationCode.No;
-                
+
             }
             else if (e.Key==Key.M)
             {
                 ViewModel.CurrentResultValidationCode = ValidationCode.Maybe;
-                
+
             }
             else if (e.Key==Key.O)
             {
                 ViewModel.CurrentResultValidationCode = ValidationCode.None;
-                
+
             }
             else
             {
-                
+
             }
 
-            
+
 
         }
 
@@ -247,7 +247,7 @@ namespace Sipper.View
         {
 
             double minWidth = 1;
-            double mzwidth = Properties.Settings.Default.MSGraphMZWindow;
+            var mzwidth = Properties.Settings.Default.MSGraphMZWindow;
 
             if (mzwidth<minWidth)
             {
@@ -285,10 +285,10 @@ namespace Sipper.View
         {
             //got this from stack overflow
             //use this to update the binding when anything is typed
-            TextBox tBox = (TextBox)sender;
-            DependencyProperty prop = TextBox.TextProperty;
+            var tBox = (TextBox)sender;
+            var prop = TextBox.TextProperty;
 
-            BindingExpression binding = BindingOperations.GetBindingExpression(tBox, prop);
+            var binding = BindingOperations.GetBindingExpression(tBox, prop);
             if (binding != null) { binding.UpdateSource(); }
 
         }
@@ -301,7 +301,7 @@ namespace Sipper.View
         private void btnNavigateUpClick(object sender, RoutedEventArgs e)
         {
             ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.ASCENDING);
-           
+
         }
 
 
@@ -312,9 +312,7 @@ namespace Sipper.View
 
         private void NavigateToSpecificScanEvent(object sender, RoutedEventArgs e)
         {
-
-            int currentScan;
-             if (Int32.TryParse(txtCurrentScan.Text,out currentScan))
+            if (Int32.TryParse(txtCurrentScan.Text,out var currentScan))
              {
                  if (currentScan == ViewModel.CurrentLcScan) return;
 
@@ -326,7 +324,7 @@ namespace Sipper.View
              }
 
             ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
-          
+
         }
 
         private void TextBox_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -347,12 +345,12 @@ namespace Sipper.View
 
             slider.Minimum = ViewModel.MinLcScan;
             slider.Maximum = ViewModel.MaxLcScan;
-            
-            int sliderScan = (int) e.NewValue;
+
+            var sliderScan = (int) e.NewValue;
             if (ViewModel.CurrentLcScan == sliderScan) return;
             ViewModel.CurrentLcScan = (int)e.NewValue;
             ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
-         
+
         }
 
         private void MsGraphMinMouseWheelEvent(object sender, MouseWheelEventArgs e)
@@ -368,7 +366,7 @@ namespace Sipper.View
                 ViewModel.MsGraphMinX = ViewModel.MsGraphMinX - 1;
             }
 
-           
+
         }
 
 
@@ -384,9 +382,9 @@ namespace Sipper.View
             {
                 ViewModel.MsGraphMaxX = ViewModel.MsGraphMaxX - 1;
             }
-           
+
         }
-      
+
 
     }
 }

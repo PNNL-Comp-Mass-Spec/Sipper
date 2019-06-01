@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using DeconTools.Backend;
-using DeconTools.Utilities;
 using OxyPlot;
 using OxyPlot.Axes;
 using PRISM.Logging;
@@ -106,13 +105,13 @@ namespace Sipper.ViewModel
             {
                 if (!string.IsNullOrEmpty(UnlabeledFilePath))
                 {
-                    FileInfo fileInfo = new FileInfo(UnlabeledFilePath);
+                    var fileInfo = new FileInfo(UnlabeledFilePath);
 
                     if (fileInfo.Exists)
                     {
                         if (fileInfo.Directory != null)
                         {
-                            string outputPath = fileInfo.Directory.FullName;
+                            var outputPath = fileInfo.Directory.FullName;
 
                             OutputFileName = outputPath + Path.DirectorySeparatorChar +
                                              "SipperFilterOptimizationOutput.txt";
@@ -224,9 +223,9 @@ namespace Sipper.ViewModel
         public void CreateRocCurve()
         {
             RocCurve = _filterOptimizer.GetRocCurve(AllParameterResults);
-            string graphTitle = "ROC curve";
+            var graphTitle = "ROC curve";
 
-            PlotModel plotModel = new PlotModel
+            var plotModel = new PlotModel
             {
                 Title = graphTitle,
                 TitleFontSize = 11,
@@ -238,7 +237,7 @@ namespace Sipper.ViewModel
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
             series.Color = OxyColors.Black;
-            for (int i = 0; i < RocCurve.Xvalues.Length; i++)
+            for (var i = 0; i < RocCurve.Xvalues.Length; i++)
             {
                 series.Points.Add(new DataPoint(RocCurve.Xvalues[i], RocCurve.Yvalues[i]));
             }
@@ -270,12 +269,12 @@ namespace Sipper.ViewModel
 
         public void SaveRocCurve(string fileName)
         {
-            using (StreamWriter writer=new StreamWriter(fileName))
+            using (var writer=new StreamWriter(fileName))
             {
-                string header = "numUnlabeled\tnumLabeled";
+                var header = "numUnlabeled\tnumLabeled";
                 writer.WriteLine(header);
 
-                XYData xydata = new XYData();
+                var xydata = new XYData();
 
                 if (RocCurve==null|| RocCurve.Xvalues==null || RocCurve.Xvalues.Length==0)
                 {
@@ -288,7 +287,7 @@ namespace Sipper.ViewModel
                     xydata.Yvalues = RocCurve.Yvalues;
                 }
 
-                for (int i = 0; i < xydata.Xvalues.Length; i++)
+                for (var i = 0; i < xydata.Xvalues.Length; i++)
                 {
                     writer.WriteLine(xydata.Xvalues[i] + "\t" + xydata.Yvalues[i]);
                 }
@@ -362,7 +361,7 @@ namespace Sipper.ViewModel
         {
             if (selectedResult == null) return string.Empty;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("Labeled fit <= " + selectedResult.FitScoreLabelled.ToString("0.####"));
             sb.Append(Environment.NewLine);
             sb.Append("IScore <= " + selectedResult.Iscore.ToString("0.####"));

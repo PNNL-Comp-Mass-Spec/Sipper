@@ -52,7 +52,7 @@ namespace Sipper.Model
 
             foreach (var targetedResultDto in repo.Results)
             {
-                ResultWithImageInfo r = new ResultWithImageInfo((SipperLcmsFeatureTargetedResultDTO)targetedResultDto);
+                var r = new ResultWithImageInfo((SipperLcmsFeatureTargetedResultDTO)targetedResultDto);
 
                 _resultsWithImageInfo.Add(r);
             }
@@ -75,7 +75,7 @@ namespace Sipper.Model
 
         public void GenerateHTMLReport()
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
 
             stringBuilder.Append(CreateHeaderHTML());
 
@@ -87,9 +87,9 @@ namespace Sipper.Model
 
             stringBuilder.Append(CloseHTMLTags());
 
-            string outputHTMLFilename = _fileInputsInfo.ResultImagesFolderPath + Path.DirectorySeparatorChar + "0_index.html";
+            var outputHTMLFilename = _fileInputsInfo.ResultImagesFolderPath + Path.DirectorySeparatorChar + "0_index.html";
 
-            using (StreamWriter sw = new StreamWriter(outputHTMLFilename))
+            using (var sw = new StreamWriter(outputHTMLFilename))
             {
                 sw.Write(stringBuilder.ToString());
 
@@ -105,7 +105,7 @@ namespace Sipper.Model
         private void GetImageFileReferences(string resultImagesFolderPath)
         {
 
-            DirectoryInfo directoryInfo = new DirectoryInfo(resultImagesFolderPath);
+            var directoryInfo = new DirectoryInfo(resultImagesFolderPath);
 
             if (directoryInfo.Exists)
             {
@@ -122,13 +122,13 @@ namespace Sipper.Model
             foreach (var result in _resultsWithImageInfo)
             {
 
-                string baseFileName = result.Result.DatasetName + "_ID" + result.Result.TargetID;
+                var baseFileName = result.Result.DatasetName + "_ID" + result.Result.TargetID;
 
                 var targetImages = (from n in _imageFilePaths where n.Contains(baseFileName) select n).ToList();
 
-                string expectedMSImage = targetImages.First(p => p.Contains("_MS.png"));
-                string expectedChromImageFilename = targetImages.First(p => p.Contains("_chrom.png"));
-                string expectedTheorMSImageFilename = targetImages.First(p => p.Contains("_theorMS.png"));
+                var expectedMSImage = targetImages.First(p => p.Contains("_MS.png"));
+                var expectedChromImageFilename = targetImages.First(p => p.Contains("_chrom.png"));
+                var expectedTheorMSImageFilename = targetImages.First(p => p.Contains("_theorMS.png"));
 
                 result.MSImageFilePath = expectedMSImage ?? "";
                 result.ChromImageFilePath = expectedChromImageFilename ?? "";
@@ -141,7 +141,7 @@ namespace Sipper.Model
 
         private string CreateHeaderHTML()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.Append("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">");
 
@@ -154,7 +154,7 @@ namespace Sipper.Model
 
         private string CloseHTMLTags()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("</table>");
             sb.Append("</body>");
             sb.Append("</html>");
@@ -164,8 +164,8 @@ namespace Sipper.Model
 
         private string getHTMLForTableRow(ResultWithImageInfo resultWithImageInfo)
         {
-            StringWriter stringWriter = new StringWriter();
-            using (HtmlTextWriter writer = new HtmlTextWriter(stringWriter))
+            var stringWriter = new StringWriter();
+            using (var writer = new HtmlTextWriter(stringWriter))
             {
                 writer.RenderBeginTag(HtmlTextWriterTag.Tr);
 
@@ -392,7 +392,7 @@ namespace Sipper.Model
         protected void addHTMLForMSImage(HtmlTextWriter writer, ResultWithImageInfo resultWithImageInfo)
         {
 
-            string relFilePath = GetRelativeFilePath(resultWithImageInfo.MSImageFilePath);
+            var relFilePath = GetRelativeFilePath(resultWithImageInfo.MSImageFilePath);
 
 
 
@@ -410,7 +410,7 @@ namespace Sipper.Model
 
         private string GetRelativeFilePath(string filePath)
         {
-            FileInfo fileInfo = new FileInfo(filePath);
+            var fileInfo = new FileInfo(filePath);
 
             if (fileInfo != null)
             {
@@ -428,7 +428,7 @@ namespace Sipper.Model
         protected void addHTMLForChromImage(HtmlTextWriter writer, ResultWithImageInfo resultWithImageInfo)
         {
 
-            string relFilePath = GetRelativeFilePath(resultWithImageInfo.ChromImageFilePath);
+            var relFilePath = GetRelativeFilePath(resultWithImageInfo.ChromImageFilePath);
 
 
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
@@ -446,7 +446,7 @@ namespace Sipper.Model
 
         protected void addHTMLForTheorMSImage(HtmlTextWriter writer, ResultWithImageInfo resultWithImageInfo)
         {
-            string relFilePath = GetRelativeFilePath(resultWithImageInfo.TheorMSImageFilePath);
+            var relFilePath = GetRelativeFilePath(resultWithImageInfo.TheorMSImageFilePath);
 
 
             writer.RenderBeginTag(HtmlTextWriterTag.Td);

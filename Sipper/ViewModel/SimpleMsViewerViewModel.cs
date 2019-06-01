@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -10,10 +9,8 @@ using DeconTools.Backend.Data;
 using DeconTools.Backend.ProcessingTasks;
 using DeconTools.Backend.ProcessingTasks.MSGenerators;
 using DeconTools.Backend.ProcessingTasks.PeakDetectors;
-using DeconTools.Backend.ProcessingTasks.ZeroFillers;
 using DeconTools.Backend.Runs;
 using DeconTools.Backend.Workflows;
-using DeconTools.Workflows.Backend.Core;
 using OxyPlot;
 using OxyPlot.Axes;
 
@@ -212,10 +209,10 @@ namespace Sipper.ViewModel
             }
             set
             {
-                bool isEvenNumber = value % 2 == 0;
+                var isEvenNumber = value % 2 == 0;
                 if (isEvenNumber)
                 {
-                    bool tryingToSumMore = value > _numMsScansToSum;
+                    var tryingToSumMore = value > _numMsScansToSum;
                     if (tryingToSumMore)
                     {
                         value++;
@@ -494,18 +491,18 @@ namespace Sipper.ViewModel
 
         private XYData ZeroFillCentroidData(XYData massSpecXyData)
         {
-            List<double> newXValues = new List<double>();
-            List<double> newYValues = new List<double>();
+            var newXValues = new List<double>();
+            var newYValues = new List<double>();
 
 
-            for (int i = 0; i < massSpecXyData.Xvalues.Length; i++)
+            for (var i = 0; i < massSpecXyData.Xvalues.Length; i++)
             {
                 var currentXVal = massSpecXyData.Xvalues[i];
                 var currentYVal = massSpecXyData.Yvalues[i];
 
-                double zeroFillDistance=0.005;
-                double newXValBefore = currentXVal - zeroFillDistance;
-                double newXValAfter = currentXVal + zeroFillDistance;
+                var zeroFillDistance=0.005;
+                var newXValBefore = currentXVal - zeroFillDistance;
+                var newXValAfter = currentXVal + zeroFillDistance;
 
                 newXValues.Add(newXValBefore);
                 newYValues.Add(0);
@@ -523,15 +520,15 @@ namespace Sipper.ViewModel
 
         private void CreateChromatogram()
         {
-            bool canGenerateChrom = Run != null && Run.ResultCollection.MSPeakResultList != null &&
+            var canGenerateChrom = Run != null && Run.ResultCollection.MSPeakResultList != null &&
                                     Run.ResultCollection.MSPeakResultList.Count > 0 && Peaks != null && Peaks.Count > 0
                                     && SelectedPeak != null;
 
             if (!canGenerateChrom) return;
 
             double scanWindowWidth = 600;
-            int lowerScan = (int)Math.Round(Math.Max(MinLcScan, CurrentLcScan - scanWindowWidth / 2));
-            int upperScan = (int)Math.Round(Math.Min(MaxLcScan, CurrentLcScan + scanWindowWidth / 2));
+            var lowerScan = (int)Math.Round(Math.Max(MinLcScan, CurrentLcScan - scanWindowWidth / 2));
+            var upperScan = (int)Math.Round(Math.Min(MaxLcScan, CurrentLcScan + scanWindowWidth / 2));
 
             ChromXyData = _peakChromatogramGenerator.GenerateChromatogram(Run, lowerScan, upperScan,
                                                                           SelectedPeak.XValue, ChromToleranceInPpm);
@@ -547,9 +544,9 @@ namespace Sipper.ViewModel
             var maxY = (float)ChromXyData.GetMaxY();
 
 
-            string graphTitle = "XIC for most intense peak (m/z " + SelectedPeak.XValue.ToString("0.000") + ")";
+            var graphTitle = "XIC for most intense peak (m/z " + SelectedPeak.XValue.ToString("0.000") + ")";
 
-            PlotModel plotModel = new PlotModel
+            var plotModel = new PlotModel
             {
                 Title = graphTitle,
                 TitleFontSize = 9,
@@ -561,7 +558,7 @@ namespace Sipper.ViewModel
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
             series.Color = OxyColors.Black;
-            for (int i = 0; i < ChromXyData.Xvalues.Length; i++)
+            for (var i = 0; i < ChromXyData.Xvalues.Length; i++)
             {
                 series.Points.Add(new DataPoint(ChromXyData.Xvalues[i], ChromXyData.Yvalues[i]));
             }
@@ -610,16 +607,16 @@ namespace Sipper.ViewModel
 
         private void CreateMSPlotForScanByScanAnalysis()
         {
-            XYData xydata = new XYData();
+            var xydata = new XYData();
             xydata.Xvalues = MassSpecXYData == null ? new double[] { 400, 1500 } : MassSpecXYData.Xvalues;
             xydata.Yvalues = MassSpecXYData == null ? new double[] { 0, 0 } : MassSpecXYData.Yvalues;
 
-            string msGraphTitle = "Observed MS - Scan: " + (CurrentScanSet == null ? "" : CurrentScanSet.ToString());
+            var msGraphTitle = "Observed MS - Scan: " + (CurrentScanSet == null ? "" : CurrentScanSet.ToString());
 
             var maxY = (float)xydata.GetMaxY(MSGraphMinX, MSGraphMaxX);
 
 
-            PlotModel plotModel = new PlotModel
+            var plotModel = new PlotModel
             {
                 Title = msGraphTitle,
                 TitleFontSize = 11,
@@ -633,7 +630,7 @@ namespace Sipper.ViewModel
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
             series.Color = OxyColors.Black;
-            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            for (var i = 0; i < xydata.Xvalues.Length; i++)
             {
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
@@ -743,7 +740,7 @@ namespace Sipper.ViewModel
             GeneralStatusMessage = "Loading chromatogram data (_peaks.txt file) .......";
             try
             {
-                PeakImporterFromText peakImporter = new PeakImporterFromText(_peaksFilename, _backgroundWorker);
+                var peakImporter = new PeakImporterFromText(_peaksFilename, _backgroundWorker);
                 peakImporter.ImportPeaks(this.Run.ResultCollection.MSPeakResultList);
             }
             catch (Exception ex)
@@ -755,7 +752,7 @@ namespace Sipper.ViewModel
 
             if (Run.ResultCollection.MSPeakResultList != null && Run.ResultCollection.MSPeakResultList.Count > 0)
             {
-                int numPeaksLoaded = Run.ResultCollection.MSPeakResultList.Count;
+                var numPeaksLoaded = Run.ResultCollection.MSPeakResultList.Count;
                 GeneralStatusMessage = "Chromatogram data LOADED. (# peaks= " + numPeaksLoaded + ")";
             }
             else
@@ -809,7 +806,7 @@ namespace Sipper.ViewModel
 
         private void OnXAxisChange(object sender, AxisChangedEventArgs e)
         {
-            LinearAxis axis = sender as LinearAxis;
+            var axis = sender as LinearAxis;
 
             _xAxisIsChangedInternally = true;
 
@@ -821,7 +818,7 @@ namespace Sipper.ViewModel
 
         private void OnYAxisChange(object sender, AxisChangedEventArgs e)
         {
-            LinearAxis yAxis = sender as LinearAxis;
+            var yAxis = sender as LinearAxis;
 
             // No need to update anything if the minimum is already <= 0
             if (yAxis.ActualMinimum <= 0) return;

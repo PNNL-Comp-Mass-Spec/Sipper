@@ -6,7 +6,6 @@ using DeconTools.Backend;
 using DeconTools.Backend.Core;
 using DeconTools.Backend.Core.Results;
 using DeconTools.Backend.Utilities;
-using DeconTools.Backend.Utilities.IqLogger;
 using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.Core;
 using DeconTools.Workflows.Backend.Results;
@@ -199,7 +198,7 @@ namespace Sipper.ViewModel
                 msGraphMaxY = (float)xydata.GetMaxY();
             }
 
-            string msGraphTitle = "TargetID= " + CurrentResultInfo.Result.Target.ID +   "; m/z " + CurrentResultInfo.Result.Target.MZ.ToString("0.0000") + "; z=" +
+            var msGraphTitle = "TargetID= " + CurrentResultInfo.Result.Target.ID +   "; m/z " + CurrentResultInfo.Result.Target.MZ.ToString("0.0000") + "; z=" +
                                   CurrentResultInfo.Result.Target.ChargeState + "; Scan= " + CurrentResultInfo.Result.ScanSet??"[No scan selected]";
 
             ObservedIsoPlot.Series.Clear();
@@ -207,7 +206,7 @@ namespace Sipper.ViewModel
             var series = new OxyPlot.Series.LineSeries();
             series.MarkerSize = 1;
             series.Color = OxyColors.Black;
-            for (int i = 0; i < xydata.Xvalues.Length; i++)
+            for (var i = 0; i < xydata.Xvalues.Length; i++)
             {
                 series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
             }
@@ -220,7 +219,7 @@ namespace Sipper.ViewModel
 
         private PlotModel CreateObservedIsoPlot()
         {
-            PlotModel plotModel = new PlotModel
+            var plotModel = new PlotModel
             {
                 TitleFontSize = 11,
                 Padding = new OxyThickness(0),
@@ -263,7 +262,7 @@ namespace Sipper.ViewModel
 
         public void OnCurrentResultUpdated(EventArgs e)
         {
-            CurrentResultChangedHandler handler = CurrentResultUpdated;
+            var handler = CurrentResultUpdated;
             if (handler != null) handler(this, e);
         }
 
@@ -316,7 +315,7 @@ namespace Sipper.ViewModel
 
         void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            BackgroundWorker worker = (BackgroundWorker)sender;
+            var worker = (BackgroundWorker)sender;
 
             _workflowExecutor = new BasicTargetedWorkflowExecutor(ExecutorParameters, FileInputs.DatasetPath, worker);
             _workflowExecutor.RunIsDisposed = false;
@@ -418,7 +417,7 @@ namespace Sipper.ViewModel
 
             var sipperResult = (SipperLcmsTargetedResult)CurrentResultInfo.Result;
 
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
 
             stringBuilder.Append("Target= ");
             stringBuilder.Append(sipperResult.Target.ID);

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using DeconTools.Backend.Utilities;
 using DeconTools.Workflows.Backend.FileIO;
@@ -17,9 +14,9 @@ namespace Sipper.UnitTesting.ViewModelTests
         [Test]
         public void createFileLinkageSingleXMLFile_Test1()
         {
-            AutoprocessorViewModel viewModel = new AutoprocessorViewModel();
+            var viewModel = new AutoprocessorViewModel();
 
-            string testWorkflowFile = FileRefs.TestFilePath + "\\" + "SipperTargetedWorkflowParameters1.XML";
+            var testWorkflowFile = FileRefs.TestFilePath + "\\" + "SipperTargetedWorkflowParameters1.XML";
             viewModel.FileInputs.CreateFileLinkage(testWorkflowFile);
 
             Assert.IsTrue(viewModel.FileInputs.ParameterFilePath == testWorkflowFile);
@@ -28,9 +25,9 @@ namespace Sipper.UnitTesting.ViewModelTests
         [Test]
         public void createFileLinkageSingleTextFile_Test1()
         {
-            AutoprocessorViewModel viewModel = new AutoprocessorViewModel();
+            var viewModel = new AutoprocessorViewModel();
 
-            string testTargetFile1 = FileRefs.TestFilePath + "\\" + "Yellow_C13_070_23Mar10_Griffin_10-01-28_LCMSFeatures.txt";
+            var testTargetFile1 = FileRefs.TestFilePath + "\\" + "Yellow_C13_070_23Mar10_Griffin_10-01-28_LCMSFeatures.txt";
             viewModel.FileInputs.CreateFileLinkage(testTargetFile1);
 
             Assert.IsTrue(viewModel.FileInputs.TargetsFilePath == testTargetFile1);
@@ -40,14 +37,14 @@ namespace Sipper.UnitTesting.ViewModelTests
         [Test]
         public void createFileLinkageMultiple_XMLFile_Test1()
         {
-            AutoprocessorViewModel viewModel = new AutoprocessorViewModel();
+            var viewModel = new AutoprocessorViewModel();
 
-            string testWorkflowFile = FileRefs.TestFilePath + "\\" + "SipperTargetedWorkflowParameters1.XML";
-            string testWorkflowFile2 = FileRefs.TestFilePath + "\\" + "SipperTargetedWorkflowParameters1.xml";
+            var testWorkflowFile = FileRefs.TestFilePath + "\\" + "SipperTargetedWorkflowParameters1.XML";
+            var testWorkflowFile2 = FileRefs.TestFilePath + "\\" + "SipperTargetedWorkflowParameters1.xml";
 
-            string testTargetFile1 = FileRefs.TestFilePath + "\\" + "Yellow_C13_070_23Mar10_Griffin_10-01-28_LCMSFeatures.txt";
+            var testTargetFile1 = FileRefs.TestFilePath + "\\" + "Yellow_C13_070_23Mar10_Griffin_10-01-28_LCMSFeatures.txt";
 
-            List<string> inputFiles = new List<string>();
+            var inputFiles = new List<string>();
             inputFiles.Add(testWorkflowFile);
             inputFiles.Add(testWorkflowFile2);
             inputFiles.Add(testTargetFile1);
@@ -62,9 +59,9 @@ namespace Sipper.UnitTesting.ViewModelTests
         [Test]
         public void create_Run__Test1()
         {
-            AutoprocessorViewModel viewModel = new AutoprocessorViewModel();
+            var viewModel = new AutoprocessorViewModel();
 
-            string testFile =
+            var testFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
             viewModel.FileInputs.CreateFileLinkage(testFile);
 
@@ -74,25 +71,25 @@ namespace Sipper.UnitTesting.ViewModelTests
         [Test]
         public void process_test1()
         {
-            AutoprocessorViewModel viewModel=new AutoprocessorViewModel();
+            var viewModel=new AutoprocessorViewModel();
 
             // Instrument data file
-            string testRawDataFile =
+            var testRawDataFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
 
 
-            string expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\Results\\" +
+            var expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\Results\\" +
                                          RunUtilities.GetDatasetName(testRawDataFile) + "_results.txt";
 
             if (File.Exists(expectedResultsFile)) File.Delete(expectedResultsFile);
 
 
             // Parameter file
-            string testWorkflowFile =
+            var testWorkflowFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
 
             // Targets file
-            string testTargetFile1 =
+            var testTargetFile1 =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt";
 
             viewModel.FileInputs.CreateFileLinkage(testRawDataFile);
@@ -106,7 +103,7 @@ namespace Sipper.UnitTesting.ViewModelTests
 
 
             Assert.That(File.Exists(expectedResultsFile));
-            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(expectedResultsFile);
+            var importer = new SipperResultFromTextImporter(expectedResultsFile);
             var resultRepo = importer.Import();
 
             Assert.AreEqual(19, resultRepo.Results.Count);
@@ -121,20 +118,20 @@ namespace Sipper.UnitTesting.ViewModelTests
         [Test]
         public void process_unidentifiedFeatures_test1()
         {
-            AutoprocessorViewModel viewModel = new AutoprocessorViewModel();
+            var viewModel = new AutoprocessorViewModel();
 
-            string testRawDataFile =
+            var testRawDataFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
 
 
-            string expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\" +
+            var expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\" +
                                          RunUtilities.GetDatasetName(testRawDataFile) + "_results.txt";
 
             if (File.Exists(expectedResultsFile)) File.Delete(expectedResultsFile);
 
-            string testWorkflowFile =
+            var testWorkflowFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
-            string testTargetFile1 =
+            var testTargetFile1 =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_first20_unidentified_LCMSFeatures.txt";
 
             viewModel.FileInputs.CreateFileLinkage(testRawDataFile);
@@ -145,7 +142,7 @@ namespace Sipper.UnitTesting.ViewModelTests
             Thread.Sleep(11000);   // the viewModel has a background worker and we need to pause to let the processing complete in the background
 
             Assert.That(File.Exists(expectedResultsFile));
-            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(expectedResultsFile);
+            var importer = new SipperResultFromTextImporter(expectedResultsFile);
             var resultRepo = importer.Import();
 
             Assert.AreEqual(20, resultRepo.Results.Count);
@@ -163,20 +160,20 @@ namespace Sipper.UnitTesting.ViewModelTests
         [Test]
         public void process_unidentifiedFeatures_test2()
         {
-            AutoprocessorViewModel viewModel = new AutoprocessorViewModel();
+            var viewModel = new AutoprocessorViewModel();
 
-            string testRawDataFile =
+            var testRawDataFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
 
 
-            string expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\" +
+            var expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\" +
                                          RunUtilities.GetDatasetName(testRawDataFile) + "_results.txt";
 
             if (File.Exists(expectedResultsFile)) File.Delete(expectedResultsFile);
 
-            string testWorkflowFile =
+            var testWorkflowFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
-            string testTargetFile1 =
+            var testTargetFile1 =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_20_UNIDENTIFIED_results.txt";
 
             viewModel.FileInputs.CreateFileLinkage(testRawDataFile);
@@ -187,7 +184,7 @@ namespace Sipper.UnitTesting.ViewModelTests
             Thread.Sleep(11000);   // the viewModel has a background worker and we need to pause to let the processing complete in the background
 
             Assert.That(File.Exists(expectedResultsFile));
-            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(expectedResultsFile);
+            var importer = new SipperResultFromTextImporter(expectedResultsFile);
             var resultRepo = importer.Import();
 
             Assert.AreEqual(20, resultRepo.Results.Count);

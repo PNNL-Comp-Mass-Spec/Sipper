@@ -37,13 +37,13 @@ namespace Sipper.Model
 
         public static JvciPeptideInfo Parse(string stringContainingInfo)
         {
-            string regexPattern =
+            var regexPattern =
                 @">fibr_(?<fibroAnno>[0-9\.]+)\s+JCVI_PEP_metagenomic.*/read_id=(?<readID>\d+)\s+/begin=(?<begin>\d+)\s+/end=(?<end>\d+)\s+/orientation=(?<orientation>[0-9.-]+)\s+/common_name=\042(?<commonName>.*)\042\s+/organism=\042(?<organism>.*)\042";
             var match=  Regex.Match(stringContainingInfo, regexPattern);
 
             if (match.Success)
             {
-                JvciPeptideInfo info = new JvciPeptideInfo();
+                var info = new JvciPeptideInfo();
 
                 info.FibroNum = match.Groups["fibroAnno"].Value;
 

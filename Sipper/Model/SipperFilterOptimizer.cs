@@ -55,7 +55,7 @@ namespace Sipper.Model
         //TODO:  this isn't working correctly
         public int GetNumCombinations()
         {
-            int numCombos = (int)((LabelFitUpper - LabelFitLower)/LabelFitStep);
+            var numCombos = (int)((LabelFitUpper - LabelFitLower)/LabelFitStep);
             numCombos *= (int)((SumOfRatiosUpper - SumOfRatiosLower) / SumOfRatiosStep);
             numCombos *= (int)((IscoreUpper - IscoreLower) / IscoreStep);
             numCombos *= (int)((ContigScoreUpper - ContigScoreLower +1) / ContigScoreStep);
@@ -81,25 +81,25 @@ namespace Sipper.Model
         public XYData GetRocCurve (List<ParameterOptimizationResult> allOptimizationResults)
         {
 
-            int maxNumLabeled = allOptimizationResults.Select(p => p.NumLabeledPassingFilter).Max();
+            var maxNumLabeled = allOptimizationResults.Select(p => p.NumLabeledPassingFilter).Max();
 
             var rocPoints = new Dictionary<int, int>();
 
-            for (int i = 0; i < maxNumLabeled; i++)
+            for (var i = 0; i < maxNumLabeled; i++)
             {
-                int currentPoint = i;
+                var currentPoint = i;
                 var parameterResultsForPoint = allOptimizationResults.Where(p => p.NumUnlabelledPassingFilter == currentPoint).ToList();
 
-                bool anyData = parameterResultsForPoint.Any();
+                var anyData = parameterResultsForPoint.Any();
 
                 if (anyData)
                 {
-                    int maxTruePositives = parameterResultsForPoint.Max(p => p.NumLabeledPassingFilter);
+                    var maxTruePositives = parameterResultsForPoint.Max(p => p.NumLabeledPassingFilter);
                     rocPoints.Add(i, maxTruePositives);
                 }
             }
 
-            XYData rocCurve = new XYData
+            var rocCurve = new XYData
                                   {
                                       Xvalues = rocPoints.Keys.Select(p => (double) p).ToArray(),
                                       Yvalues = rocPoints.Values.Select(p => (double) p).ToArray()
@@ -111,7 +111,7 @@ namespace Sipper.Model
 
         public void LoadLabeledResults(string filePath)
         {
-            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(filePath);
+            var importer = new SipperResultFromTextImporter(filePath);
             LabeledResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
 
         }
@@ -119,7 +119,7 @@ namespace Sipper.Model
 
         public void LoadUnlabeledResults(string filePath)
         {
-            SipperResultFromTextImporter importer = new SipperResultFromTextImporter(filePath);
+            var importer = new SipperResultFromTextImporter(filePath);
             UnlabeledResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
         }
 
@@ -129,20 +129,20 @@ namespace Sipper.Model
 
         public List<ParameterOptimizationResult> DoCalculationsOnAllFilterCombinations(string outputFileName = null)
         {
-            bool isHeaderWritten = false;
+            var isHeaderWritten = false;
 
             if (!string.IsNullOrEmpty(outputFileName) && File.Exists(outputFileName)) File.Delete(outputFileName);
 
 
             var parameterOptimizationResults = new List<ParameterOptimizationResult>();
-            int numCombinations = GetNumCombinations();
+            var numCombinations = GetNumCombinations();
 
             FileLogger.WriteLog(BaseLogger.LogLevels.INFO, "Filter optimizer - num combinations to analyze = "+ numCombinations);
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            int comboCounter = 0;
+            var comboCounter = 0;
 
-            for (double fitScoreLabelled = LabelFitLower; fitScoreLabelled < LabelFitUpper; fitScoreLabelled = fitScoreLabelled + LabelFitStep)
+            for (var fitScoreLabelled = LabelFitLower; fitScoreLabelled < LabelFitUpper; fitScoreLabelled = fitScoreLabelled + LabelFitStep)
             {
                 sb.Clear();
 
@@ -156,7 +156,7 @@ namespace Sipper.Model
 
                 FileLogger.WriteLog(BaseLogger.LogLevels.INFO, "Current filter combo: " + comboCounter +" out of " + numCombinations);
 
-                for (double area = SumOfRatiosLower; area < SumOfRatiosUpper; area = area + SumOfRatiosStep)
+                for (var area = SumOfRatiosLower; area < SumOfRatiosUpper; area = area + SumOfRatiosStep)
                 {
                     var levelTwoC13Filter = (from n in levelOneC13Filter
                                              where n.AreaUnderRatioCurveRevised >= area
@@ -167,7 +167,7 @@ namespace Sipper.Model
                                              select n).ToList();
 
 
-                    for (double iscore = IscoreLower; iscore < IscoreUpper; iscore = iscore + IscoreStep)
+                    for (var iscore = IscoreLower; iscore < IscoreUpper; iscore = iscore + IscoreStep)
                     {
 
                         var levelThreeC13Filter = (from n in levelTwoC13Filter
@@ -180,11 +180,11 @@ namespace Sipper.Model
 
 
 
-                        for (int contigScore = ContigScoreLower; contigScore <= ContigScoreUpper; contigScore = contigScore + ContigScoreStep)
+                        for (var contigScore = ContigScoreLower; contigScore <= ContigScoreUpper; contigScore = contigScore + ContigScoreStep)
                         {
-                            for (double percentIncorp = PercentIncorpLower; percentIncorp < PercentIncorpUpper; percentIncorp = percentIncorp + PercentIncorpStep)
+                            for (var percentIncorp = PercentIncorpLower; percentIncorp < PercentIncorpUpper; percentIncorp = percentIncorp + PercentIncorpStep)
                             {
-                                for (double peptidePop = PercentPeptidePopulationLower; peptidePop < PercentPeptidePopulationUpper; peptidePop = peptidePop + PercentPeptidePopulationStep)
+                                for (var peptidePop = PercentPeptidePopulationLower; peptidePop < PercentPeptidePopulationUpper; peptidePop = peptidePop + PercentPeptidePopulationStep)
                                 {
                                     var c13filteredResults = (from n in levelThreeC13Filter
                                                               where n.ContiguousnessScore >= contigScore
@@ -199,7 +199,7 @@ namespace Sipper.Model
                                                               select n).ToList();
 
 
-                                    ParameterOptimizationResult optimizationResult = new ParameterOptimizationResult();
+                                    var optimizationResult = new ParameterOptimizationResult();
                                     optimizationResult.FitScoreLabelled = fitScoreLabelled;
                                     optimizationResult.SumOfRatios = area;
                                     optimizationResult.Iscore = iscore;

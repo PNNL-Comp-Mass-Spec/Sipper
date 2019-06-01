@@ -107,7 +107,7 @@ namespace Sipper.ViewModel
         public FileInputsViewModel FileInputs { get; private set; }
 
 
-       
+
 
 
         private ResultWithImageInfo _currentResult;
@@ -135,18 +135,18 @@ namespace Sipper.ViewModel
             }
             else
             {
-                DirectoryInfo directoryInfo = new DirectoryInfo(resultImagesFolderPath);
+                var directoryInfo = new DirectoryInfo(resultImagesFolderPath);
 
                 if (directoryInfo.Exists)
                 {
                     _imageFilePaths = directoryInfo.GetFiles("*.png", SearchOption.AllDirectories).Select(p => p.FullName).ToList();
                     ResultImagesStatusText = _imageFilePaths.Count + " images loaded";
-                    
+
                     if (_imageFilePaths.Count>0)
                     {
-                        IsImageFilesLoaded = true;  
+                        IsImageFilesLoaded = true;
                     }
-                    
+
                 }
                 else
                 {
@@ -155,10 +155,10 @@ namespace Sipper.ViewModel
 
             }
 
-         
 
-           
-            
+
+
+
 
 
         }
@@ -178,7 +178,7 @@ namespace Sipper.ViewModel
             }
 
             var imageOutputter = new ResultImageOutputter(_fileInputsInfo);
-            
+
 
             imageOutputter.Execute();
         }
@@ -188,7 +188,7 @@ namespace Sipper.ViewModel
         {
             if (IsImageFilesLoaded && _resultRepositorySource.Results.Count > 0)
             {
-                string expectedHtmlFilepath = FileInputs.ResultImagesFolderPath + Path.DirectorySeparatorChar +
+                var expectedHtmlFilepath = FileInputs.ResultImagesFolderPath + Path.DirectorySeparatorChar +
                                               "0_index.html";
 
                 if (File.Exists(expectedHtmlFilepath))
@@ -201,7 +201,7 @@ namespace Sipper.ViewModel
                     {
                         GeneralStatusMessage = ex.Message;
                     }
-                    
+
                 }
 
             }
@@ -214,8 +214,8 @@ namespace Sipper.ViewModel
         {
             if (IsImageFilesLoaded && _resultRepositorySource.Results.Count>0)
             {
-                
-                HTMLReportGenerator reportGenerator = new HTMLReportGenerator(Results, _fileInputsInfo);
+
+                var reportGenerator = new HTMLReportGenerator(Results, _fileInputsInfo);
 
                 try
                 {
@@ -244,11 +244,11 @@ namespace Sipper.ViewModel
 
             _resultRepositorySource.Results.Clear();
 
-            FileInfo fileInfo = new FileInfo(resultFile);
+            var fileInfo = new FileInfo(resultFile);
 
             if (fileInfo.Exists)
             {
-                SipperResultFromTextImporter importer = new SipperResultFromTextImporter(resultFile);
+                var importer = new SipperResultFromTextImporter(resultFile);
                 var tempResults = importer.Import();
 
                 _resultRepositorySource.Results.AddRange(tempResults.Results);
@@ -269,7 +269,7 @@ namespace Sipper.ViewModel
             Results.Clear();
             foreach (var resultDto in query)
             {
-                ResultWithImageInfo resultWithImageInfo = new ResultWithImageInfo(resultDto);
+                var resultWithImageInfo = new ResultWithImageInfo(resultDto);
 
 
 
@@ -282,7 +282,7 @@ namespace Sipper.ViewModel
 
             GenerateHTMLReport();
 
-            
+
 
 
         }
@@ -297,15 +297,15 @@ namespace Sipper.ViewModel
                 //                 result.Result.DatasetName + "_ID" + result.Result.TargetID;
 
 
-                string baseFileName = result.Result.DatasetName + "_ID" + result.Result.TargetID;
+                var baseFileName = result.Result.DatasetName + "_ID" + result.Result.TargetID;
 
 
                 var targetImages = (from n in _imageFilePaths where n.Contains(baseFileName) select n).ToList();
 
 
-                string expectedMSImage = targetImages.FirstOrDefault(p => p.Contains("_MS.png"));
-                string expectedChromImageFilename = targetImages.FirstOrDefault(p => p.Contains("_chrom.png"));
-                string expectedTheorMSImageFilename = targetImages.FirstOrDefault(p => p.Contains("_theorMS.png"));
+                var expectedMSImage = targetImages.FirstOrDefault(p => p.Contains("_MS.png"));
+                var expectedChromImageFilename = targetImages.FirstOrDefault(p => p.Contains("_chrom.png"));
+                var expectedTheorMSImageFilename = targetImages.FirstOrDefault(p => p.Contains("_theorMS.png"));
 
 
                 result.MSImageFilePath = expectedMSImage??"";
@@ -337,7 +337,7 @@ namespace Sipper.ViewModel
 
         }
 
-        
+
         public void UpdateAnnotationsUsingAutomaticFilter()
         {
             foreach (SipperLcmsFeatureTargetedResultDTO result in _resultRepositorySource.Results)
@@ -362,6 +362,6 @@ namespace Sipper.ViewModel
 
         #endregion
 
-     
+
     }
 }

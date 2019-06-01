@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using DeconTools.Backend;
 using DeconTools.Backend.Core;
 using Sipper.Model;
@@ -63,8 +55,7 @@ namespace Sipper.View
         {
             if (ViewModel == null || ViewModel.Run == null) return;
 
-            int currentScan;
-            if (Int32.TryParse(txtCurrentScan.Text, out currentScan))
+            if (Int32.TryParse(txtCurrentScan.Text, out var currentScan))
             {
                 if (currentScan == ViewModel.CurrentLcScan) return;
 
@@ -140,7 +131,7 @@ namespace Sipper.View
 
         private void btnOpenDataset_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            var dlg = new Microsoft.Win32.OpenFileDialog();
 
             // Set filter for file extension and default file extension
             dlg.DefaultExt = ".txt";
@@ -148,14 +139,14 @@ namespace Sipper.View
 
 
             // Display OpenFileDialog by calling ShowDialog method
-            Nullable<bool> result = dlg.ShowDialog();
+            var result = dlg.ShowDialog();
 
 
             // Get the selected file name and display in a TextBox
             if (result == true)
             {
                 // Open document
-                string filename = dlg.FileName;
+                var filename = dlg.FileName;
                 ViewModel.LoadRun(filename);
 
                 slider.Minimum = ViewModel.MinLcScan;
