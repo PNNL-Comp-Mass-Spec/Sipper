@@ -1,0 +1,53 @@
+ Directory of Library
+
+05/31/2019  06:03 PM    <DIR>          DLLsToBeCopied
+06/04/2018  11:56 AM    <DIR>          MergeModules
+01/29/2013  05:40 PM            86,016 agtsampleinforw.dll
+01/29/2018  07:40 PM         1,343,488 alglibnet2.dll
+02/16/2019  10:56 AM            20,992 BrukerDataReader.dll
+05/31/2019  05:48 PM           704,512 DeconTools.Backend.dll
+05/31/2019  05:48 PM           311,808 DeconTools.Workflows.dll
+04/09/2012  03:55 PM           316,416 DynamicDataDisplay.dll
+06/13/2013  10:40 AM            30,208 GwsDMSUtilities.dll
+04/02/2013  02:00 PM            23,040 GWSGraphLibrary.dll
+03/22/2012  09:54 AM            15,840 IMSCOMP.dll
+12/21/2012  05:44 PM            40,960 Mapack.dll
+01/29/2018  07:40 PM           185,344 MassLynxRaw.dll
+12/21/2012  05:44 PM            61,440 MSDBLibrary.dll
+06/13/2013  10:40 AM            18,432 MSFeatureStatsAnalysis.dll
+01/29/2018  07:40 PM         1,505,792 MultiAlignEngine.dll
+01/29/2018  07:40 PM           430,592 PNNLOmics.dll
+05/15/2019  06:24 PM            50,176 ProteowizardWrapper.dll
+04/02/2013  02:00 PM           440,320 Scinet.ChartControl.dll
+04/02/2013  02:00 PM           287,744 Scinet.dll
+06/16/2017  07:35 AM            44,032 ThermoFisher.CommonCore.BackgroundSubtraction.dll
+06/16/2017  07:35 AM           366,080 ThermoFisher.CommonCore.Data.dll
+06/16/2017  07:35 AM            11,264 ThermoFisher.CommonCore.MassPrecisionEstimator.dll
+06/16/2017  07:35 AM           620,032 ThermoFisher.CommonCore.RawFileReader.dll
+05/09/2019  12:51 PM            48,128 ThermoRawFileReader.dll
+04/09/2012  03:55 PM           307,200 ZedGraph.dll
+09/11/2018  05:32 PM            52,736 RawFileReaderLicense.doc
+04/02/2013  02:11 PM            77,824 IsoBlender.exe
+12/21/2012  05:44 PM             3,756 Interop.EDAL.SxS.manifest
+12/21/2012  05:44 PM             3,597 Interop.HSREADWRITELib.SxS.manifest
+02/16/2019  10:56 AM            56,832 BrukerDataReader.pdb
+05/31/2019  05:48 PM         1,998,336 DeconTools.Backend.pdb
+05/31/2019  05:48 PM           818,688 DeconTools.Workflows.pdb
+06/13/2013  10:40 AM            48,640 GwsDMSUtilities.pdb
+04/02/2013  02:00 PM            71,168 GWSGraphLibrary.pdb
+04/02/2013  02:11 PM            44,544 IsoBlender.pdb
+06/13/2013  10:40 AM            42,496 MSFeatureStatsAnalysis.pdb
+01/29/2018  07:40 PM         6,582,272 MultiAlignEngine.pdb
+01/29/2018  07:40 PM           998,912 PNNLOmics.pdb
+05/15/2019  06:24 PM           122,368 ProteowizardWrapper.pdb
+06/03/2019  10:58 AM                 0 FileDates.txt
+03/22/2012  09:54 AM            63,982 PNNLOmicsElementData.xml
+04/09/2012  03:55 PM         1,492,968 ZedGraph.XML
+
+ Directory of Library\DLLsToBeCopied
+
+12/17/2012  01:07 PM            15,840 IMSCOMP.dll
+01/29/2018  07:40 PM           185,344 MassLynxRaw.dll
+12/17/2012  01:07 PM             3,756 Interop.EDAL.SxS.manifest
+12/17/2012  01:07 PM             3,597 Interop.HSREADWRITELib.SxS.manifest
+12/17/2012  01:07 PM            63,982 PNNLOmicsElementData.xml
