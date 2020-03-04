@@ -93,7 +93,8 @@ namespace Sipper.ViewModel
 
         private void OnYAxisChange(object sender, AxisChangedEventArgs e)
         {
-            var yAxis = sender as LinearAxis;
+            if (!(sender is LinearAxis yAxis))
+                return;
 
             // No need to update anything if the minimum is already <= 0
             if (yAxis.ActualMinimum <= 0) return;

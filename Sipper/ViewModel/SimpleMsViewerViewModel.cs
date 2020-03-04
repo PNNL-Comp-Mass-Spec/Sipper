@@ -793,19 +793,21 @@ namespace Sipper.ViewModel
 
         private void OnXAxisChange(object sender, AxisChangedEventArgs e)
         {
-            var axis = sender as LinearAxis;
+            if (!(sender is LinearAxis xAxis))
+                return;
 
             _xAxisIsChangedInternally = true;
 
-            MSGraphMinX = axis.ActualMinimum;
-            MSGraphMaxX = axis.ActualMaximum;
+            MSGraphMinX = xAxis.ActualMinimum;
+            MSGraphMaxX = xAxis.ActualMaximum;
 
             _xAxisIsChangedInternally = false;
         }
 
         private void OnYAxisChange(object sender, AxisChangedEventArgs e)
         {
-            var yAxis = sender as LinearAxis;
+            if (!(sender is LinearAxis yAxis))
+                return;
 
             // No need to update anything if the minimum is already <= 0
             if (yAxis.ActualMinimum <= 0) return;

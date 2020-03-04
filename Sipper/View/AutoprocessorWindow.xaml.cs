@@ -56,21 +56,16 @@ namespace Sipper.View
 
         private void FileDropHandler(object sender, DragEventArgs e)
         {
-            var dataObject = e.Data as DataObject;
+            if (!(e.Data is DataObject dataObject))
+                return;
 
             if (dataObject.ContainsFileDropList())
             {
-
-
                 var fileNamesStringCollection = dataObject.GetFileDropList();
-                var bd = new StringBuilder();
-
 
                 var fileNames = fileNamesStringCollection.Cast<string>().ToList();
 
                 ViewModel.FileInputs.CreateFileLinkages(fileNames);
-
-
             }
         }
 
@@ -80,14 +75,19 @@ namespace Sipper.View
 
             if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
             {
-                var filenames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-
-                foreach (var filename in filenames)
+                if (!(e.Data.GetData(DataFormats.FileDrop, true) is string[] fileNames))
                 {
-                    if (System.IO.Path.GetExtension(filename).ToUpperInvariant() != ".TXT")
+                    dropEnabled = false;
+                }
+                else
+                {
+                    foreach (var filename in fileNames)
                     {
-                        dropEnabled = false;
-                        break;
+                        if (System.IO.Path.GetExtension(filename)?.ToUpper() != ".TXT")
+                        {
+                            dropEnabled = false;
+                            break;
+                        }
                     }
                 }
             }
