@@ -18,9 +18,7 @@ namespace Sipper.ViewModel
 {
     public class SimpleMsViewerViewModel : ViewModelBase
     {
-
         private bool _xAxisIsChangedInternally;
-        private bool _isInternalPeakListUpdate;
 
         private MSGenerator _msGenerator;
         private readonly ScanSetFactory _scanSetFactory = new ScanSetFactory();
@@ -470,10 +468,8 @@ namespace Sipper.ViewModel
 
             CreateMSPlotForScanByScanAnalysis();
 
-            _isInternalPeakListUpdate = true;
-            SelectedPeak = Peaks.OrderByDescending(p => p.Height).FirstOrDefault();  //this triggers an XIC
-            _isInternalPeakListUpdate = false;
-
+            // This triggers an XIC
+            SelectedPeak = Peaks.OrderByDescending(p => p.Height).FirstOrDefault();
         }
 
         private XYData ZeroFillCentroidData(XYData massSpecXyData)
