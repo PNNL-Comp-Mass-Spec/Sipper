@@ -136,7 +136,7 @@ namespace Sipper.ViewModel
         private Run _run;
         public Run Run
         {
-            get { return _run; }
+            get => _run;
             set
             {
                 _run = value;
@@ -170,7 +170,7 @@ namespace Sipper.ViewModel
         private double _massSpecVisibleWindowWidth;
         public double MassSpecVisibleWindowWidth
         {
-            get { return _massSpecVisibleWindowWidth; }
+            get => _massSpecVisibleWindowWidth;
             set
             {
                 _massSpecVisibleWindowWidth = value;
@@ -207,16 +207,9 @@ namespace Sipper.ViewModel
 
         public string DatasetFilePath
         {
-            get
-            {
-                return FileInputs.DatasetPath;
-            }
+            get => FileInputs.DatasetPath;
 
-            set
-            {
-                FileInputs.DatasetPath = value;
-            }
-
+            set => FileInputs.DatasetPath = value;
         }
 
         public ObservableCollection<SipperLcmsFeatureTargetedResultDTO> Results { get; set; }
@@ -224,7 +217,7 @@ namespace Sipper.ViewModel
         private PlotModel _theorIsoPlot;
         public PlotModel TheorIsoPlot
         {
-            get { return _theorIsoPlot; }
+            get => _theorIsoPlot;
             set
             {
                 _theorIsoPlot = value;
@@ -235,7 +228,7 @@ namespace Sipper.ViewModel
         private PlotModel _observedIsoPlot;
         public PlotModel ObservedIsoPlot
         {
-            get { return _observedIsoPlot; }
+            get => _observedIsoPlot;
             set
             {
                 _observedIsoPlot = value;
@@ -246,7 +239,7 @@ namespace Sipper.ViewModel
         private PlotModel _chromatogramPlot;
         public PlotModel ChromatogramPlot
         {
-            get { return _chromatogramPlot; }
+            get => _chromatogramPlot;
             set
             {
                 _chromatogramPlot = value;
@@ -257,10 +250,7 @@ namespace Sipper.ViewModel
         private PlotModel _chromCorrelationPlot;
         public PlotModel ChromCorrelationPlot
         {
-            get
-            {
-                return _chromCorrelationPlot;
-            }
+            get => _chromCorrelationPlot;
             set
             {
                 _chromCorrelationPlot = value;
@@ -271,7 +261,7 @@ namespace Sipper.ViewModel
         private SipperLcmsFeatureTargetedResultDTO _currentResult;
         public SipperLcmsFeatureTargetedResultDTO CurrentResult
         {
-            get { return _currentResult; }
+            get => _currentResult;
             set
             {
                 //check if we moved on to a different dataset
@@ -296,7 +286,7 @@ namespace Sipper.ViewModel
         private string _targetsFileStatusText;
         public string TargetsFileStatusText
         {
-            get { return _targetsFileStatusText; }
+            get => _targetsFileStatusText;
             set
             {
                 if (value == TargetsFileStatusText) return;
@@ -308,7 +298,7 @@ namespace Sipper.ViewModel
         private string _targetFilterString;
         public string TargetFilterString
         {
-            get { return _targetFilterString; }
+            get => _targetFilterString;
             set
             {
                 _targetFilterString = value;
@@ -321,7 +311,7 @@ namespace Sipper.ViewModel
         private string _parameterFileStatusText;
         public string ParameterFileStatusText
         {
-            get { return _parameterFileStatusText; }
+            get => _parameterFileStatusText;
             set
             {
                 if (value == ParameterFileStatusText) return;
@@ -334,7 +324,7 @@ namespace Sipper.ViewModel
         private SipperTargetedWorkflow _workflow;
         public SipperTargetedWorkflow Workflow
         {
-            get { return _workflow; }
+            get => _workflow;
             set
             {
                 _workflow = value;
@@ -345,7 +335,7 @@ namespace Sipper.ViewModel
         private string _generalStatusMessage;
         public string GeneralStatusMessage
         {
-            get { return _generalStatusMessage; }
+            get => _generalStatusMessage;
             set
             {
                 _generalStatusMessage = value;
@@ -387,7 +377,7 @@ namespace Sipper.ViewModel
         private XYData _chromXyData;
         public XYData ChromXyData
         {
-            get { return _chromXyData; }
+            get => _chromXyData;
             set
             {
                 _chromXyData = value;
@@ -398,7 +388,7 @@ namespace Sipper.ViewModel
         private XYData _massSpecXyData;
         public XYData MassSpecXyData
         {
-            get { return _massSpecXyData; }
+            get => _massSpecXyData;
             set
             {
                 _massSpecXyData = value;
@@ -410,15 +400,15 @@ namespace Sipper.ViewModel
         private XYData _subtractedMassSpecXyData;
         public XYData SubtractedMassSpecXYData
         {
-            get { return _subtractedMassSpecXyData; }
-            set { _subtractedMassSpecXyData = value; }
+            get => _subtractedMassSpecXyData;
+            set => _subtractedMassSpecXyData = value;
         }
 
         private XYData _chromCorrXyData;
         public XYData ChromCorrXYData
         {
-            get { return _chromCorrXyData; }
-            set { _chromCorrXyData = value; }
+            get => _chromCorrXyData;
+            set => _chromCorrXyData = value;
         }
 
         public XYData RatioLogsXyData { get; set; }
@@ -434,7 +424,7 @@ namespace Sipper.ViewModel
         private double _msGraphMaxX;
         public double MsGraphMaxX
         {
-            get { return _msGraphMaxX; }
+            get => _msGraphMaxX;
             set
             {
                 _msGraphMaxX = value;
@@ -445,7 +435,7 @@ namespace Sipper.ViewModel
         private double _msGraphMinX;
         public double MsGraphMinX
         {
-            get { return _msGraphMinX; }
+            get => _msGraphMinX;
             set
             {
                 _msGraphMinX = value;
@@ -477,7 +467,7 @@ namespace Sipper.ViewModel
 
         public int CurrentLcScan
         {
-            get { return _currentLcScan; }
+            get => _currentLcScan;
             set
             {
                 _currentLcScan = value;
@@ -491,7 +481,7 @@ namespace Sipper.ViewModel
         private XYData _theorProfileXyData;
         public XYData TheorProfileXyData
         {
-            get { return _theorProfileXyData; }
+            get => _theorProfileXyData;
             set
             {
                 _theorProfileXyData = value;
@@ -505,7 +495,7 @@ namespace Sipper.ViewModel
         /// </summary>
         public int PercentProgress
         {
-            get { return _percentProgress; }
+            get => _percentProgress;
             set
             {
                 _percentProgress = value;
@@ -516,32 +506,20 @@ namespace Sipper.ViewModel
         private bool _showFileAndResultsList;
         public bool ShowFileAndResultsList
         {
-            get { return _showFileAndResultsList; }
+            get => _showFileAndResultsList;
             set { _showFileAndResultsList = value;
             OnPropertyChanged("ShowFileAndResultsList");
             }
         }
 
         protected bool IsParametersLoaded { get; set; }
-        protected bool IsRunLoaded
-        {
-            get
-            {
-                return Run != null
-                    && Run.PeakList != null && Run.PeakList.Count > 0;
-            }
-        }
+        protected bool IsRunLoaded =>
+            Run != null
+            && Run.PeakList != null && Run.PeakList.Count > 0;
 
-        protected bool IsResultsLoaded
-        {
-            get { return Results != null && Results.Count > 0; }
-        }
+        protected bool IsResultsLoaded => Results != null && Results.Count > 0;
 
-        public bool IsAllDataReady
-        {
-            get { return (IsParametersLoaded && IsResultsLoaded && IsRunLoaded); }
-        }
-
+        public bool IsAllDataReady => (IsParametersLoaded && IsResultsLoaded && IsRunLoaded);
 
         #endregion
 

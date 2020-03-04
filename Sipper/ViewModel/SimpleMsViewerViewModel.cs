@@ -72,7 +72,7 @@ namespace Sipper.ViewModel
         private bool _showMsMsSpectra;
         public bool ShowMsMsSpectra
         {
-            get { return _showMsMsSpectra; }
+            get => _showMsMsSpectra;
             set
             {
                 _showMsMsSpectra = value;
@@ -86,7 +86,7 @@ namespace Sipper.ViewModel
         private double _chromSourcePeakDetectorPeakBr;
         public double ChromSourcePeakDetectorPeakBr
         {
-            get { return _chromSourcePeakDetectorPeakBr; }
+            get => _chromSourcePeakDetectorPeakBr;
             set
             {
                 _chromSourcePeakDetectorPeakBr = value;
@@ -98,7 +98,7 @@ namespace Sipper.ViewModel
         private double _chromSourcePeakDetectorSigNoise;
         public double ChromSourcePeakDetectorSigNoise
         {
-            get { return _chromSourcePeakDetectorSigNoise; }
+            get => _chromSourcePeakDetectorSigNoise;
             set
             {
                 _chromSourcePeakDetectorSigNoise = value;
@@ -111,7 +111,7 @@ namespace Sipper.ViewModel
         private List<Peak> _peaks;
         public List<Peak> Peaks
         {
-            get { return _peaks; }
+            get => _peaks;
             set
             {
                 _peaks = value;
@@ -123,21 +123,14 @@ namespace Sipper.ViewModel
         private DeconTools.Backend.Core.Run _run;
         public DeconTools.Backend.Core.Run Run
         {
-            get { return _run; }
-            set
-            {
-                _run = value;
-
-            }
+            get => _run;
+            set => _run = value;
         }
 
         int _currentLcScan;
         public int CurrentLcScan
         {
-            get
-            {
-                return _currentLcScan;
-            }
+            get => _currentLcScan;
             set
             {
                 _currentLcScan = value;
@@ -148,15 +141,15 @@ namespace Sipper.ViewModel
         private ScanSet _currentScanSet;
         public ScanSet CurrentScanSet
         {
-            get { return _currentScanSet; }
-            set { _currentScanSet = value; }
+            get => _currentScanSet;
+            set => _currentScanSet = value;
         }
 
 
         private Peak _selectedPeak;
         public Peak SelectedPeak
         {
-            get { return _selectedPeak; }
+            get => _selectedPeak;
             set
             {
                 _selectedPeak = value;
@@ -192,7 +185,7 @@ namespace Sipper.ViewModel
         private XYData _massSpecXYData;
         public XYData MassSpecXYData
         {
-            get { return _massSpecXYData; }
+            get => _massSpecXYData;
             set
             {
                 _massSpecXYData = value;
@@ -203,10 +196,7 @@ namespace Sipper.ViewModel
         private int _numMsScansToSum;
         public int NumMSScansToSum
         {
-            get
-            {
-                return _numMsScansToSum;
-            }
+            get => _numMsScansToSum;
             set
             {
                 var isEvenNumber = value % 2 == 0;
@@ -242,7 +232,7 @@ namespace Sipper.ViewModel
         private double _msGraphMaxX;
         public double MSGraphMaxX
         {
-            get { return _msGraphMaxX; }
+            get => _msGraphMaxX;
             set
             {
                 if (value <= _msGraphMinX)
@@ -263,7 +253,7 @@ namespace Sipper.ViewModel
         private double _msGraphMinX;
         public double MSGraphMinX
         {
-            get { return _msGraphMinX; }
+            get => _msGraphMinX;
             set
             {
                 if (value >= _msGraphMaxX)
@@ -296,7 +286,7 @@ namespace Sipper.ViewModel
         private PlotModel _observedIsoPlot;
         public PlotModel ObservedIsoPlot
         {
-            get { return _observedIsoPlot; }
+            get => _observedIsoPlot;
             set
             {
                 _observedIsoPlot = value;
@@ -308,7 +298,7 @@ namespace Sipper.ViewModel
         private PlotModel _chromatogramPlot;
         public PlotModel ChromatogramPlot
         {
-            get { return _chromatogramPlot; }
+            get => _chromatogramPlot;
             set
             {
                 _chromatogramPlot = value;
@@ -319,10 +309,7 @@ namespace Sipper.ViewModel
         string _generalStatusMessage;
         public string GeneralStatusMessage
         {
-            get
-            {
-                return _generalStatusMessage;
-            }
+            get => _generalStatusMessage;
             set
             {
                 _generalStatusMessage = value;
@@ -334,7 +321,7 @@ namespace Sipper.ViewModel
         private int _percentProgress;
         public int PercentProgress
         {
-            get { return _percentProgress; }
+            get => _percentProgress;
             set
             {
                 _percentProgress = value;
@@ -345,7 +332,7 @@ namespace Sipper.ViewModel
         private bool _isProgressVisible;
         public bool IsProgressVisible
         {
-            get { return _isProgressVisible; }
+            get => _isProgressVisible;
             set
             {
                 _isProgressVisible = value;

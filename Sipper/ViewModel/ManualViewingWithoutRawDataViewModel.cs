@@ -69,7 +69,7 @@ namespace Sipper.ViewModel
         private string _targetsFileStatusText;
         public string TargetsFileStatusText
         {
-            get { return _targetsFileStatusText; }
+            get => _targetsFileStatusText;
             set
             {
                 if (value == TargetsFileStatusText) return;
@@ -82,7 +82,7 @@ namespace Sipper.ViewModel
         private string _generalStatusMessage;
         public string GeneralStatusMessage
         {
-            get { return _generalStatusMessage; }
+            get => _generalStatusMessage;
             set
             {
                 _generalStatusMessage = value;
@@ -94,7 +94,7 @@ namespace Sipper.ViewModel
         private string _resultImagesStatusText;
         public string ResultImagesStatusText
         {
-            get { return _resultImagesStatusText; }
+            get => _resultImagesStatusText;
             set
             {
                 if (value == _resultImagesStatusText) return;
@@ -113,10 +113,7 @@ namespace Sipper.ViewModel
         private ResultWithImageInfo _currentResult;
         public ResultWithImageInfo CurrentResult
         {
-            get
-            {
-                return _currentResult;
-            }
+            get => _currentResult;
             set
             {
                 if (value == _currentResult) return;

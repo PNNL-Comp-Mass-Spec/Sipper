@@ -29,18 +29,12 @@ namespace Sipper.ViewModel
 
         #region Properties
 
-        public ObservableCollection<string> DatasetPathCollection
-        {
-            get
-            {
-                return _fileInputsInfo.DatasetPathsList as ObservableCollection<string>;
-            }
-        }
+        public ObservableCollection<string> DatasetPathCollection => _fileInputsInfo.DatasetPathsList as ObservableCollection<string>;
 
 
         public string DatasetParentFolder
         {
-            get { return _fileInputsInfo.DatasetDirectory; }
+            get => _fileInputsInfo.DatasetDirectory;
             set
             {
                 if (value == _fileInputsInfo.DatasetDirectory) return;
@@ -53,7 +47,7 @@ namespace Sipper.ViewModel
 
         public string DatasetPath
         {
-            get { return _fileInputsInfo.DatasetPath; }
+            get => _fileInputsInfo.DatasetPath;
             set
             {
                 if (value == _fileInputsInfo.DatasetPath)
@@ -68,7 +62,7 @@ namespace Sipper.ViewModel
 
         public string TargetsFilePath
         {
-            get { return _fileInputsInfo.TargetsFilePath; }
+            get => _fileInputsInfo.TargetsFilePath;
             set
             {
                 if (value == _fileInputsInfo.TargetsFilePath)
@@ -84,10 +78,7 @@ namespace Sipper.ViewModel
 
         public string ResultImagesFolderPath
         {
-            get
-            {
-                return _fileInputsInfo.ResultImagesFolderPath;
-            }
+            get => _fileInputsInfo.ResultImagesFolderPath;
             set
             {
                 if (value == _fileInputsInfo.ResultImagesFolderPath)
@@ -101,7 +92,7 @@ namespace Sipper.ViewModel
 
         public string ResultsSaveFilePath
         {
-            get { return _fileInputsInfo.ResultsSaveFilePath; }
+            get => _fileInputsInfo.ResultsSaveFilePath;
             set
             {
                 if (value == _fileInputsInfo.ResultsSaveFilePath)
@@ -120,7 +111,7 @@ namespace Sipper.ViewModel
 
         public string ParameterFilePath
         {
-            get { return _fileInputsInfo.ParameterFilePath; }
+            get => _fileInputsInfo.ParameterFilePath;
             set
             {
                 if (value == _fileInputsInfo.ParameterFilePath)

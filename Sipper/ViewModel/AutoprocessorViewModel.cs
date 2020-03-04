@@ -67,7 +67,7 @@ namespace Sipper.ViewModel
         private PlotModel _observedIsoPlot;
         public PlotModel ObservedIsoPlot
         {
-            get { return _observedIsoPlot; }
+            get => _observedIsoPlot;
             set
             {
                 _observedIsoPlot = value;
@@ -87,7 +87,7 @@ namespace Sipper.ViewModel
 
         public int NumMSScansSummed
         {
-            get { return SipperWorkflowParameters.NumMSScansToSum; }
+            get => SipperWorkflowParameters.NumMSScansToSum;
             set
             {
                 SipperWorkflowParameters.NumMSScansToSum = value;
@@ -103,7 +103,7 @@ namespace Sipper.ViewModel
         private string _statusMessageGeneral;
         public string StatusMessageGeneral
         {
-            get { return _statusMessageGeneral; }
+            get => _statusMessageGeneral;
             set
             {
                 _statusMessageGeneral = value;
@@ -134,7 +134,7 @@ namespace Sipper.ViewModel
         private int _percentProgress;
         public int PercentProgress
         {
-            get { return _percentProgress; }
+            get => _percentProgress;
             set
             {
                 _percentProgress = value;
@@ -150,10 +150,7 @@ namespace Sipper.ViewModel
 
         public TargetedWorkflowExecutorProgressInfo CurrentResultInfo
         {
-            get
-            {
-                return _currentResultInfo;
-            }
+            get => _currentResultInfo;
             set
             {
                 _currentResultInfo = value;

@@ -37,7 +37,7 @@ namespace Sipper.ViewModel
         private ParameterOptimizationResult _bestParameter;
         public ParameterOptimizationResult BestParameter
         {
-            get { return FilteredParameters.FirstOrDefault(); }
+            get => FilteredParameters.FirstOrDefault();
             set
             {
                 _bestParameter = value;
@@ -49,7 +49,7 @@ namespace Sipper.ViewModel
         private string _unlabeledFilePath;
         public string UnlabeledFilePath
         {
-            get { return _unlabeledFilePath; }
+            get => _unlabeledFilePath;
             set
             {
                 _unlabeledFilePath = value;
@@ -66,7 +66,7 @@ namespace Sipper.ViewModel
         private string _labeledFilePath;
         public string LabeledFilePath
         {
-            get { return _labeledFilePath; }
+            get => _labeledFilePath;
             set
             {
                 _labeledFilePath = value;
@@ -82,7 +82,7 @@ namespace Sipper.ViewModel
         private string _outputFileName;
         public string OutputFileName
         {
-            get { return _outputFileName; }
+            get => _outputFileName;
             set
             {
                 _outputFileName = value;
@@ -94,8 +94,8 @@ namespace Sipper.ViewModel
         private XYData _rocCurve;
         public XYData RocCurve
         {
-            get { return _rocCurve; }
-            set { _rocCurve = value; }
+            get => _rocCurve;
+            set => _rocCurve = value;
         }
 
 
@@ -145,7 +145,7 @@ namespace Sipper.ViewModel
         private double _maxAllowedFalsePositiveRate;
         public double MaxAllowedFalsePositiveRate
         {
-            get { return _maxAllowedFalsePositiveRate; }
+            get => _maxAllowedFalsePositiveRate;
             set
             {
                 _maxAllowedFalsePositiveRate = value;
@@ -164,7 +164,7 @@ namespace Sipper.ViewModel
         /// </summary>
         public ParameterOptimizationResult SelectedFilterParameter
         {
-            get { return _selectedFilterParameter; }
+            get => _selectedFilterParameter;
             set
             {
                 _selectedFilterParameter = value;
@@ -178,7 +178,7 @@ namespace Sipper.ViewModel
         private string _selectedFilterReportString;
         public string SelectedFilterReportString
         {
-            get { return _selectedFilterReportString; }
+            get => _selectedFilterReportString;
             set
             {
                 _selectedFilterReportString = value;
@@ -193,7 +193,7 @@ namespace Sipper.ViewModel
         /// </summary>
         public ParameterOptimizationResult CurrentFilterParameter
         {
-            get { return _currentFilterParameter; }
+            get => _currentFilterParameter;
             set
             {
                 _currentFilterParameter = value;
@@ -207,7 +207,7 @@ namespace Sipper.ViewModel
         private string _currentFilterReportString;
         public string CurrentFilterReportString
         {
-            get { return _currentFilterReportString; }
+            get => _currentFilterReportString;
             set
             {
                 _currentFilterReportString = value;
@@ -303,7 +303,7 @@ namespace Sipper.ViewModel
         private PlotModel _rocPlot;
         public PlotModel RocPlot
         {
-            get { return _rocPlot; }
+            get => _rocPlot;
             set
             {
                 _rocPlot = value;
@@ -315,7 +315,7 @@ namespace Sipper.ViewModel
         private List<ParameterOptimizationResult> _filteredParameters;
         public List<ParameterOptimizationResult> FilteredParameters
         {
-            get { return _filteredParameters; }
+            get => _filteredParameters;
             set
             {
                 _filteredParameters = value;
