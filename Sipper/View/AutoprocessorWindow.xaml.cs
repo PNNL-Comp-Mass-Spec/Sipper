@@ -29,24 +29,21 @@ namespace Sipper.View
 
         void ViewModel_CurrentResultUpdated(object sender, System.EventArgs e)
         {
+            // Uncomment to debug
 
-            var xvals = ViewModel.CurrentResultInfo.MassSpectrumXYData.Xvalues;
-            var yvals = ViewModel.CurrentResultInfo.MassSpectrumXYData.Yvalues;
+            // var xValues = ViewModel.CurrentResultInfo.MassSpectrumXYData.Xvalues;
+            // var yValues = ViewModel.CurrentResultInfo.MassSpectrumXYData.Yvalues;
 
-            if (xvals==null || xvals.Length<2)
-            {
-                return;
-            }
+            // if (xValues == null || xValues.Length < 2)
+            // {
+            //     return;
+            // }
 
-            var min = 0d;
+            // var min = 0d;
 
+            // var max = yValues.Max();
 
-            var max = yvals.Max();
-
-
-            var titleString = ViewModel.GetInfoStringOnCurrentResult();
-
-
+            // var titleString = ViewModel.GetInfoStringOnCurrentResult();
         }
 
         public AutoprocessorViewModel ViewModel { get; set; }
