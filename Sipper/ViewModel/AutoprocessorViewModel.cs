@@ -288,7 +288,7 @@ namespace Sipper.ViewModel
 
             ExecutorParameters.TargetsFilePath = FileInputs.TargetsFilePath;
             ExecutorParameters.WorkflowParameterFile = FileInputs.ParameterFilePath;
-            ExecutorParameters.OutputFolderBase = GetOutputFolderPath();
+            ExecutorParameters.OutputDirectoryBase = GetOutputFolderPath();
 
             _backgroundWorker = new BackgroundWorker();
             _backgroundWorker.WorkerSupportsCancellation = true;
@@ -298,15 +298,13 @@ namespace Sipper.ViewModel
             _backgroundWorker.ProgressChanged += _backgroundWorker_ProgressChanged;
             _backgroundWorker.RunWorkerCompleted += _backgroundWorker_RunWorkerCompleted;
             _backgroundWorker.RunWorkerAsync();
-
-
         }
 
         private string GetOutputFolderPath()
         {
             if (!String.IsNullOrEmpty(FileInputs.DatasetPath))
             {
-                return RunUtilities.GetDatasetParentFolder(FileInputs.DatasetPath);
+                return RunUtilities.GetDatasetParentDirectory(FileInputs.DatasetPath);
 
             }
 

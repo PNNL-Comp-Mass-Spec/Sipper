@@ -153,9 +153,9 @@ namespace Sipper.View
             {
 
 
-                var dataIsMostlyUnlabelled = labelDistributionXYData.Yvalues.First() > 0.98;
+                var dataIsMostlyUnlabeled = labelDistributionXYData.Yvalues.First() > 0.98;
 
-                if (dataIsMostlyUnlabelled)
+                if (dataIsMostlyUnlabeled)
                 {
                     yMax = 1.1;
                 }
@@ -247,19 +247,14 @@ namespace Sipper.View
         {
 
             double minWidth = 1;
-            var mzwidth = Properties.Settings.Default.MSGraphMZWindow;
+            var mzWidth = Properties.Settings.Default.MSGraphMZWindow;
 
-            if (mzwidth<minWidth)
+            if (mzWidth < minWidth)
             {
-                mzwidth = minWidth;
+                mzWidth = minWidth;
             }
 
-            ViewModel.MassSpecVisibleWindowWidth = mzwidth;
-
-
-
-
-
+            ViewModel.MassSpecVisibleWindowWidth = mzWidth;
         }
 
         private void SaveSettings()

@@ -401,7 +401,7 @@ namespace Sipper.Model
 
 
             string baseFileName;
-            baseFileName = this.Run.DataSetPath + "\\" + this.Run.DatasetName;
+            baseFileName = this.Run.DatasetDirectoryPath + "\\" + this.Run.DatasetName;
 
             var expectedPeaksFilename = baseFileName + "_peaks.txt";
 
@@ -449,7 +449,7 @@ namespace Sipper.Model
         private bool checkForPeaksFile()
         {
             string baseFileName;
-            baseFileName = this.Run.DataSetPath + "\\" + this.Run.DatasetName;
+            baseFileName = this.Run.DatasetDirectoryPath + "\\" + this.Run.DatasetName;
 
             var possibleFilename1 = baseFileName + "_peaks.txt";
 

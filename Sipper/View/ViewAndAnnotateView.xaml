@@ -525,7 +525,7 @@
                             <Setter Property="Shape.Stroke" Value="SlateGray" />
                         </Style>
 
-                        <Style x:Key="catagoryHeaderStyle" TargetType="TextBlock">
+                        <Style x:Key="categoryHeaderStyle" TargetType="TextBlock">
                             <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
                             <Setter Property="Control.Margin" Value="3,0,3,0" />
                             <Setter Property="TextBlock.FontSize" Value="13" />
@@ -546,7 +546,7 @@
                     <Border>
                         <StackPanel Margin="3">
 
-                            <TextBlock Style="{StaticResource ResourceKey=catagoryHeaderStyle}">Basic info</TextBlock>
+                            <TextBlock Style="{StaticResource ResourceKey=categoryHeaderStyle}">Basic info</TextBlock>
                             <Rectangle />
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -700,7 +700,7 @@
                             <Setter Property="Shape.Stroke" Value="SlateGray" />
                         </Style>
 
-                        <Style x:Key="catagoryHeaderStyle" TargetType="TextBlock">
+                        <Style x:Key="categoryHeaderStyle" TargetType="TextBlock">
                             <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
                             <Setter Property="Control.Margin" Value="3,0,3,0" />
                             <Setter Property="TextBlock.FontSize" Value="13" />
@@ -720,7 +720,7 @@
 
                     <Border>
                         <StackPanel Margin="3">
-                            <TextBlock Style="{StaticResource ResourceKey=catagoryHeaderStyle}">C13-enrichment info</TextBlock>
+                            <TextBlock Style="{StaticResource ResourceKey=categoryHeaderStyle}">C13-enrichment info</TextBlock>
                             <Rectangle />
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -761,7 +761,7 @@
                                 <TextBlock
                                     Grid.Row="4"
                                     Grid.Column="1"
-                                    Text="{Binding CurrentResult.PercentCarbonsLabelled, StringFormat=0.00}" />
+                                    Text="{Binding CurrentResult.PercentCarbonsLabeled, StringFormat=0.00}" />
                                 <TextBlock
                                     Grid.Row="5"
                                     Grid.Column="0"
@@ -769,14 +769,14 @@
                                 <TextBlock
                                     Grid.Row="5"
                                     Grid.Column="1"
-                                    Text="{Binding CurrentResult.PercentPeptideLabelled, StringFormat=0.00}" />
+                                    Text="{Binding CurrentResult.PercentPeptideLabeled, StringFormat=0.00}" />
 
                             </Grid>
                         </StackPanel>
                     </Border>
                     <Border>
                         <StackPanel Margin="3">
-                            <TextBlock Style="{StaticResource ResourceKey=catagoryHeaderStyle}">Quality metrics</TextBlock>
+                            <TextBlock Style="{StaticResource ResourceKey=categoryHeaderStyle}">Quality metrics</TextBlock>
                             <Rectangle />
                             <Grid>
                                 <Grid.ColumnDefinitions>

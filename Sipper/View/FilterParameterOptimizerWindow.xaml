@@ -168,13 +168,13 @@
 
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Binding="{Binding Path=FitScoreLabelled, StringFormat=0.000}" Header="FitScoreLabeled" />
-                                <DataGridTextColumn Binding="{Binding Path=Iscore, StringFormat=0.00}" Header="IScore" />
+                                <DataGridTextColumn Binding="{Binding Path=FitScoreLabeled, StringFormat=0.000}" Header="FitScoreLabeled" />
+                                <DataGridTextColumn Binding="{Binding Path=InterferenceScore, StringFormat=0.00}" Header="IScore" />
                                 <DataGridTextColumn Binding="{Binding Path=SumOfRatios, StringFormat=0.0}" Header="SumOfRatios" />
                                 <DataGridTextColumn Binding="{Binding Path=ContigScore, StringFormat=0}" Header="ContigScore" />
-                                <DataGridTextColumn Binding="{Binding Path=PercentIncorp, StringFormat=0.0}" Header="PercentIncorp" />
+                                <DataGridTextColumn Binding="{Binding Path=PercentIncorporated, StringFormat=0.0}" Header="PercentIncorp" />
                                 <DataGridTextColumn Binding="{Binding Path=PercentPeptidePopulation, StringFormat=0.0}" Header="PercentPeptide" />
-                                <DataGridTextColumn Binding="{Binding Path=NumUnlabelledPassingFilter, StringFormat=0}" Header="NumUnlabeled" />
+                                <DataGridTextColumn Binding="{Binding Path=NumUnlabeledPassingFilter, StringFormat=0}" Header="NumUnlabeled" />
                                 <DataGridTextColumn Binding="{Binding Path=NumLabeledPassingFilter, StringFormat=0}" Header="NumLabeled" />
                                 <DataGridTextColumn Binding="{Binding Path=FalsePositiveRate, StringFormat=0.000}" Header="FalsePostiveRate" />
 

@@ -13,22 +13,22 @@ namespace Sipper.Model
         #region Properties
 
 
-        public double FitScoreLabelled { get; set; }
+        public double FitScoreLabeled { get; set; }
         public double SumOfRatios { get; set; }
-        public double Iscore { get; set; }
+        public double InterferenceScore { get; set; }
         public int ContigScore { get; set; }
-        public double PercentIncorp { get; set; }
+        public double PercentIncorporated { get; set; }
         public double PercentPeptidePopulation { get; set; }
-        public int NumUnlabelledPassingFilter { get; set; }
+        public int NumUnlabeledPassingFilter { get; set; }
         public int NumLabeledPassingFilter { get; set; }
 
         public double FalsePositiveRate
         {
             get
             {
-                if (NumLabeledPassingFilter>0 || NumUnlabelledPassingFilter>0)
+                if (NumLabeledPassingFilter > 0 || NumUnlabeledPassingFilter > 0)
                 {
-                    return (NumUnlabelledPassingFilter/(double) (NumUnlabelledPassingFilter + NumLabeledPassingFilter));
+                    return (NumUnlabeledPassingFilter / (double)(NumUnlabeledPassingFilter + NumLabeledPassingFilter));
                 }
 
                 return double.NaN;
@@ -37,26 +37,26 @@ namespace Sipper.Model
 
 
 
-        public string ToStringWithDetails(char delimiter='\t')
+        public string ToStringWithDetails(char delimiter = '\t')
         {
             var sb = new StringBuilder();
-            sb.Append(FitScoreLabelled);
+            sb.Append(FitScoreLabeled);
             sb.Append(delimiter);
             sb.Append(SumOfRatios);
             sb.Append(delimiter);
-            sb.Append(Iscore);
+            sb.Append(InterferenceScore);
             sb.Append(delimiter);
             sb.Append(ContigScore);
             sb.Append(delimiter);
-            sb.Append(PercentIncorp);
+            sb.Append(PercentIncorporated);
             sb.Append(delimiter);
             sb.Append(PercentPeptidePopulation);
             sb.Append(delimiter);
-            sb.Append(NumUnlabelledPassingFilter);
+            sb.Append(NumUnlabeledPassingFilter);
             sb.Append(delimiter);
             sb.Append(NumLabeledPassingFilter);
             sb.Append(delimiter);
-            sb.Append(double.IsNaN(FalsePositiveRate) ? "1.0":FalsePositiveRate.ToString("0.###"));
+            sb.Append(double.IsNaN(FalsePositiveRate) ? "1.0" : FalsePositiveRate.ToString("0.###"));
 
             return sb.ToString();
 

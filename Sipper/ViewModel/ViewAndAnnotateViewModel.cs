@@ -685,7 +685,7 @@ namespace Sipper.ViewModel
             if (Run != null)
             {
                 LoadPeaksUsingBackgroundWorker();
-                FileInputs.DatasetParentFolder = Run.DataSetPath;
+                FileInputs.DatasetParentFolder = Run.DatasetDirectoryPath;
             }
         }
 
@@ -716,7 +716,7 @@ namespace Sipper.ViewModel
         {
             try
             {
-                _peaksFilename = this.Run.DataSetPath + "\\" + this.Run.DatasetName + "_peaks.txt";
+                _peaksFilename = this.Run.DatasetDirectoryPath + "\\" + this.Run.DatasetName + "_peaks.txt";
 
                 if (!File.Exists(_peaksFilename))
                 {

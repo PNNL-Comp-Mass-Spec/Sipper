@@ -10,7 +10,6 @@ namespace Sipper.Model
         //Some history here... I reran the parameter optimization on 9/11/2013 (after getting feedback from reviewers)
         //So these are updated as of that date. See the 'OldApplyAutoValidationCodeF2LooseFilter' for the older settings
 
-
         public static void ApplyAutoValidationCodeF2LooseFilter(List<SipperLcmsFeatureTargetedResultDTO> resultList)
         {
             foreach (var resultDto in resultList)
@@ -23,8 +22,8 @@ namespace Sipper.Model
                                                n.IScore <= 0.6 &&
                                                n.AreaUnderRatioCurveRevised >= 0 &&
                                                n.ContiguousnessScore >=0 &&
-                                               n.PercentCarbonsLabelled>=0.5 &&
-                                               n.PercentPeptideLabelled>=0.5
+                                               n.PercentCarbonsLabeled>=0.5 &&
+                                               n.PercentPeptideLabeled>=0.5
                                          select n).ToList();
 
             foreach (var resultDto in peptidesPassingFilter)
@@ -45,8 +44,8 @@ namespace Sipper.Model
                                          where n.AreaUnderRatioCurveRevised >= 2 &&
                                                n.IScore <= 0.9 &&
                                                n.FitScoreLabeledProfile <= 0.5 &&
-                                               n.PercentCarbonsLabelled >= 0 &&
-                                               n.PercentPeptideLabelled >= 0
+                                               n.PercentCarbonsLabeled >= 0 &&
+                                               n.PercentPeptideLabeled >= 0
                                          select n).ToList();
 
             foreach (var resultDto in peptidesPassingFilter)
@@ -75,8 +74,8 @@ namespace Sipper.Model
                                          n.IScore <=0.4 &&
                                          n.AreaUnderRatioCurveRevised >=2.0 &&
                                          n.ContiguousnessScore >=3 &&
-                                         n.PercentCarbonsLabelled >=0 &&
-                                         n.PercentPeptideLabelled >=0
+                                         n.PercentCarbonsLabeled >=0 &&
+                                         n.PercentPeptideLabeled >=0
                                          select n).ToList();
 
             foreach (var resultDto in peptidesPassingFilter)
@@ -98,8 +97,8 @@ namespace Sipper.Model
                                          where n.AreaUnderRatioCurveRevised >= 1 &&
                                                n.IScore <= 0.2 &&
                                                n.FitScoreLabeledProfile <= 0.5 &&
-                                               n.PercentCarbonsLabelled >= 0 &&
-                                               n.PercentPeptideLabelled >= 0.5
+                                               n.PercentCarbonsLabeled >= 0 &&
+                                               n.PercentPeptideLabeled >= 0.5
                                          select n).ToList();
 
             foreach (var resultDto in peptidesPassingFilter)
@@ -128,8 +127,8 @@ namespace Sipper.Model
                                                n.IScore <= 0 &&
                                                n.FitScoreLabeledProfile <= 1.1 &&
                                                n.ContiguousnessScore >= 0 &&
-                                               n.PercentCarbonsLabelled >= 0 &&
-                                               n.PercentPeptideLabelled >= 0
+                                               n.PercentCarbonsLabeled >= 0 &&
+                                               n.PercentPeptideLabeled >= 0
                                          select n).ToList();
 
             foreach (var resultDto in peptidesPassingFilter)
@@ -159,8 +158,8 @@ namespace Sipper.Model
                                                n.IScore <= 0.4 &&
                                                n.FitScoreLabeledProfile <= 1.1 &&
                                                n.ContiguousnessScore>=2 &&
-                                               n.PercentCarbonsLabelled >= 0 &&
-                                               n.PercentPeptideLabelled >= 0
+                                               n.PercentCarbonsLabeled >= 0 &&
+                                               n.PercentPeptideLabeled >= 0
                                          select n).ToList();
 
             foreach (var resultDto in peptidesPassingFilter)

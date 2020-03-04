@@ -274,22 +274,22 @@ namespace Sipper.ViewModel
                 var header = "numUnlabeled\tnumLabeled";
                 writer.WriteLine(header);
 
-                var xydata = new XYData();
+                var xyData = new XYData();
 
-                if (RocCurve==null|| RocCurve.Xvalues==null || RocCurve.Xvalues.Length==0)
+                if (RocCurve?.Xvalues == null || RocCurve.Xvalues.Length==0)
                 {
-                    xydata.Xvalues=new double[0];
-                    xydata.Yvalues=new double[0];
+                    xyData.Xvalues=new double[0];
+                    xyData.Yvalues=new double[0];
                 }
                 else
                 {
-                    xydata.Xvalues = RocCurve.Xvalues;
-                    xydata.Yvalues = RocCurve.Yvalues;
+                    xyData.Xvalues = RocCurve.Xvalues;
+                    xyData.Yvalues = RocCurve.Yvalues;
                 }
 
-                for (var i = 0; i < xydata.Xvalues.Length; i++)
+                for (var i = 0; i < xyData.Xvalues.Length; i++)
                 {
-                    writer.WriteLine(xydata.Xvalues[i] + "\t" + xydata.Yvalues[i]);
+                    writer.WriteLine(xyData.Xvalues[i] + "\t" + xyData.Yvalues[i]);
                 }
 
 
@@ -362,19 +362,19 @@ namespace Sipper.ViewModel
             if (selectedResult == null) return string.Empty;
 
             var sb = new StringBuilder();
-            sb.Append("Labeled fit <= " + selectedResult.FitScoreLabelled.ToString("0.####"));
+            sb.Append("Labeled fit <= " + selectedResult.FitScoreLabeled.ToString("0.####"));
             sb.Append(Environment.NewLine);
-            sb.Append("IScore <= " + selectedResult.Iscore.ToString("0.####"));
+            sb.Append("IScore <= " + selectedResult.InterferenceScore.ToString("0.####"));
             sb.Append(Environment.NewLine);
             sb.Append("SumOfRatios >= " + selectedResult.SumOfRatios.ToString("0.#"));
             sb.Append(Environment.NewLine);
             sb.Append("ContigScore >= " + selectedResult.ContigScore.ToString("0"));
             sb.Append(Environment.NewLine);
-            sb.Append("PercentIncorp >= " + selectedResult.PercentIncorp.ToString("0.####"));
+            sb.Append("PercentIncorp >= " + selectedResult.PercentIncorporated.ToString("0.####"));
             sb.Append(Environment.NewLine);
             sb.Append("PercentPeptide >= " + selectedResult.PercentPeptidePopulation.ToString("0.##"));
             sb.Append(Environment.NewLine);
-            sb.Append("Num unlabeled results at this filter= " + selectedResult.NumUnlabelledPassingFilter);
+            sb.Append("Num unlabeled results at this filter= " + selectedResult.NumUnlabeledPassingFilter);
             sb.Append(Environment.NewLine);
             sb.Append("Num labeled results at this filter= " + selectedResult.NumLabeledPassingFilter);
             sb.Append(Environment.NewLine);

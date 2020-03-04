@@ -88,7 +88,7 @@ namespace Sipper.Model
             for (var i = 0; i < maxNumLabeled; i++)
             {
                 var currentPoint = i;
-                var parameterResultsForPoint = allOptimizationResults.Where(p => p.NumUnlabelledPassingFilter == currentPoint).ToList();
+                var parameterResultsForPoint = allOptimizationResults.Where(p => p.NumUnlabeledPassingFilter == currentPoint).ToList();
 
                 var anyData = parameterResultsForPoint.Any();
 
@@ -142,16 +142,16 @@ namespace Sipper.Model
 
             var comboCounter = 0;
 
-            for (var fitScoreLabelled = LabelFitLower; fitScoreLabelled < LabelFitUpper; fitScoreLabelled = fitScoreLabelled + LabelFitStep)
+            for (var fitScoreLabeled = LabelFitLower; fitScoreLabeled < LabelFitUpper; fitScoreLabeled += LabelFitStep)
             {
                 sb.Clear();
 
                 var levelOneC13Filter = (from n in LabeledResults
-                                         where n.FitScoreLabeledProfile <= fitScoreLabelled
+                                         where n.FitScoreLabeledProfile <= fitScoreLabeled
                                          select n).ToList();
 
                 var levelOneC12Filter = (from n in UnlabeledResults
-                                         where n.FitScoreLabeledProfile <= fitScoreLabelled
+                                         where n.FitScoreLabeledProfile <= fitScoreLabeled
                                          select n).ToList();
 
                 FileLogger.WriteLog(BaseLogger.LogLevels.INFO, "Current filter combo: " + comboCounter +" out of " + numCombinations);
@@ -167,48 +167,48 @@ namespace Sipper.Model
                                              select n).ToList();
 
 
-                    for (var iscore = IscoreLower; iscore < IscoreUpper; iscore = iscore + IscoreStep)
+                    for (var interferenceScore = IscoreLower; interferenceScore < IscoreUpper; interferenceScore = interferenceScore + IscoreStep)
                     {
 
                         var levelThreeC13Filter = (from n in levelTwoC13Filter
-                                                 where n.IScore <= iscore
-                                                 select n).ToList();
+                                                   where n.IScore <= interferenceScore
+                                                   select n).ToList();
 
                         var levelThreeC12Filter = (from n in levelTwoC12Filter
-                                                 where n.IScore <= iscore
-                                                 select n).ToList();
+                                                   where n.IScore <= interferenceScore
+                                                   select n).ToList();
 
-
-
-                        for (var contigScore = ContigScoreLower; contigScore <= ContigScoreUpper; contigScore = contigScore + ContigScoreStep)
+                        for (var contigScore = ContigScoreLower; contigScore <= ContigScoreUpper; contigScore += ContigScoreStep)
                         {
-                            for (var percentIncorp = PercentIncorpLower; percentIncorp < PercentIncorpUpper; percentIncorp = percentIncorp + PercentIncorpStep)
+                            for (var percentIncorporated = PercentIncorpLower; percentIncorporated < PercentIncorpUpper; percentIncorporated += PercentIncorpStep)
                             {
-                                for (var peptidePop = PercentPeptidePopulationLower; peptidePop < PercentPeptidePopulationUpper; peptidePop = peptidePop + PercentPeptidePopulationStep)
+                                for (var peptidePop = PercentPeptidePopulationLower; peptidePop < PercentPeptidePopulationUpper; peptidePop += PercentPeptidePopulationStep)
                                 {
                                     var c13filteredResults = (from n in levelThreeC13Filter
                                                               where n.ContiguousnessScore >= contigScore
-                                                             && n.PercentCarbonsLabelled >= percentIncorp
-                                                             && n.PercentPeptideLabelled >= peptidePop
+                                                             && n.PercentCarbonsLabeled >= percentIncorporated
+                                                             && n.PercentPeptideLabeled >= peptidePop
                                                               select n).ToList();
 
                                     var c12filteredResults = (from n in levelThreeC12Filter
                                                               where n.ContiguousnessScore >= contigScore
-                                                             && n.PercentCarbonsLabelled >= percentIncorp
-                                                             && n.PercentPeptideLabelled >= peptidePop
+                                                             && n.PercentCarbonsLabeled >= percentIncorporated
+                                                             && n.PercentPeptideLabeled >= peptidePop
                                                               select n).ToList();
 
 
-                                    var optimizationResult = new ParameterOptimizationResult();
-                                    optimizationResult.FitScoreLabelled = fitScoreLabelled;
-                                    optimizationResult.SumOfRatios = area;
-                                    optimizationResult.Iscore = iscore;
-                                    optimizationResult.ContigScore = contigScore;
-                                    optimizationResult.PercentIncorp = percentIncorp;
-                                    optimizationResult.PercentPeptidePopulation = peptidePop;
+                                    var optimizationResult = new ParameterOptimizationResult
+                                    {
+                                        FitScoreLabeled = fitScoreLabeled,
+                                        SumOfRatios = area,
+                                        InterferenceScore = interferenceScore,
+                                        ContigScore = contigScore,
+                                        PercentIncorporated = percentIncorporated,
+                                        PercentPeptidePopulation = peptidePop,
+                                        NumLabeledPassingFilter = c13filteredResults.Count,
+                                        NumUnlabeledPassingFilter = c12filteredResults.Count
+                                    };
 
-                                    optimizationResult.NumLabeledPassingFilter = c13filteredResults.Count;
-                                    optimizationResult.NumUnlabelledPassingFilter = c12filteredResults.Count;
 
                                     sb.Append(optimizationResult.ToStringWithDetails());
                                     sb.Append(Environment.NewLine);
@@ -227,24 +227,18 @@ namespace Sipper.Model
 
                 if (!string.IsNullOrEmpty(outputFileName))
                 {
-                    using (var sw = new StreamWriter(new FileStream(outputFileName, FileMode.Append, FileAccess.Write, FileShare.Read)))
+                    using (var writer = new StreamWriter(new FileStream(outputFileName, FileMode.Append, FileAccess.Write, FileShare.Read)))
                     {
-                        sw.AutoFlush = true;
+                        writer.AutoFlush = true;
 
-                        if (!isHeaderWritten)
-                        {
-                            sw.WriteLine("LabeledFit\tSumOfRatios\tIscore\tContigScore\tPercentIncorp\tPercentPeptideLabeled\tUnlabeledCount\tLabeledCount\tFalsePositiveRate");
-                        }
-                        sw.Write(sb.ToString());
-
+                        writer.WriteLine("LabeledFit\tSumOfRatios\tIscore\tContigScore\tPercentIncorp\tPercentPeptideLabeled\tUnlabeledCount\tLabeledCount\tFalsePositiveRate");
+                        writer.Write(sb.ToString());
                     }
                 }
 
             }
 
             return parameterOptimizationResults;
-
-
 
         }
 
