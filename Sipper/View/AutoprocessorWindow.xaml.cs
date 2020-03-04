@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Text;
 using System.Windows;
 using Sipper.Model;
 using Sipper.ViewModel;
@@ -15,7 +14,7 @@ namespace Sipper.View
         {
             InitializeComponent();
 
-            if (sipperProject==null)
+            if (sipperProject == null)
             {
                 sipperProject = new Project();
             }
@@ -26,8 +25,6 @@ namespace Sipper.View
             ViewModel.CurrentResultUpdated += ViewModel_CurrentResultUpdated;
 
             DataContext = ViewModel;
-
-
         }
 
         void ViewModel_CurrentResultUpdated(object sender, System.EventArgs e)

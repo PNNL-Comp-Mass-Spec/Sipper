@@ -14,9 +14,9 @@ namespace Sipper.ViewModel
     public class ManualViewingWithoutRawDataViewModel : ViewModelBase
     {
 
-        private TargetedResultRepository _resultRepositorySource;
+        private readonly TargetedResultRepository _resultRepositorySource;
         private List<string> _imageFilePaths;
-        private FileInputsInfo _fileInputsInfo;
+        private readonly FileInputsInfo _fileInputsInfo;
 
         #region Constructors
 
@@ -126,7 +126,7 @@ namespace Sipper.ViewModel
         {
             IsImageFilesLoaded = false;
 
-            if (String.IsNullOrEmpty(resultImagesFolderPath))
+            if (string.IsNullOrEmpty(resultImagesFolderPath))
             {
                 ResultImagesStatusText =  "0 images loaded";
             }
@@ -286,7 +286,7 @@ namespace Sipper.ViewModel
 
         private void MapResultsToImages()
         {
-            if (String.IsNullOrEmpty(FileInputs.ResultImagesFolderPath)) return;
+            if (string.IsNullOrEmpty(FileInputs.ResultImagesFolderPath)) return;
 
             foreach (var result in Results)
             {

@@ -414,12 +414,12 @@ namespace Sipper.Model
 
             if (fileInfo != null)
             {
-                var dir = fileInfo.Directory != null ? fileInfo.Directory.Name : String.Empty;
+                var dir = fileInfo.Directory != null ? fileInfo.Directory.Name : string.Empty;
 
                 return  dir + "/" + fileInfo.Name;
             }
 
-            return String.Empty;
+            return string.Empty;
 
 
         }

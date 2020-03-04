@@ -14,7 +14,7 @@ namespace Sipper.ViewModel
     public class SipperParameterOptimizerViewModel : ViewModelBase
     {
 
-        private SipperFilterOptimizer _filterOptimizer;
+        private readonly SipperFilterOptimizer _filterOptimizer;
 
         #region Constructors
 
@@ -234,9 +234,10 @@ namespace Sipper.ViewModel
                 PlotAreaBorderThickness = new OxyThickness(0),
             };
 
-            var series = new OxyPlot.Series.LineSeries();
-            series.MarkerSize = 1;
-            series.Color = OxyColors.Black;
+            var series = new OxyPlot.Series.LineSeries {
+                MarkerSize = 1, Color = OxyColors.Black
+            };
+
             for (var i = 0; i < RocCurve.Xvalues.Length; i++)
             {
                 series.Points.Add(new DataPoint(RocCurve.Xvalues[i], RocCurve.Yvalues[i]));

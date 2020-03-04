@@ -34,7 +34,8 @@ namespace Sipper.ViewModel
 
         public AutoprocessorViewModel()
         {
-            ExecutorParameters = new SipperWorkflowExecutorParameters {
+            ExecutorParameters = new SipperWorkflowExecutorParameters
+            {
                 TargetType = Globals.TargetType.LcmsFeature
             };
 
@@ -46,7 +47,7 @@ namespace Sipper.ViewModel
         }
 
 
-        public AutoprocessorViewModel(FileInputsInfo fileInputs):this()
+        public AutoprocessorViewModel(FileInputsInfo fileInputs) : this()
         {
 
             FileInputs = new FileInputsViewModel(fileInputs);
@@ -75,15 +76,13 @@ namespace Sipper.ViewModel
             }
         }
 
-
         public Run Run { get; set; }
 
-        public FileInputsViewModel FileInputs { get; private set; }
+        public FileInputsViewModel FileInputs { get; }
 
         public SipperWorkflowExecutorParameters ExecutorParameters { get; set; }
 
         public SipperTargetedWorkflowParameters SipperWorkflowParameters { get; set; }
-
 
         public int NumMSScansSummed
         {
@@ -120,13 +119,9 @@ namespace Sipper.ViewModel
                 {
                     return true;
                 }
-                else
-                {
-                    StatusCollection.Add(DateTime.Now + "\t" + "Autoprocessor setup not complete. Please check setup.");
-                    return false;
-                }
 
-
+                StatusCollection.Add(DateTime.Now + "\t" + "Autoprocessor setup not complete. Please check setup.");
+                return false;
             }
         }
 
@@ -163,25 +158,30 @@ namespace Sipper.ViewModel
         private void GetMassSpectrumForCurrentResult()
         {
 
-            if (ObservedIsoPlot==null)
+            if (ObservedIsoPlot == null)
             {
-                ObservedIsoPlot=  CreateObservedIsoPlot();
+                ObservedIsoPlot = CreateObservedIsoPlot();
             }
 
-
-            var xydata = new XYData();
+            XYData xyData;
 
             if (CurrentResultInfo.MassSpectrumXYData == null)
             {
-                xydata.Xvalues = CurrentResultInfo.MassSpectrumXYData == null ? new double[] { 400, 1500 } : CurrentResultInfo.MassSpectrumXYData.Xvalues;
-                xydata.Yvalues = CurrentResultInfo.MassSpectrumXYData == null ? new double[] { 0, 0 } : CurrentResultInfo.MassSpectrumXYData.Yvalues;
+                xyData = new XYData
+                {
+                    Xvalues = CurrentResultInfo.MassSpectrumXYData == null ? new double[] { 400, 1500 } : CurrentResultInfo.MassSpectrumXYData.Xvalues,
+                    Yvalues = CurrentResultInfo.MassSpectrumXYData == null ? new double[] { 0, 0 } : CurrentResultInfo.MassSpectrumXYData.Yvalues
+                };
             }
             else
             {
-                xydata.Xvalues = CurrentResultInfo.MassSpectrumXYData.Xvalues;
-                xydata.Yvalues = CurrentResultInfo.MassSpectrumXYData.Yvalues;
+                var xyDataSource = new XYData
+                {
+                    Xvalues = CurrentResultInfo.MassSpectrumXYData.Xvalues,
+                    Yvalues = CurrentResultInfo.MassSpectrumXYData.Yvalues
+                };
 
-                xydata = xydata.TrimData(CurrentResultInfo.Result.Target.MZ - 2, CurrentResultInfo.Result.Target.MZ + 8);
+                xyData = xyDataSource.TrimData(CurrentResultInfo.Result.Target.MZ - 2, CurrentResultInfo.Result.Target.MZ + 8);
             }
 
 
@@ -192,20 +192,25 @@ namespace Sipper.ViewModel
             }
             else
             {
-                msGraphMaxY = (float)xydata.GetMaxY();
+                msGraphMaxY = (float)xyData.GetMaxY();
             }
 
-            var msGraphTitle = "TargetID= " + CurrentResultInfo.Result.Target.ID +   "; m/z " + CurrentResultInfo.Result.Target.MZ.ToString("0.0000") + "; z=" +
-                                  CurrentResultInfo.Result.Target.ChargeState + "; Scan= " + CurrentResultInfo.Result.ScanSet??"[No scan selected]";
+            var msGraphTitle = "TargetID= " + CurrentResultInfo.Result.Target.ID +
+                               "; m/z " + CurrentResultInfo.Result.Target.MZ.ToString("0.0000") +
+                               "; z=" + CurrentResultInfo.Result.Target.ChargeState +
+                               "; Scan= " + CurrentResultInfo.Result.ScanSet ?? "[No scan selected]";
 
             ObservedIsoPlot.Series.Clear();
 
-            var series = new OxyPlot.Series.LineSeries();
-            series.MarkerSize = 1;
-            series.Color = OxyColors.Black;
-            for (var i = 0; i < xydata.Xvalues.Length; i++)
+            var series = new OxyPlot.Series.LineSeries
             {
-                series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
+                MarkerSize = 1,
+                Color = OxyColors.Black
+            };
+
+            for (var i = 0; i < xyData.Xvalues.Length; i++)
+            {
+                series.Points.Add(new DataPoint(xyData.Xvalues[i], xyData.Yvalues[i]));
             }
 
             ObservedIsoPlot.Axes[1].Maximum = msGraphMaxY + msGraphMaxY * 0.05;
@@ -259,8 +264,7 @@ namespace Sipper.ViewModel
 
         public void OnCurrentResultUpdated(EventArgs e)
         {
-            var handler = CurrentResultUpdated;
-            if (handler != null) handler(this, e);
+            CurrentResultUpdated?.Invoke(this, e);
         }
 
         #region Public Methods
@@ -287,9 +291,11 @@ namespace Sipper.ViewModel
             ExecutorParameters.WorkflowParameterFile = FileInputs.ParameterFilePath;
             ExecutorParameters.OutputDirectoryBase = GetOutputFolderPath();
 
-            _backgroundWorker = new BackgroundWorker();
-            _backgroundWorker.WorkerSupportsCancellation = true;
-            _backgroundWorker.WorkerReportsProgress = true;
+            _backgroundWorker = new BackgroundWorker
+            {
+                WorkerSupportsCancellation = true,
+                WorkerReportsProgress = true
+            };
 
             _backgroundWorker.DoWork += _backgroundWorker_DoWork;
             _backgroundWorker.ProgressChanged += _backgroundWorker_ProgressChanged;
@@ -299,21 +305,23 @@ namespace Sipper.ViewModel
 
         private string GetOutputFolderPath()
         {
-            if (!String.IsNullOrEmpty(FileInputs.DatasetPath))
+            if (!string.IsNullOrEmpty(FileInputs.DatasetPath))
             {
                 return RunUtilities.GetDatasetParentDirectory(FileInputs.DatasetPath);
 
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             var worker = (BackgroundWorker)sender;
 
-            _workflowExecutor = new BasicTargetedWorkflowExecutor(ExecutorParameters, FileInputs.DatasetPath, worker);
-            _workflowExecutor.RunIsDisposed = false;
+            _workflowExecutor = new BasicTargetedWorkflowExecutor(ExecutorParameters, FileInputs.DatasetPath, worker)
+            {
+                RunIsDisposed = false
+            };
 
             _workflowExecutor.Execute();
 
@@ -354,21 +362,20 @@ namespace Sipper.ViewModel
 
             if (e.UserState != null)
             {
-                if (e.UserState is TargetedWorkflowExecutorProgressInfo)
+                if (e.UserState is TargetedWorkflowExecutorProgressInfo info)
                 {
-                    var info = (TargetedWorkflowExecutorProgressInfo)e.UserState;
                     if (info.IsGeneralProgress)
                     {
 
-                        var infostrings = info.ProgressInfoString.Split(new string[] { Environment.NewLine },
+                        var infoStrings = info.ProgressInfoString.Split(new[] { Environment.NewLine },
                                                                         StringSplitOptions.RemoveEmptyEntries);
 
-                        foreach (var infostring in infostrings)
+                        foreach (var infoString in infoStrings)
                         {
-                            if (!String.IsNullOrEmpty(infostring))
+                            if (!string.IsNullOrEmpty(infoString))
                             {
-                                StatusCollection.Add(infostring);
-                                StatusMessageGeneral = infostring;
+                                StatusCollection.Add(infoString);
+                                StatusMessageGeneral = infoString;
                             }
                         }
 
@@ -382,7 +389,7 @@ namespace Sipper.ViewModel
                         //HACK: need to convert to the other Sipper result type in order to use the filter.
                         var sipperResult = (SipperLcmsFeatureTargetedResultDTO)ResultDTOFactory.CreateTargetedResult(CurrentResultInfo.Result);
                         SipperFilters.ApplyAutoValidationCodeF2LooseFilter(sipperResult);
-                        if (sipperResult.ValidationCode==ValidationCode.Yes)
+                        if (sipperResult.ValidationCode == ValidationCode.Yes)
                         {
                             ProgressInfos.Add(info);
                         }
@@ -395,19 +402,14 @@ namespace Sipper.ViewModel
                     Console.WriteLine(e.UserState);
                 }
             }
-
-
-
-
-
         }
 
 
         public string GetInfoStringOnCurrentResult()
         {
-            if (CurrentResultInfo == null || CurrentResultInfo.Result == null)
+            if (CurrentResultInfo?.Result == null)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             var sipperResult = (SipperLcmsTargetedResult)CurrentResultInfo.Result;
@@ -432,10 +434,7 @@ namespace Sipper.ViewModel
                                      : sipperResult.IsotopicProfile.ChargeState.ToString("0"));
 
             return stringBuilder.ToString();
-
         }
-
-
 
         #endregion
 

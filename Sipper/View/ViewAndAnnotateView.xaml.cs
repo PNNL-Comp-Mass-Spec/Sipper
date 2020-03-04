@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,9 +18,6 @@ namespace Sipper.View
     /// </summary>
     public partial class ViewAndAnnotateView : Window
     {
-        private bool _graphsWereSetup = false;
-        private int _counter;
-
 
         public ViewAndAnnotateView(Project project = null)
         {
@@ -37,7 +33,7 @@ namespace Sipper.View
 
             LoadSettings();
 
-            ViewModel.AllDataLoadedAndReadyEvent += new AllDataLoadedAndReadyEventHandler(ViewModel_AllDataLoadedAndReadyEvent);
+            ViewModel.AllDataLoadedAndReadyEvent += ViewModel_AllDataLoadedAndReadyEvent;
 
 
             DataContext = ViewModel;
@@ -69,7 +65,7 @@ namespace Sipper.View
             }
         }
 
-        private void txtWorkflowParameterFilepath_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void txtWorkflowParameterFilepath_TextChanged(object sender, TextChangedEventArgs e)
         {
 
         }
@@ -101,7 +97,6 @@ namespace Sipper.View
                 dropEnabled = false;
             }
 
-
             if (!dropEnabled)
             {
                 e.Effects = DragDropEffects.None;
@@ -114,7 +109,7 @@ namespace Sipper.View
             e.Handled = true;
         }
 
-        private void ListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
 
@@ -122,12 +117,13 @@ namespace Sipper.View
             ViewModel.ExecuteWorkflow();
         }
 
+        [Obsolete("Unused")]
         private void GetMinMaxValuesForLabelDistributionGraph(XYData labelDistributionXYData, out double xMin, out double xMax, out double yMin, out double yMax)
         {
 
             xMin = 0.5;
 
-            var dataIsEmpty = labelDistributionXYData == null || labelDistributionXYData.Xvalues == null;
+            var dataIsEmpty = labelDistributionXYData?.Xvalues == null;
 
             var dataIsLimited = dataIsEmpty || labelDistributionXYData.Xvalues.Length < 5;
 
@@ -142,17 +138,12 @@ namespace Sipper.View
 
             yMin = 0;
 
-
-
-
             if (dataIsEmpty)
             {
                 yMax = 1.1;
             }
             else
             {
-
-
                 var dataIsMostlyUnlabeled = labelDistributionXYData.Yvalues.First() > 0.98;
 
                 if (dataIsMostlyUnlabeled)
@@ -168,18 +159,13 @@ namespace Sipper.View
 
                         if (currentVal > yMax)
                         {
-                            yMax = currentVal + currentVal *0.10;
+                            yMax = currentVal + currentVal * 0.10;
                         }
                     }
 
                 }
 
-
-
             }
-
-
-
 
         }
 
@@ -203,38 +189,32 @@ namespace Sipper.View
             ViewModel.CopyChromatogramToClipboard();
         }
 
-        private void StackPanel_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void StackPanel_KeyDown(object sender, KeyEventArgs e)
         {
             if (ViewModel.CurrentResult == null) return;
 
 
-            if (e.Key==Key.Y)
+            if (e.Key == Key.Y)
             {
                 ViewModel.CurrentResultValidationCode = ValidationCode.Yes;
 
 
             }
-            else if (e.Key==Key.N)
+            else if (e.Key == Key.N)
             {
                 ViewModel.CurrentResultValidationCode = ValidationCode.No;
 
             }
-            else if (e.Key==Key.M)
+            else if (e.Key == Key.M)
             {
                 ViewModel.CurrentResultValidationCode = ValidationCode.Maybe;
 
             }
-            else if (e.Key==Key.O)
+            else if (e.Key == Key.O)
             {
                 ViewModel.CurrentResultValidationCode = ValidationCode.None;
 
             }
-            else
-            {
-
-            }
-
-
 
         }
 
@@ -243,7 +223,7 @@ namespace Sipper.View
             SaveSettings();
         }
 
-        private  void LoadSettings()
+        private void LoadSettings()
         {
 
             double minWidth = 1;
@@ -271,12 +251,7 @@ namespace Sipper.View
             Properties.Settings.Default.Save();
         }
 
-        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-
-        }
-
-        private void TxtTargetFilterStringChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void TxtTargetFilterStringChanged(object sender, TextChangedEventArgs e)
         {
             //got this from stack overflow
             //use this to update the binding when anything is typed
@@ -284,7 +259,7 @@ namespace Sipper.View
             var prop = TextBox.TextProperty;
 
             var binding = BindingOperations.GetBindingExpression(tBox, prop);
-            if (binding != null) { binding.UpdateSource(); }
+            binding?.UpdateSource();
 
         }
 
@@ -295,10 +270,9 @@ namespace Sipper.View
 
         private void btnNavigateUpClick(object sender, RoutedEventArgs e)
         {
+            // ReSharper disable once RedundantArgumentDefaultValue
             ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.ASCENDING);
-
         }
-
 
         private void btnNavigateDownClick(object sender, RoutedEventArgs e)
         {
@@ -307,16 +281,16 @@ namespace Sipper.View
 
         private void NavigateToSpecificScanEvent(object sender, RoutedEventArgs e)
         {
-            if (Int32.TryParse(txtCurrentScan.Text,out var currentScan))
-             {
-                 if (currentScan == ViewModel.CurrentLcScan) return;
+            if (int.TryParse(txtCurrentScan.Text, out var currentScan))
+            {
+                if (currentScan == ViewModel.CurrentLcScan) return;
 
-                 ViewModel.CurrentLcScan = currentScan;
-             }
-             else
-             {
-                 return;
-             }
+                ViewModel.CurrentLcScan = currentScan;
+            }
+            else
+            {
+                return;
+            }
 
             ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
 
@@ -324,7 +298,7 @@ namespace Sipper.View
 
         private void TextBox_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (e.Delta>0)
+            if (e.Delta > 0)
             {
                 ViewModel.NavigateToNextMs1MassSpectrum();
             }
@@ -336,12 +310,12 @@ namespace Sipper.View
 
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (ViewModel == null || ViewModel.Run == null) return;
+            if (ViewModel?.Run == null) return;
 
             slider.Minimum = ViewModel.MinLcScan;
             slider.Maximum = ViewModel.MaxLcScan;
 
-            var sliderScan = (int) e.NewValue;
+            var sliderScan = (int)e.NewValue;
             if (ViewModel.CurrentLcScan == sliderScan) return;
             ViewModel.CurrentLcScan = (int)e.NewValue;
             ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
@@ -350,32 +324,29 @@ namespace Sipper.View
 
         private void MsGraphMinMouseWheelEvent(object sender, MouseWheelEventArgs e)
         {
-            if (ViewModel == null || ViewModel.Run == null) return;
-
-            if (e.Delta>0)
-            {
-                ViewModel.MsGraphMinX= ViewModel.MsGraphMinX + 1;
-            }
-            else
-            {
-                ViewModel.MsGraphMinX = ViewModel.MsGraphMinX - 1;
-            }
-
-
-        }
-
-
-        private void MsGraphMaxMouseWheelEvent(object sender, MouseWheelEventArgs e)
-        {
-            if (ViewModel == null || ViewModel.Run == null) return;
+            if (ViewModel?.Run == null) return;
 
             if (e.Delta > 0)
             {
-                ViewModel.MsGraphMaxX = ViewModel.MsGraphMaxX + 1;
+                ViewModel.MsGraphMinX += 1;
             }
             else
             {
-                ViewModel.MsGraphMaxX = ViewModel.MsGraphMaxX - 1;
+                ViewModel.MsGraphMinX -= 1;
+            }
+        }
+
+        private void MsGraphMaxMouseWheelEvent(object sender, MouseWheelEventArgs e)
+        {
+            if (ViewModel?.Run == null) return;
+
+            if (e.Delta > 0)
+            {
+                ViewModel.MsGraphMaxX += 1;
+            }
+            else
+            {
+                ViewModel.MsGraphMaxX -= 1;
             }
 
         }

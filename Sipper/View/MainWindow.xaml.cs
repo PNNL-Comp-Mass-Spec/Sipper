@@ -16,7 +16,6 @@ namespace Sipper.View
             LoadSettings();
         }
 
-
         protected MainWindowViewModel ViewModel { get; set; }
 
         private void btnBrowseAndAnnotate_Click(object sender, RoutedEventArgs e)
@@ -28,8 +27,6 @@ namespace Sipper.View
             childWindow.ShowDialog();
 
             ViewModel.SipperProject.Run = childWindow.ViewModel.Run;
-
-
         }
 
         private void btnAutoprocess_Click(object sender, RoutedEventArgs e)

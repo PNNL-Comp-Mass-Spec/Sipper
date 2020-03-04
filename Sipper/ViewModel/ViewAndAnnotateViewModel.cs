@@ -88,7 +88,7 @@ namespace Sipper.ViewModel
         public void OnAllDataLoadedAndReady(EventArgs e)
         {
             var handler = AllDataLoadedAndReadyEvent;
-            if (handler != null) handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         private void OnYAxisChange(object sender, AxisChangedEventArgs e)
@@ -277,7 +277,7 @@ namespace Sipper.ViewModel
         {
             get
             {
-                if (CurrentResult == null) return String.Empty;
+                if (CurrentResult == null) return string.Empty;
 
                 return "XIC m/z " + CurrentResult.MonoMZ.ToString("0.0000");
 
@@ -353,7 +353,7 @@ namespace Sipper.ViewModel
                 {
                     return Workflow.WorkflowStatusMessage;
                 }
-                return String.Empty;
+                return string.Empty;
             }
 
         }
@@ -362,17 +362,13 @@ namespace Sipper.ViewModel
         {
             get
             {
-                if (Workflow != null && Workflow.Result != null)
+                if (Workflow?.Result != null)
                 {
                     return Workflow.Result.Target.Code;
                 }
-                return String.Empty;
+                return string.Empty;
 
             }
-
-
-
-
         }
 
         private XYData _chromXyData;
@@ -557,10 +553,7 @@ namespace Sipper.ViewModel
             var currentScanSet = _scanSetFactory.CreateScanSet(Run, CurrentLcScan, workflowParameters.NumMSScansToSum);
             MassSpecXyData = _msGenerator.GenerateMS(Run, currentScanSet);
 
-            if (MassSpecXyData!=null)
-            {
-                MassSpecXyData = MassSpecXyData.TrimData(MsGraphMinX - 20, MsGraphMaxX + 20);
-            }
+            MassSpecXyData = MassSpecXyData?.TrimData(MsGraphMinX - 20, MsGraphMaxX + 20);
 
             CreateMsPlotForScanByScanAnalysis(currentScanSet);
         }
@@ -605,38 +598,34 @@ namespace Sipper.ViewModel
         {
             var isInternalChange = false;
 
-            var observedXaxis = ObservedIsoPlot.Axes[0];
-            var theoreticalXaxis = TheorIsoPlot.Axes[0];
+            var observedXAxis = ObservedIsoPlot.Axes[0];
+            var theoreticalXAxis = TheorIsoPlot.Axes[0];
 
-            theoreticalXaxis.AxisChanged += (s, e) =>
-                                    {
-                                        if (isInternalChange)
-                                        {
-                                            return;
-                                        }
-                                        isInternalChange = true;
-                                        observedXaxis.Zoom(theoreticalXaxis.ActualMinimum,
-                                                           theoreticalXaxis.ActualMaximum);
-                                        ObservedIsoPlot.InvalidatePlot(false);
-                                        isInternalChange = false;
+            theoreticalXAxis.AxisChanged += (s, e) =>
+                {
+                    if (isInternalChange)
+                    {
+                        return;
+                    }
+                    isInternalChange = true;
+                    observedXAxis.Zoom(theoreticalXAxis.ActualMinimum,
+                                       theoreticalXAxis.ActualMaximum);
+                    ObservedIsoPlot.InvalidatePlot(false);
+                    isInternalChange = false;
 
-                                    };
+                };
 
-            observedXaxis.AxisChanged += (s, e) =>
-                                 {
-                                     if (isInternalChange)
-                                     {
-                                         return;
-                                     }
-                                     isInternalChange = true;
-                                     theoreticalXaxis.Zoom(observedXaxis.ActualMinimum, observedXaxis.ActualMaximum);
-                                     TheorIsoPlot.InvalidatePlot(false);
-                                     isInternalChange = false;
-                                 };
-
-
-
-
+            observedXAxis.AxisChanged += (s, e) =>
+                {
+                    if (isInternalChange)
+                    {
+                        return;
+                    }
+                    isInternalChange = true;
+                    theoreticalXAxis.Zoom(observedXAxis.ActualMinimum, observedXAxis.ActualMaximum);
+                    TheorIsoPlot.InvalidatePlot(false);
+                    isInternalChange = false;
+                };
 
         }
 
@@ -679,9 +668,11 @@ namespace Sipper.ViewModel
 
             }
 
-            _backgroundWorker = new BackgroundWorker();
-            _backgroundWorker.WorkerSupportsCancellation = true;
-            _backgroundWorker.WorkerReportsProgress = true;
+            _backgroundWorker = new BackgroundWorker
+            {
+                WorkerSupportsCancellation = true,
+                WorkerReportsProgress = true
+            };
             _backgroundWorker.RunWorkerCompleted += BackgroundWorkerCompleted;
             _backgroundWorker.ProgressChanged += BackgroundWorkerProgressChanged;
             _backgroundWorker.DoWork += BackgroundWorkerDoWork;
@@ -703,10 +694,12 @@ namespace Sipper.ViewModel
                         "Creating chromatogram data (_peaks.txt file); this is only done once. It takes 1 - 5 min .......";
                     var deconParam = (TargetedWorkflowParameters)Workflow.WorkflowParameters;
 
-                    var peakCreationParameters = new PeakDetectAndExportWorkflowParameters();
-                    peakCreationParameters.PeakBR = deconParam.ChromGenSourceDataPeakBR;
-                    peakCreationParameters.PeakFitType = Globals.PeakFitType.QUADRATIC;
-                    peakCreationParameters.SigNoiseThreshold = deconParam.ChromGenSourceDataSigNoise;
+                    var peakCreationParameters = new PeakDetectAndExportWorkflowParameters
+                    {
+                        PeakBR = deconParam.ChromGenSourceDataPeakBR,
+                        PeakFitType = Globals.PeakFitType.QUADRATIC,
+                        SigNoiseThreshold = deconParam.ChromGenSourceDataSigNoise
+                    };
 
                     var peakCreator = new PeakDetectAndExportWorkflow(Run, peakCreationParameters, _backgroundWorker);
                     peakCreator.Execute();
@@ -749,7 +742,6 @@ namespace Sipper.ViewModel
 
             LoadPeaks();
 
-
             if (worker.CancellationPending)
             {
                 e.Cancel = true;
@@ -781,7 +773,7 @@ namespace Sipper.ViewModel
         {
             IsParametersLoaded = false;
 
-            if (String.IsNullOrEmpty(FileInputs.ParameterFilePath))
+            if (string.IsNullOrEmpty(FileInputs.ParameterFilePath))
             {
                 ParameterFileStatusText = "None loaded; using defaults";
 
@@ -857,19 +849,19 @@ namespace Sipper.ViewModel
 
         public void CopyMsDataToClipboard()
         {
-            if (MassSpecXyData == null || MassSpecXyData.Xvalues == null || MassSpecXyData.Xvalues.Length == 0) return;
+            if (MassSpecXyData?.Xvalues == null || MassSpecXyData.Xvalues.Length == 0) return;
             CopyXyDataToClipboard(MassSpecXyData.Xvalues, MassSpecXyData.Yvalues);
         }
 
         public void CopyChromatogramToClipboard()
         {
-            if (ChromXyData == null || ChromXyData.Xvalues == null || ChromXyData.Xvalues.Length == 0) return;
+            if (ChromXyData?.Xvalues == null || ChromXyData.Xvalues.Length == 0) return;
             CopyXyDataToClipboard(ChromXyData.Xvalues, ChromXyData.Yvalues);
         }
 
         public void CopyTheorMsToClipboard()
         {
-            if (TheorProfileXyData == null || TheorProfileXyData.Xvalues == null || TheorProfileXyData.Xvalues.Length == 0) return;
+            if (TheorProfileXyData?.Xvalues == null || TheorProfileXyData.Xvalues.Length == 0) return;
             CopyXyDataToClipboard(TheorProfileXyData.Xvalues, TheorProfileXyData.Yvalues);
         }
 
@@ -1331,14 +1323,9 @@ namespace Sipper.ViewModel
             //    MSGraphMaxX = MassSpecXYData.Xvalues.Max();
             //}
 
-
-
-
-
-
         }
 
-        private void SetCurrentWorkflowTarget(SipperLcmsFeatureTargetedResultDTO result)
+        private void SetCurrentWorkflowTarget(TargetedResultDTO result)
         {
             TargetBase target = new LcmsFeatureTarget();
             target.ChargeState = (short)result.ChargeState;
@@ -1360,7 +1347,7 @@ namespace Sipper.ViewModel
 
         }
 
-        private void CopyXyDataToClipboard(double[] xvals, double[] yvals)
+        private void CopyXyDataToClipboard(IReadOnlyList<double> xValues, IReadOnlyList<double> yValues)
         {
             var stringBuilder = new System.Text.StringBuilder();
 
@@ -1432,7 +1419,7 @@ namespace Sipper.ViewModel
                 return;
             }
 
-            var delimitersToCheck = new char[] { '\t', ',', '\n', ' ' };
+            var delimitersToCheck = new[] { '\t', ',', '\n', ' ' };
 
             var trimmedFilterString = TargetFilterString.Trim(delimitersToCheck);
 

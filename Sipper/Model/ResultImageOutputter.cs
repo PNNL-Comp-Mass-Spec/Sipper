@@ -99,7 +99,7 @@ namespace Sipper.Model
             {
                 if (Run == null)
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 return Run.DatasetName;

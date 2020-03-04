@@ -55,7 +55,7 @@ namespace Sipper.View
         {
             if (ViewModel == null || ViewModel.Run == null) return;
 
-            if (Int32.TryParse(txtCurrentScan.Text, out var currentScan))
+            if (int.TryParse(txtCurrentScan.Text, out var currentScan))
             {
                 if (currentScan == ViewModel.CurrentLcScan) return;
 

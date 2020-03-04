@@ -23,10 +23,10 @@ namespace Sipper.ViewModel
         private bool _isInternalPeakListUpdate;
 
         private MSGenerator _msGenerator;
-        private ScanSetFactory _scanSetFactory = new ScanSetFactory();
+        private readonly ScanSetFactory _scanSetFactory = new ScanSetFactory();
         private BackgroundWorker _backgroundWorker;
         private string _peaksFilename;
-        PeakChromatogramGenerator _peakChromatogramGenerator;
+        readonly PeakChromatogramGenerator _peakChromatogramGenerator;
         private bool _recreatePeaksFile;
 
         #region Constructors
@@ -394,9 +394,9 @@ namespace Sipper.ViewModel
 
             }
 
-            _backgroundWorker = new BackgroundWorker();
-            _backgroundWorker.WorkerSupportsCancellation = true;
-            _backgroundWorker.WorkerReportsProgress = true;
+            _backgroundWorker = new BackgroundWorker {
+                WorkerSupportsCancellation = true, WorkerReportsProgress = true
+            };
             _backgroundWorker.RunWorkerCompleted += BackgroundWorkerCompleted;
             _backgroundWorker.ProgressChanged += BackgroundWorkerProgressChanged;
             _backgroundWorker.DoWork += BackgroundWorkerDoWork;
@@ -463,8 +463,8 @@ namespace Sipper.ViewModel
                 MassSpecXYData = MassSpecXYData.TrimData(MSGraphMinX - 20, MSGraphMaxX + 20);
 
                 //Use only the data within the viewing area for peak detection
-                var xydataForPeakDetector = MassSpecXYData.TrimData(MSGraphMinX, MSGraphMaxX);
-                Peaks = PeakDetector.FindPeaks(xydataForPeakDetector.Xvalues, xydataForPeakDetector.Yvalues);
+                var xyDataForPeakDetector = MassSpecXYData.TrimData(MSGraphMinX, MSGraphMaxX);
+                Peaks = PeakDetector.FindPeaks(xyDataForPeakDetector.Xvalues, xyDataForPeakDetector.Yvalues);
 
             }
 
@@ -507,9 +507,11 @@ namespace Sipper.ViewModel
 
         private void CreateChromatogram()
         {
-            var canGenerateChrom = Run != null && Run.ResultCollection.MSPeakResultList != null &&
-                                    Run.ResultCollection.MSPeakResultList.Count > 0 && Peaks != null && Peaks.Count > 0
-                                    && SelectedPeak != null;
+            var canGenerateChrom = Run?.ResultCollection.MSPeakResultList != null &&
+                                   Run.ResultCollection.MSPeakResultList.Count > 0 &&
+                                   Peaks != null &&
+                                   Peaks.Count > 0 &&
+                                   SelectedPeak != null;
 
             if (!canGenerateChrom) return;
 
@@ -522,9 +524,10 @@ namespace Sipper.ViewModel
 
             if (ChromXyData == null)
             {
-                ChromXyData = new XYData();
-                ChromXyData.Xvalues = new double[] { lowerScan, upperScan };
-                ChromXyData.Yvalues = new double[] { 0, 0 };
+                ChromXyData = new XYData {
+                    Xvalues = new double[] {lowerScan, upperScan},
+                    Yvalues = new double[] {0, 0}
+                };
 
             }
 
@@ -542,9 +545,10 @@ namespace Sipper.ViewModel
                 PlotAreaBorderThickness = new OxyThickness(0)
             };
 
-            var series = new OxyPlot.Series.LineSeries();
-            series.MarkerSize = 1;
-            series.Color = OxyColors.Black;
+            var series = new OxyPlot.Series.LineSeries {
+                MarkerSize = 1, Color = OxyColors.Black
+            };
+
             for (var i = 0; i < ChromXyData.Xvalues.Length; i++)
             {
                 series.Points.Add(new DataPoint(ChromXyData.Xvalues[i], ChromXyData.Yvalues[i]));
@@ -594,13 +598,15 @@ namespace Sipper.ViewModel
 
         private void CreateMSPlotForScanByScanAnalysis()
         {
-            var xydata = new XYData();
-            xydata.Xvalues = MassSpecXYData == null ? new double[] { 400, 1500 } : MassSpecXYData.Xvalues;
-            xydata.Yvalues = MassSpecXYData == null ? new double[] { 0, 0 } : MassSpecXYData.Yvalues;
+            var xyData = new XYData
+            {
+                Xvalues = MassSpecXYData == null ? new double[] {400, 1500} : MassSpecXYData.Xvalues,
+                Yvalues = MassSpecXYData == null ? new double[] {0, 0} : MassSpecXYData.Yvalues
+            };
 
             var msGraphTitle = "Observed MS - Scan: " + (CurrentScanSet == null ? "" : CurrentScanSet.ToString());
 
-            var maxY = (float)xydata.GetMaxY(MSGraphMinX, MSGraphMaxX);
+            var maxY = (float)xyData.GetMaxY(MSGraphMinX, MSGraphMaxX);
 
 
             var plotModel = new PlotModel
@@ -614,12 +620,13 @@ namespace Sipper.ViewModel
 
             plotModel.MouseDown += MouseButtonDown;
 
-            var series = new OxyPlot.Series.LineSeries();
-            series.MarkerSize = 1;
-            series.Color = OxyColors.Black;
-            for (var i = 0; i < xydata.Xvalues.Length; i++)
+            var series = new OxyPlot.Series.LineSeries {
+                MarkerSize = 1, Color = OxyColors.Black
+            };
+
+            for (var i = 0; i < xyData.Xvalues.Length; i++)
             {
-                series.Points.Add(new DataPoint(xydata.Xvalues[i], xydata.Yvalues[i]));
+                series.Points.Add(new DataPoint(xyData.Xvalues[i], xyData.Yvalues[i]));
             }
 
             var xAxis = new LinearAxis
@@ -657,19 +664,13 @@ namespace Sipper.ViewModel
 
 
             ObservedIsoPlot = plotModel;
-
-
-
-
-
-
         }
 
         private void LoadPeaks()
         {
             try
             {
-                _peaksFilename = Path.Combine(this.Run.DataSetPath, this.Run.DatasetName + "_peaks.txt");
+                _peaksFilename = Path.Combine(this.Run.DatasetDirectoryPath, this.Run.DatasetName + "_peaks.txt");
                 var fiPeaksFile = new FileInfo(_peaksFilename);
                 if (!fiPeaksFile.Exists)
                 {
@@ -688,14 +689,14 @@ namespace Sipper.ViewModel
                     // Make sure we have write access to the folder with the dataset file
                     try
                     {
-                        using (var swPeaksfile = new StreamWriter(new FileStream(fiPeaksFile.FullName, FileMode.Create, FileAccess.Write)))
+                        using (var peaksFileWriter = new StreamWriter(new FileStream(fiPeaksFile.FullName, FileMode.Create, FileAccess.Write)))
                         {
-                            swPeaksfile.WriteLine("Test");
+                            peaksFileWriter.WriteLine("Test");
                         }
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        // Create the _peaks.txt file in the user's temprorary folder
+                        // Create the _peaks.txt file in the user's temporary folder
                         _peaksFilename = Path.Combine(System.IO.Path.GetTempPath(), this.Run.DatasetName + "_peaks.txt");
                         fiPeaksFile = new FileInfo(_peaksFilename);
                     }
@@ -708,11 +709,13 @@ namespace Sipper.ViewModel
                         "Creating chromatogram data (_peaks.txt file); this is only done once. It takes 1 - 5 min .......";
 
 
-                    var peakCreationParameters = new PeakDetectAndExportWorkflowParameters();
-                    peakCreationParameters.PeakBR = ChromSourcePeakDetectorPeakBr;
-                    peakCreationParameters.PeakFitType = Globals.PeakFitType.QUADRATIC;
-                    peakCreationParameters.SigNoiseThreshold = ChromSourcePeakDetectorSigNoise;
-                    peakCreationParameters.OutputFolder = fiPeaksFile.Directory.FullName;
+                    var peakCreationParameters = new PeakDetectAndExportWorkflowParameters
+                    {
+                        PeakBR = ChromSourcePeakDetectorPeakBr,
+                        PeakFitType = Globals.PeakFitType.QUADRATIC,
+                        SigNoiseThreshold = ChromSourcePeakDetectorSigNoise,
+                        OutputDirectory = fiPeaksFile.Directory.FullName
+                    };
 
                     var peakCreator = new PeakDetectAndExportWorkflow(Run, peakCreationParameters, _backgroundWorker);
                     peakCreator.Execute();
@@ -830,19 +833,17 @@ namespace Sipper.ViewModel
                 var position = e.Position;
 
                 var series = plot.GetSeriesFromPoint(position, 10);
-                if (series != null)
+                var hitResult = series?.GetNearestPoint(position, true);
+
+                if (hitResult != null && hitResult.DataPoint.IsDefined())
                 {
-                    var hitResult = series.GetNearestPoint(position, true);
+                    var dataPoint = hitResult.DataPoint;
 
-                    if (hitResult != null && hitResult.DataPoint.IsDefined())
-                    {
-                        var datapoint = hitResult.DataPoint;
+                    SelectedPeak = new Peak(dataPoint.X, (float)dataPoint.Y, 0);
 
-                        SelectedPeak = new Peak(datapoint.X, (float)datapoint.Y, 0);
-
-                        GeneralStatusMessage = "Selected point = " + datapoint.X.ToString("0.000") + ", " +
-                                       datapoint.Y.ToString("0.000");
-                    }
+                    GeneralStatusMessage = "Selected point = " +
+                                           dataPoint.X.ToString("0.000") + ", " +
+                                           dataPoint.Y.ToString("0.000");
                 }
             }
 

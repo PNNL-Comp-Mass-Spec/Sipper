@@ -129,10 +129,7 @@ namespace Sipper.Model
 
         public List<ParameterOptimizationResult> DoCalculationsOnAllFilterCombinations(string outputFileName = null)
         {
-            var isHeaderWritten = false;
-
             if (!string.IsNullOrEmpty(outputFileName) && File.Exists(outputFileName)) File.Delete(outputFileName);
-
 
             var parameterOptimizationResults = new List<ParameterOptimizationResult>();
             var numCombinations = GetNumCombinations();
@@ -239,9 +236,7 @@ namespace Sipper.Model
             }
 
             return parameterOptimizationResults;
-
         }
-
 
 
         #endregion
@@ -266,10 +261,19 @@ namespace Sipper.Model
 
         public double SumOfRatiosStep { get; set; }
 
+        /// <summary>
+        /// Interference score minimum
+        /// </summary>
         public double IscoreLower { get; set; }
 
+        /// <summary>
+        /// Interference score maximum
+        /// </summary>
         public double IscoreUpper { get; set; }
 
+        /// <summary>
+        /// Interference score step size
+        /// </summary>
         public double IscoreStep { get; set; }
 
         public int ContigScoreLower { get; set; }

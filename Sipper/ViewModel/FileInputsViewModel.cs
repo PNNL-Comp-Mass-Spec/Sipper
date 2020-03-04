@@ -9,8 +9,7 @@ namespace Sipper.ViewModel
 {
     public class FileInputsViewModel : ViewModelBase
     {
-        private FileInputsInfo _fileInputsInfo;
-
+        private readonly FileInputsInfo _fileInputsInfo;
 
         #region Constructors
 
@@ -19,13 +18,12 @@ namespace Sipper.ViewModel
             _fileInputsInfo = new FileInputsInfo();
         }
 
-        public FileInputsViewModel(FileInputsInfo fileInputsInfo):this()
+        public FileInputsViewModel(FileInputsInfo fileInputsInfo) : this()
         {
             _fileInputsInfo = fileInputsInfo ?? new FileInputsInfo();
 
         }
         #endregion
-
 
         #region Properties
 
@@ -179,12 +177,10 @@ namespace Sipper.ViewModel
                 isDir = (File.GetAttributes(fileOrFolderPath) & FileAttributes.Directory)
                         == FileAttributes.Directory;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
-
 
             if (isDir)
             {
@@ -269,7 +265,7 @@ namespace Sipper.ViewModel
         #region Private Methods
         private void SetSaveFilePath()
         {
-            if (String.IsNullOrEmpty(_fileInputsInfo.TargetsFilePath)) return;
+            if (string.IsNullOrEmpty(_fileInputsInfo.TargetsFilePath)) return;
 
             var sourceResultsFileName = Path.GetFileNameWithoutExtension(_fileInputsInfo.TargetsFilePath);
             var path = Path.GetDirectoryName(_fileInputsInfo.TargetsFilePath);
