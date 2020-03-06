@@ -55,16 +55,13 @@ namespace Sipper.View
            // ViewModel.SipperProject.FileInputs.TargetsFilePath = Properties.Settings.Default.ResultFilepath ?? "";
         }
 
-
         private void SaveSettings()
         {
 
             Properties.Settings.Default.WorkflowParameterFilepath =ViewModel.SipperProject.FileInputs.ParameterFilePath ?? "";
             //Properties.Settings.Default.ResultFilepath = ViewModel.SipperProject.FileInputs.TargetsFilePath ?? "";
 
-
             Properties.Settings.Default.Save();
-
         }
 
         private void btnOpenSimpleMsViewer(object sender, RoutedEventArgs e)
@@ -88,7 +85,6 @@ namespace Sipper.View
             {
                 ViewModel.SipperProject.SelectedFilterSettings = childWindow.ViewModel.SelectedFilterParameter;
             }
-
         }
     }
 }

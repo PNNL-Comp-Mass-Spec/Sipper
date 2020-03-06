@@ -19,9 +19,6 @@ namespace Sipper.UnitTesting.ModelTests
             var importer = new SipperResultFromTextImporter(resultFile);
                 var repo = importer.Import();
 
-
-
-
             fileInputs.TargetsFilePath =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt";
 

@@ -5,13 +5,11 @@ namespace Sipper.Model
     public class FileInputsInfo
     {
 
-
         #region Constructors
         public FileInputsInfo()
         {
             DatasetPathsList = new List<string>();
         }
-
 
         public FileInputsInfo(string datasetPath, string parameterFilePath, string targetsFilePath)
             : this()
@@ -25,9 +23,7 @@ namespace Sipper.Model
 
         #region Properties
 
-
         public string DatasetDirectory { get; set; }
-
 
         public IList<string> DatasetPathsList { get; set; }
 
@@ -44,16 +40,11 @@ namespace Sipper.Model
         #endregion
 
         #region Public Methods
-        public void AddDatasetPath(string fileOrFolderPath)
+        public void AddDatasetPath(string fileOrDirectoryPath)
         {
-            DatasetPathsList.Add(fileOrFolderPath);
+            DatasetPathsList.Add(fileOrDirectoryPath);
         }
 
-
-
-
         #endregion
-
-
     }
 }

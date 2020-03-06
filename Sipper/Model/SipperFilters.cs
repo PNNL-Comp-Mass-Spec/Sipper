@@ -32,7 +32,6 @@ namespace Sipper.Model
             }
         }
 
-
         public static void OldApplyAutoValidationCodeF2LooseFilter(List<SipperLcmsFeatureTargetedResultDTO> resultList)
         {
             foreach (var resultDto in resultList)
@@ -53,7 +52,6 @@ namespace Sipper.Model
                 resultDto.ValidationCode = ValidationCode.Yes;
             }
         }
-
 
         public static void ApplyAutoValidationCodeF2LooseFilter(SipperLcmsFeatureTargetedResultDTO result)
         {
@@ -84,7 +82,6 @@ namespace Sipper.Model
             }
         }
 
-
         public static void OldApplyAutoValidationCodeF1TightFilter(List<SipperLcmsFeatureTargetedResultDTO> resultList)
         {
             foreach (var resultDto in resultList)
@@ -106,7 +103,6 @@ namespace Sipper.Model
                 resultDto.ValidationCode = ValidationCode.Yes;
             }
         }
-
 
         public static void ApplyAutoValidationCodeF1TightFilter(SipperLcmsFeatureTargetedResultDTO result)
         {
@@ -143,8 +139,6 @@ namespace Sipper.Model
             ApplyAveragineBasedTightFilter(resultList);
         }
 
-
-
         public static void ApplyAveragineBasedLooseFilter(List<SipperLcmsFeatureTargetedResultDTO> resultList)
         {
             foreach (var resultDto in resultList)
@@ -166,7 +160,6 @@ namespace Sipper.Model
             {
                 resultDto.ValidationCode = ValidationCode.Yes;
             }
-
         }
 
         public static void ApplyAveragineBasedLooseFilter(SipperLcmsFeatureTargetedResultDTO result)
@@ -174,7 +167,5 @@ namespace Sipper.Model
             var resultList = new List<SipperLcmsFeatureTargetedResultDTO> { result };
             ApplyAveragineBasedLooseFilter(resultList);
         }
-
-
     }
 }

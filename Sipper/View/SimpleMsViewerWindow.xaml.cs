@@ -17,7 +17,6 @@ namespace Sipper.View
         public SimpleMsViewerWindow()
             : this(null)
         {
-
         }
 
         public SimpleMsViewerWindow(Project sipperProject)
@@ -28,21 +27,16 @@ namespace Sipper.View
 
             ViewModel = new SimpleMsViewerViewModel(sipperProject.Run);
             DataContext = ViewModel;
-
         }
 
-
         public SimpleMsViewerViewModel ViewModel { get; set; }
-
 
         private void btnNavigateUpClick(object sender, RoutedEventArgs e)
         {
             if (ViewModel == null || ViewModel.Run == null) return;
 
             ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.ASCENDING);
-
         }
-
 
         private void btnNavigateDownClick(object sender, RoutedEventArgs e)
         {
@@ -67,9 +61,7 @@ namespace Sipper.View
             }
 
             ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
-
         }
-
 
         private void TextBox_MouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -89,11 +81,8 @@ namespace Sipper.View
         {
             if (ViewModel == null || ViewModel.Run == null) return;
 
-
-
             ViewModel.CurrentLcScan = (int)e.NewValue;
             ViewModel.NavigateToNextMS1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
-
         }
 
         private void MsGraphMinMouseWheelEvent(object sender, MouseWheelEventArgs e)
@@ -108,10 +97,7 @@ namespace Sipper.View
             {
                 ViewModel.MSGraphMinX = ViewModel.MSGraphMinX - 1;
             }
-
-
         }
-
 
         private void MsGraphMaxMouseWheelEvent(object sender, MouseWheelEventArgs e)
         {
@@ -125,9 +111,7 @@ namespace Sipper.View
             {
                 ViewModel.MSGraphMaxX = ViewModel.MSGraphMaxX - 1;
             }
-
         }
-
 
         private void btnOpenDataset_Click(object sender, RoutedEventArgs e)
         {
@@ -137,10 +121,8 @@ namespace Sipper.View
             dlg.DefaultExt = ".txt";
             dlg.Filter = "RAW Files (*.raw)|*.raw|UIMF (*.uimf)|*.uimf|All Files (*.*)|*.*";
 
-
             // Display OpenFileDialog by calling ShowDialog method
             var result = dlg.ShowDialog();
-
 
             // Get the selected file name and display in a TextBox
             if (result == true)
@@ -152,7 +134,6 @@ namespace Sipper.View
                 slider.Minimum = ViewModel.MinLcScan;
                 slider.Maximum = ViewModel.MaxLcScan;
             }
-
         }
 
         private void txtNumMsSummed_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -167,8 +148,6 @@ namespace Sipper.View
             {
                 ViewModel.NumMSScansToSum = ViewModel.NumMSScansToSum - 2;
             }
-
-
         }
 
         private void msPeaksDatagrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -179,21 +158,13 @@ namespace Sipper.View
             {
                 ViewModel.SelectedPeak = (Peak) e.AddedItems[0];
             }
-
-
         }
 
         private void btnReCreatePeaksFile_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel == null || ViewModel.Run == null) return;
 
-
             ViewModel.LoadPeaksUsingBackgroundWorker(true);
-
         }
-
-
-
-
     }
 }

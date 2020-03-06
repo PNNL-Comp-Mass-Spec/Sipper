@@ -25,15 +25,9 @@ namespace Sipper.View
             ViewModel = new ManualViewingWithoutRawDataViewModel(project.ResultRepository, project.FileInputs);
 
             DataContext = ViewModel;
-
-
-
-
         }
 
-
         public ManualViewingWithoutRawDataViewModel ViewModel { get; set; }
-
 
         private void FileDropHandler(object sender, DragEventArgs e)
         {
@@ -44,7 +38,6 @@ namespace Sipper.View
             {
                 var fileNamesStringCollection = dataObject.GetFileDropList();
                 var bd = new StringBuilder();
-
 
                 var fileNames = fileNamesStringCollection.Cast<string>().ToList();
 
@@ -79,7 +72,6 @@ namespace Sipper.View
                 dropEnabled = false;
             }
 
-
             if (!dropEnabled)
             {
                 e.Effects = DragDropEffects.None;
@@ -92,11 +84,9 @@ namespace Sipper.View
             e.Handled = true;
         }
 
-
         private void ListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
-
 
             var firstAddedItem = e.AddedItems[0];
 
@@ -104,15 +94,12 @@ namespace Sipper.View
             {
                 ViewModel.CurrentResult = (ResultWithImageInfo)e.AddedItems[0];
             }
-
         }
 
         private void btnCreateImagesClick(object sender, RoutedEventArgs e)
         {
             ViewModel.CreateImages();
         }
-
-
 
         private void btnSaveResultsClick(object sender, RoutedEventArgs e)
         {
@@ -121,10 +108,7 @@ namespace Sipper.View
 
         private void ValidationCodeListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-
         }
-
-
 
         private void btnOpenHtmlReport_Click(object sender, RoutedEventArgs e)
         {
@@ -148,18 +132,10 @@ namespace Sipper.View
             {
                 ViewModel.CurrentResult.Result.ValidationCode = ValidationCode.Yes;
 
-
                 listViewMain.SelectedItem = ViewModel.CurrentResult;
 
                 listViewMain.Items.Refresh();
-
-
-
-
-
             }
-
-
         }
 
         public void CanExecuteCustomCommand(object sender,
@@ -167,8 +143,5 @@ namespace Sipper.View
         {
             e.CanExecute = true;
         }
-
-
-
     }
 }

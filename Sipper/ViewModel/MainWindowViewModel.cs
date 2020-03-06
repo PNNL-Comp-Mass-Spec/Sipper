@@ -25,9 +25,7 @@ namespace Sipper.ViewModel
         public Project SipperProject { get; set; }
 
         public Run Run { get; set; }
+
         #endregion
-
-
-
     }
 }

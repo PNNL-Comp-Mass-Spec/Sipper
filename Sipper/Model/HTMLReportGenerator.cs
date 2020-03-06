@@ -27,7 +27,6 @@ namespace Sipper.Model
         private const int ChromImageWidth = 275;
         private const int ChromImageHeight = 350;
 
-
         #region Constructors
 
         public HTMLReportGenerator(ICollection<ResultWithImageInfo> resultImages, FileInputsInfo fileInputs)
@@ -36,11 +35,7 @@ namespace Sipper.Model
             _fileInputsInfo = fileInputs;
 
             Check.Require(_fileInputsInfo != null, "FileInputs object is null");
-
-
-
         }
-
 
         public HTMLReportGenerator(TargetedResultRepository repo, FileInputsInfo fileInputs)
         {
@@ -57,13 +52,9 @@ namespace Sipper.Model
                 _resultsWithImageInfo.Add(r);
             }
 
-
             GetImageFileReferences(_fileInputsInfo.ResultImagesFolderPath);
             MapResultsToImages();
-
         }
-
-
 
         #endregion
 
@@ -79,7 +70,6 @@ namespace Sipper.Model
 
             stringBuilder.Append(CreateHeaderHTML());
 
-
             foreach (var resultWithImageInfo in _resultsWithImageInfo)
             {
                 stringBuilder.Append(getHTMLForTableRow(resultWithImageInfo));
@@ -92,11 +82,8 @@ namespace Sipper.Model
             using (var sw = new StreamWriter(outputHTMLFilename))
             {
                 sw.Write(stringBuilder.ToString());
-
             }
-
         }
-
 
         #endregion
 
@@ -111,10 +98,7 @@ namespace Sipper.Model
             {
                 _imageFilePaths = directoryInfo.GetFiles("*.png", SearchOption.AllDirectories).Select(p => p.FullName).ToList();
             }
-
         }
-
-
 
         private void MapResultsToImages()
         {
@@ -134,10 +118,7 @@ namespace Sipper.Model
                 result.ChromImageFilePath = expectedChromImageFilename ?? "";
                 result.TheorMSImageFilePath = expectedTheorMSImageFilename ?? "";
             }
-
-
         }
-
 
         private string CreateHeaderHTML()
         {
@@ -160,7 +141,6 @@ namespace Sipper.Model
             sb.Append("</html>");
             return sb.ToString();
         }
-
 
         private string getHTMLForTableRow(ResultWithImageInfo resultWithImageInfo)
         {
@@ -188,7 +168,6 @@ namespace Sipper.Model
                 //this is a hook so that sub-classes can add additional stuff here
                 //addHTMLForOtherData(writer);
                 writer.RenderEndTag();
-
             }
             return stringWriter.ToString();
         }
@@ -206,13 +185,11 @@ namespace Sipper.Model
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BorderColor, "Black");
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BorderStyle, "Solid");
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BackgroundColor, "White");
-
             }
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.Write("None");
             writer.RenderEndTag();
             writer.RenderEndTag();
-
 
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
             if (resultWithImageInfo.Result.ValidationCode == ValidationCode.Yes)
@@ -221,7 +198,6 @@ namespace Sipper.Model
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BorderColor, "Black");
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BorderStyle, "Solid");
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BackgroundColor, "LightGreen");
-
             }
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.Write("Yes");
@@ -235,7 +211,6 @@ namespace Sipper.Model
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BorderColor, "Black");
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BorderStyle, "Solid");
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BackgroundColor, "Tomato");
-
             }
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.Write("No");
@@ -249,20 +224,14 @@ namespace Sipper.Model
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BorderColor, "Black");
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BorderStyle, "Solid");
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BackgroundColor, "LightYellow");
-
             }
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.Write("Maybe");
             writer.RenderEndTag();
             writer.RenderEndTag();
 
-
             writer.RenderEndTag();
-
-
-
         }
-
 
         private void addResultInfoTable(HtmlTextWriter writer, ResultWithImageInfo resultWithImageInfo)
         {
@@ -270,11 +239,7 @@ namespace Sipper.Model
             writer.AddAttribute(HtmlTextWriterAttribute.Width, "200");
             writer.RenderBeginTag(HtmlTextWriterTag.Table);
 
-
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
-
-
-
 
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.Write("TargetID");
@@ -289,8 +254,6 @@ namespace Sipper.Model
             writer.Write(resultWithImageInfo.Result.MatchedMassTagID);
             writer.RenderEndTag();
             writer.RenderEndTag();
-
-
 
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
@@ -307,7 +270,6 @@ namespace Sipper.Model
             writer.RenderEndTag();
             writer.RenderEndTag();
 
-
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.Write("MonoMass");
@@ -322,7 +284,6 @@ namespace Sipper.Model
             writer.Write(resultWithImageInfo.Result.MonoMZ.ToString("0.0000"));
             writer.RenderEndTag();
             writer.RenderEndTag();
-
 
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
@@ -353,7 +314,6 @@ namespace Sipper.Model
             writer.Write(resultWithImageInfo.Result.AreaUnderRatioCurveRevised.ToString("0.0"));
             writer.RenderEndTag();
             writer.RenderEndTag();
-
 
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
@@ -388,13 +348,10 @@ namespace Sipper.Model
             writer.RenderEndTag();
         }
 
-
         protected void addHTMLForMSImage(HtmlTextWriter writer, ResultWithImageInfo resultWithImageInfo)
         {
 
             var relFilePath = GetRelativeFilePath(resultWithImageInfo.MSImageFilePath);
-
-
 
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.AddAttribute(HtmlTextWriterAttribute.Href, resultWithImageInfo.MSImageFilePath);
@@ -420,16 +377,12 @@ namespace Sipper.Model
             }
 
             return string.Empty;
-
-
         }
-
 
         protected void addHTMLForChromImage(HtmlTextWriter writer, ResultWithImageInfo resultWithImageInfo)
         {
 
             var relFilePath = GetRelativeFilePath(resultWithImageInfo.ChromImageFilePath);
-
 
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.AddAttribute(HtmlTextWriterAttribute.Href, relFilePath);
@@ -443,11 +396,9 @@ namespace Sipper.Model
             writer.RenderEndTag();
         }
 
-
         protected void addHTMLForTheorMSImage(HtmlTextWriter writer, ResultWithImageInfo resultWithImageInfo)
         {
             var relFilePath = GetRelativeFilePath(resultWithImageInfo.TheorMSImageFilePath);
-
 
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.AddAttribute(HtmlTextWriterAttribute.Href, relFilePath);
@@ -461,13 +412,6 @@ namespace Sipper.Model
             writer.RenderEndTag();
         }
 
-
-
-
-
-
-
         #endregion
-
     }
 }

@@ -20,18 +20,14 @@ namespace Sipper.Model
             foreach (var sipperLcmsFeatureTargetedResultDto in allResults)
             {
                 ApplyFilteringScheme1(sipperLcmsFeatureTargetedResultDto);
-
             }
-
         }
         public static void ApplyFilteringScheme2(List<SipperLcmsFeatureTargetedResultDTO> allResults)
         {
             foreach (var sipperLcmsFeatureTargetedResultDto in allResults)
             {
                 ApplyFilteringScheme2(sipperLcmsFeatureTargetedResultDto);
-
             }
-
         }
 
         public static void ApplyFilteringScheme1(SipperLcmsFeatureTargetedResultDTO result)
@@ -73,17 +69,14 @@ namespace Sipper.Model
                             {
                                 result.PassesFilter = true;
                             }
-
                         }
                         //all other results -
                         else if (result.RSquaredValForRatioCurve > 0.975 && result.IScore <= 0.25)
                         {
                             result.PassesFilter = true;
                         }
-
                     }
                 }
-
             }
         }
 
@@ -126,26 +119,21 @@ namespace Sipper.Model
                             {
                                 result.PassesFilter = true;
                             }
-
                         }
                         //all other results -
                         else if (result.RSquaredValForRatioCurve > 0.95 && result.IScore <= 0.25)
                         {
                             result.PassesFilter = true;
                         }
-
                     }
                 }
-
             }
         }
-
 
         #endregion
 
         #region Private Methods
 
         #endregion
-
     }
 }

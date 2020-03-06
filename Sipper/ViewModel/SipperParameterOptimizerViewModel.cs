@@ -29,7 +29,6 @@ namespace Sipper.ViewModel
             FileLogger.ChangeLogFileBaseName(@"Logs\Sipper", appendDateToBaseName: true);
         }
 
-
         #endregion
 
         #region Properties
@@ -61,8 +60,6 @@ namespace Sipper.ViewModel
             }
         }
 
-
-
         private string _labeledFilePath;
         public string LabeledFilePath
         {
@@ -73,11 +70,8 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("LabeledFilePath");
 
                 TryLoadLabeledResults(_labeledFilePath);
-
-
             }
         }
-
 
         private string _outputFileName;
         public string OutputFileName
@@ -90,9 +84,7 @@ namespace Sipper.ViewModel
             }
         }
 
-
         public XYData RocCurve { get; set; }
-
 
         private void UpdateOutputFileName()
         {
@@ -110,11 +102,8 @@ namespace Sipper.ViewModel
 
                             OutputFileName = outputPath + Path.DirectorySeparatorChar +
                                              "SipperFilterOptimizationOutput.txt";
-
                         }
                     }
-
-
                 }
             }
         }
@@ -133,9 +122,7 @@ namespace Sipper.ViewModel
             {
                 _filterOptimizer.LoadLabeledResults(labeledFilePath);
             }
-
         }
-
 
         private double _maxAllowedFalsePositiveRate;
         public double MaxAllowedFalsePositiveRate
@@ -146,12 +133,9 @@ namespace Sipper.ViewModel
                 _maxAllowedFalsePositiveRate = value;
                 OnPropertyChanged("MaxAllowedFalsePositiveRate");
 
-
                 UpdateFilteredParameters();
-
             }
         }
-
 
         private ParameterOptimizationResult _selectedFilterParameter;
         /// <summary>
@@ -166,7 +150,6 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("SelectedFilterParameter");
 
                 SelectedFilterReportString = GenerateFilterReportString(SelectedFilterParameter);
-
             }
         }
 
@@ -180,7 +163,6 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("SelectedFilterReportString");
             }
         }
-
 
         private ParameterOptimizationResult _currentFilterParameter;
         /// <summary>
@@ -197,7 +179,6 @@ namespace Sipper.ViewModel
                 CurrentFilterReportString = GenerateFilterReportString(CurrentFilterParameter);
             }
         }
-
 
         private string _currentFilterReportString;
         public string CurrentFilterReportString
@@ -256,11 +237,7 @@ namespace Sipper.ViewModel
             plotModel.Axes.Add(xAxis);
             plotModel.Axes.Add(yAxis);
 
-
             RocPlot = plotModel;
-
-
-
         }
 
         public void SaveRocCurve(string fileName)
@@ -287,14 +264,8 @@ namespace Sipper.ViewModel
                 {
                     writer.WriteLine(xyData.Xvalues[i] + "\t" + xyData.Yvalues[i]);
                 }
-
-
             }
-
-
-
         }
-
 
         private PlotModel _rocPlot;
         public PlotModel RocPlot
@@ -307,7 +278,6 @@ namespace Sipper.ViewModel
             }
         }
 
-
         private List<ParameterOptimizationResult> _filteredParameters;
         public List<ParameterOptimizationResult> FilteredParameters
         {
@@ -318,7 +288,6 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("FilteredParameters");
             }
         }
-
 
         public void DoCalculationsOnAllParameterCombinations()
         {
@@ -338,8 +307,6 @@ namespace Sipper.ViewModel
         }
 
         protected List<ParameterOptimizationResult> AllParameterResults { get; set; }
-
-
 
         public bool CanExecuteMainCalculation()
         {
@@ -377,7 +344,6 @@ namespace Sipper.ViewModel
             sb.Append("False positive rate = " + selectedResult.FalsePositiveRate.ToString("0.###"));
 
             return sb.ToString();
-
         }
     }
 }

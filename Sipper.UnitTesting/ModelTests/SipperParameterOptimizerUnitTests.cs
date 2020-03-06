@@ -19,27 +19,20 @@ namespace Sipper.UnitTesting.ModelTests
             //labeledResultsFilePath =
             //    @"D:\Data\Sipper\Yellow_C13_2009Study\Results_2013_04_09\yellow_c13_results\_yellow_c13_merged_results.txt";
 
-
-
             var filterOptimizer = new SipperFilterOptimizer();
 
             filterOptimizer.LoadUnlabeledResults(unlabeledResultsFilePath);
             filterOptimizer.LoadLabeledResults(labeledResultsFilePath);
 
-
             var outputFileName = @"D:\Data\Sipper\Yellow_C13_2009Study\SipperFilterOptimizationOutput.txt";
             var results = filterOptimizer.DoCalculationsOnAllFilterCombinations(outputFileName);
 
-
             var rocData=  filterOptimizer.GetRocCurve(results);
-
 
             for (var i = 0; i < rocData.Xvalues.Length; i++)
             {
                 Console.WriteLine(rocData.Xvalues[i] + "\t" + rocData.Yvalues[i]);
             }
-
         }
-
     }
 }

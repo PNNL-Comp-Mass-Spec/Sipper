@@ -18,12 +18,8 @@ namespace Sipper.UnitTesting.ViewModelTests
             var testParameterFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
 
-
             var testResultFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt";
-
-
-
 
             var fileInputs = new FileInputsInfo();
             fileInputs.ParameterFilePath = testParameterFile;
@@ -31,12 +27,9 @@ namespace Sipper.UnitTesting.ViewModelTests
 
             var viewModel = new ViewAndAnnotateViewModel(fileInputs);
 
-
             viewModel.LoadResults(testResultFile);
             Assert.IsNotEmpty(viewModel.Results);
         }
-
-
 
         [Test]
         public void loadParametersTest1()
@@ -51,9 +44,7 @@ namespace Sipper.UnitTesting.ViewModelTests
 
             Assert.IsNotNull(viewModel.Workflow.WorkflowParameters);
             Assert.AreEqual(2,((TargetedWorkflowParameters)(viewModel.Workflow.WorkflowParameters)).MSPeakDetectorPeakBR);
-
         }
-
 
         [Test]
         public void executeWorkflowTest1()
@@ -99,8 +90,6 @@ namespace Sipper.UnitTesting.ViewModelTests
             viewModel.NavigateToNextMs1MassSpectrum();
             Assert.AreEqual(3750, viewModel.CurrentLcScan);
             Console.WriteLine("After manual navigating... CurrentScanSet= " + viewModel.CurrentLcScan);
-
         }
-
     }
 }

@@ -37,7 +37,6 @@ namespace Sipper.ViewModel
         private string _peaksFilename;
         private MSGenerator _msGenerator;
 
-
         #region Constructors
 
         public ViewAndAnnotateViewModel()
@@ -63,7 +62,6 @@ namespace Sipper.ViewModel
 
             LoadParameters();
             UpdateGraphRelatedProperties();
-
         }
 
         public ViewAndAnnotateViewModel(TargetedResultRepository resultRepository, FileInputsInfo fileInputs = null)
@@ -76,7 +74,6 @@ namespace Sipper.ViewModel
             {
                 OnAllDataLoadedAndReady(new EventArgs());
             }
-
         }
 
         #endregion
@@ -123,12 +120,7 @@ namespace Sipper.ViewModel
             {
                 OnAllDataLoadedAndReady(new EventArgs());
             }
-
-
-
-
         }
-
 
         #endregion
 
@@ -164,7 +156,6 @@ namespace Sipper.ViewModel
                 return "LOADED.";
             }
         }
-
 
         private double _massSpecVisibleWindowWidth;
         public double MassSpecVisibleWindowWidth
@@ -276,7 +267,6 @@ namespace Sipper.ViewModel
                 if (CurrentResult == null) return string.Empty;
 
                 return "XIC m/z " + CurrentResult.MonoMZ.ToString("0.0000");
-
             }
         }
 
@@ -314,7 +304,6 @@ namespace Sipper.ViewModel
                 if (value == ParameterFileStatusText) return;
                 _parameterFileStatusText = value;
                 OnPropertyChanged("ParameterFileStatusText");
-
             }
         }
 
@@ -337,7 +326,6 @@ namespace Sipper.ViewModel
             {
                 _generalStatusMessage = value;
                 { OnPropertyChanged("GeneralStatusMessage"); }
-
             }
         }
 
@@ -351,7 +339,6 @@ namespace Sipper.ViewModel
                 }
                 return string.Empty;
             }
-
         }
 
         public string PeptideSequence
@@ -363,7 +350,6 @@ namespace Sipper.ViewModel
                     return Workflow.Result.Target.Code;
                 }
                 return string.Empty;
-
             }
         }
 
@@ -388,7 +374,6 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("MassSpecXyData");
             }
         }
-
 
         public XYData SubtractedMassSpecXYData { get; set; }
 
@@ -435,7 +420,6 @@ namespace Sipper.ViewModel
                 if (Run == null) return 1;
                 return Run.MinLCScan;
             }
-
         }
 
         public int MaxLcScan
@@ -445,7 +429,6 @@ namespace Sipper.ViewModel
                 if (Run == null) return 1;
                 return Run.MaxLCScan;
             }
-
         }
 
         public int CurrentLcScan
@@ -457,7 +440,6 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("CurrentLcScan");
             }
         }
-
 
         public XYData LabelDistributionXyData { get; set; }
 
@@ -509,7 +491,6 @@ namespace Sipper.ViewModel
 
         #region Public Methods
 
-
         public void NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode selectionMode = Globals.ScanSelectionMode.ASCENDING)
         {
             if (Run == null) return;
@@ -533,9 +514,7 @@ namespace Sipper.ViewModel
             if (_msGenerator == null)
             {
                 _msGenerator = MSGeneratorFactory.CreateMSGenerator(Run.MSFileType);
-
             }
-
 
             var currentScanSet = _scanSetFactory.CreateScanSet(Run, CurrentLcScan, workflowParameters.NumMSScansToSum);
             MassSpecXyData = _msGenerator.GenerateMS(Run, currentScanSet);
@@ -594,7 +573,6 @@ namespace Sipper.ViewModel
                                        theoreticalXAxis.ActualMaximum);
                     ObservedIsoPlot.InvalidatePlot(false);
                     isInternalChange = false;
-
                 };
 
             observedXAxis.AxisChanged += (s, e) =>
@@ -608,7 +586,6 @@ namespace Sipper.ViewModel
                     TheorIsoPlot.InvalidatePlot(false);
                     isInternalChange = false;
                 };
-
         }
 
         public void LoadRun(string fileOrFolderPath)
@@ -647,7 +624,6 @@ namespace Sipper.ViewModel
             {
                 GeneralStatusMessage = "Patience please. Already busy...";
                 return;
-
             }
 
             _backgroundWorker = new BackgroundWorker
@@ -660,8 +636,6 @@ namespace Sipper.ViewModel
             _backgroundWorker.DoWork += BackgroundWorkerDoWork;
 
             _backgroundWorker.RunWorkerAsync();
-
-
         }
 
         private void LoadPeaks()
@@ -715,7 +689,6 @@ namespace Sipper.ViewModel
             {
                 GeneralStatusMessage = "No Chromatogram data!!! Check your _peaks.txt file for correct format.";
             }
-
         }
 
         void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
@@ -760,7 +733,6 @@ namespace Sipper.ViewModel
                 ParameterFileStatusText = "None loaded; using defaults";
 
                 Workflow.WorkflowParameters = new SipperTargetedWorkflowParameters();
-
             }
             else
             {
@@ -771,8 +743,6 @@ namespace Sipper.ViewModel
                     Workflow.WorkflowParameters.LoadParameters(FileInputs.ParameterFilePath);
                     ParameterFileStatusText = fileInfo.Name + " LOADED";
 
-
-
                     IsParametersLoaded = true;
                 }
                 else
@@ -780,15 +750,9 @@ namespace Sipper.ViewModel
                     Workflow.WorkflowParameters = new SipperTargetedWorkflowParameters();
                     ParameterFileStatusText = "None loaded; using defaults";
                 }
-
-
             }
 
             Workflow.IsWorkflowInitialized = false;    //important... forces workflow to be reinitialized with new parameters
-
-
-
-
         }
 
         public void LoadResults(string resultFile)
@@ -807,8 +771,6 @@ namespace Sipper.ViewModel
             }
 
             SetResults(_resultRepositorySource.Results);
-
-
         }
 
         public void SaveResults()
@@ -825,8 +787,6 @@ namespace Sipper.ViewModel
             }
 
             GeneralStatusMessage = "Results saved to: " + Path.GetFileName(FileInputs.ResultsSaveFilePath);
-
-
         }
 
         public void CopyMsDataToClipboard()
@@ -873,7 +833,6 @@ namespace Sipper.ViewModel
                                   Workflow.Result.Target.MZ.ToString("0.0000") + "; z=" +
                                   Workflow.Result.Target.ChargeState;
 
-
             var plotModel = new PlotModel
             {
                 Title = graphTitle,
@@ -910,7 +869,6 @@ namespace Sipper.ViewModel
                 AbsoluteMinimum = 0
             };
 
-
             var maxY = xyData.GetMaxY();
             yAxis.Maximum = maxY + maxY * 0.05;
             yAxis.AxisChanged += OnYAxisChange;
@@ -920,11 +878,9 @@ namespace Sipper.ViewModel
             yAxis.AxislineStyle = LineStyle.Solid;
             yAxis.AxislineThickness = 1;
 
-
             plotModel.Series.Add(series);
             plotModel.Axes.Add(xAxis);
             plotModel.Axes.Add(yAxis);
-
 
             ChromatogramPlot = plotModel;
         }
@@ -940,7 +896,6 @@ namespace Sipper.ViewModel
             var msGraphTitle = "Observed MS - Scan: " + scanSet;
 
             MsGraphMaxY = (float)xyData.GetMaxY(MsGraphMinX, MsGraphMaxX);
-
 
             var plotModel = new PlotModel
             {
@@ -995,10 +950,7 @@ namespace Sipper.ViewModel
             plotModel.Axes.Add(xAxis);
             plotModel.Axes.Add(yAxis);
 
-
             ObservedIsoPlot = plotModel;
-
-
         }
 
         private void CreateObservedIsotopicProfilePlot()
@@ -1089,10 +1041,7 @@ namespace Sipper.ViewModel
             plotModel.Axes.Add(xAxis);
             plotModel.Axes.Add(yAxis);
 
-
             ObservedIsoPlot = plotModel;
-
-
         }
 
         private void CreateTheorIsotopicProfilePlot()
@@ -1180,7 +1129,6 @@ namespace Sipper.ViewModel
                 StringFormat = "0.0E0"
             };
 
-
             //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
             //yAxis.AbsoluteMaximum = maxIntensity + (maxIntensity * .05);
             yAxis.AxisChanged += OnYAxisChange;
@@ -1190,15 +1138,12 @@ namespace Sipper.ViewModel
             yAxis.AxislineStyle = LineStyle.Solid;
             yAxis.AxislineThickness = 1;
 
-
             plotModel.Series.Add(series);
 
             plotModel.Axes.Add(xAxis);
             plotModel.Axes.Add(yAxis);
 
             TheorIsoPlot = plotModel;
-
-
         }
 
         private void CreateChromCorrPlot()
@@ -1235,7 +1180,6 @@ namespace Sipper.ViewModel
                 Color = OxyColors.Black
             };
 
-
             for (var i = 0; i < xyData.Xvalues.Length; i++)
             {
                 series.Points.Add(new DataPoint(xyData.Xvalues[i], xyData.Yvalues[i]));
@@ -1247,7 +1191,6 @@ namespace Sipper.ViewModel
                 Title = "isotopic peak #"
             };
 
-
             var yAxis = new LinearAxis
             {
                 Position = AxisPosition.Left,
@@ -1258,7 +1201,6 @@ namespace Sipper.ViewModel
             xAxis.AxislineThickness = 1;
             yAxis.AxislineStyle = LineStyle.Solid;
             yAxis.AxislineThickness = 1;
-
 
             xAxis.FontSize = 8;
             xAxis.MajorStep = 1;
@@ -1293,13 +1235,14 @@ namespace Sipper.ViewModel
 
             RatioXyData = new XYData
             {
-                Xvalues = Workflow.RatioVals == null ? new double[] {0, 1, 2, 3, 4} : Workflow.RatioVals.Xvalues,
-                Yvalues = Workflow.RatioVals == null ? new double[] {0, 0, 0, 0, 0} : Workflow.RatioVals.Yvalues
+                Xvalues = Workflow.RatioVals == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.RatioVals.Xvalues,
+                Yvalues = Workflow.RatioVals == null ? new double[] { 0, 0, 0, 0, 0 } : Workflow.RatioVals.Yvalues
             };
 
-            RatioLogsXyData = new XYData {
-                Xvalues = new double[] {0, 1, 2, 3, 4},
-                Yvalues = new double[] {0, 0, 0, 0, 0}
+            RatioLogsXyData = new XYData
+            {
+                Xvalues = new double[] { 0, 1, 2, 3, 4 },
+                Yvalues = new double[] { 0, 0, 0, 0, 0 }
             };
 
             LabelDistributionXyData = new XYData();
@@ -1318,8 +1261,6 @@ namespace Sipper.ViewModel
                 LabelDistributionXyData.Yvalues = new double[] { 0, 0, 0, 0 };
             }
 
-
-
             //if (CurrentResultInfo != null)
             //{
             //    MSGraphMinX = CurrentResultInfo.MonoMZ - 1.75;
@@ -1330,7 +1271,6 @@ namespace Sipper.ViewModel
             //    MSGraphMinX = MassSpecXYData.Xvalues.Min();
             //    MSGraphMaxX = MassSpecXYData.Xvalues.Max();
             //}
-
         }
 
         private void SetCurrentWorkflowTarget(TargetedResultDTO result)
@@ -1342,7 +1282,6 @@ namespace Sipper.ViewModel
             target.EmpiricalFormula = result.EmpiricalFormula;
             target.ID = (int)result.TargetID;
 
-
             target.IsotopicProfile = null;   //workflow will determine this
 
             target.MZ = result.MonoMZ;
@@ -1350,9 +1289,6 @@ namespace Sipper.ViewModel
             target.ScanLCTarget = result.ScanLC;
 
             Run.CurrentMassTag = target;
-
-
-
         }
 
         private void CopyXyDataToClipboard(IReadOnlyList<double> xValues, IReadOnlyList<double> yValues)
@@ -1401,7 +1337,6 @@ namespace Sipper.ViewModel
                     mostFrequentDelimiter = delimiter;
                     maxCount = count;
                 }
-
             }
 
             return mostFrequentDelimiter;
@@ -1440,21 +1375,16 @@ namespace Sipper.ViewModel
             {
                 var parsedFilterStringArray = trimmedFilterString.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
                 filterList.AddRange(parsedFilterStringArray);
-
             }
             else
             {
                 filterList.Add(trimmedFilterString);
             }
 
-
-
             var filteredResults = new List<TargetedResultDTO>();
             foreach (var filter in filterList)
             {
                 var isNumerical = int.TryParse(filter, out var myInt);
-
-
 
                 if (isNumerical)
                 {
@@ -1464,14 +1394,9 @@ namespace Sipper.ViewModel
                 {
                     filteredResults.AddRange(_resultRepositorySource.Results.Where(p => p.Code.Contains(filter)));
                 }
-
             }
 
             SetResults(filteredResults);
-
-
-
-
 
             //split string
 
@@ -1481,7 +1406,5 @@ namespace Sipper.ViewModel
         }
 
         #endregion
-
-
     }
 }

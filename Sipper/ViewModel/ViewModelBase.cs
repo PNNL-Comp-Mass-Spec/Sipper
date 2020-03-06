@@ -8,10 +8,7 @@ namespace Sipper.ViewModel
     {
 
         #region Constructors
-        protected ViewModelBase()
-        {
 
-        }
         #endregion
 
         #region Properties
@@ -35,10 +32,9 @@ namespace Sipper.ViewModel
             {
                 var msg = "Invalid property name: " + propertyName;
 
-                if (this.ThrowOnInvalidPropertyName)
+                if (ThrowOnInvalidPropertyName)
                     throw new Exception(msg);
-                else
-                    Debug.Fail(msg);
+                Debug.Fail(msg);
             }
         }
 
@@ -62,16 +58,15 @@ namespace Sipper.ViewModel
         /// <param name="propertyName">The property that has a new value.</param>
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            this.VerifyPropertyName(propertyName);
+            VerifyPropertyName(propertyName);
 
-            var handler = this.PropertyChanged;
+            var handler = PropertyChanged;
             if (handler != null)
             {
                 var e = new PropertyChangedEventArgs(propertyName);
                 handler(this, e);
             }
         }
-
 
         #endregion
 

@@ -9,7 +9,6 @@ namespace Sipper.Model
         public ResultWithImageInfo(SipperLcmsFeatureTargetedResultDTO result)
         {
             Result = result;
-
         }
         #endregion
 

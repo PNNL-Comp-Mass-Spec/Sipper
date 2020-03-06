@@ -17,12 +17,9 @@ namespace Sipper.ViewModel
 
         protected TargetedWorkflowParameters WorkflowParameters { get; set; }
 
-
         public double ChromToleranceInPPM { get; set; }
 
-
         //TODO:  fill in others
-
 
         #endregion
 

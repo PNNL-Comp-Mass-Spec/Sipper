@@ -13,10 +13,7 @@ namespace Sipper.View
     {
         public FilterParameterOptimizerWindow():this(null)
         {
-
-
         }
-
 
         public FilterParameterOptimizerWindow(Project sipperProject)
         {
@@ -26,7 +23,6 @@ namespace Sipper.View
 
             ViewModel = new SipperParameterOptimizerViewModel();
             DataContext = ViewModel;
-
         }
 
         public SipperParameterOptimizerViewModel ViewModel { get; set; }
@@ -45,7 +41,6 @@ namespace Sipper.View
             {
                 ViewModel.UnlabeledFilePath = openFileDialog.FileName;
             }
-
         }
 
         private void btnSelectLabeledFile_Click(object sender, RoutedEventArgs e)
@@ -72,15 +67,11 @@ namespace Sipper.View
 
         private void btnUpdateMaxFalsePos_Click(object sender, RoutedEventArgs e)
         {
-
         }
 
         private void filterDatagrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
-
         }
-
 
         private void BtnSetFavoriteFilter_OnClick(object sender, RoutedEventArgs e)
         {

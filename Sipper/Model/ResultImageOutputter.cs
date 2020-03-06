@@ -24,14 +24,11 @@ namespace Sipper.Model
         private TargetedWorkflowExecutorProgressInfo _progressInfo = new TargetedWorkflowExecutorProgressInfo();
         private const double DefaultMSPeakWidth = 0.01;
 
-
         private int _subFolderCounter;   //keeps track of which folder images are being written to
-
 
         private MSGraphControl _msGraph = new MSGraphControl();
         private ChromGraphControl _chromGraph = new ChromGraphControl();
         private MSGraphControl _theorMSGraph = new MSGraphControl();
-
 
         #region Constructors
         public ResultImageOutputter(FileInputsInfo fileInputs, BackgroundWorker worker = null)
@@ -48,21 +45,15 @@ namespace Sipper.Model
             NumResultsPerFolder = 200;
 
             InitializeGraphs();
-
-
-
         }
 
         private void InitializeGraphs()
         {
             UpdateGraphRelatedProperties();
 
-
             //something not working with the size - it's not being affected by this...
             _msGraph.zedGraphControl1.Width = 600;
             _msGraph.zedGraphControl1.Height = 400;
-
-
 
             //For some reason, in the first drawing of the graph, the graph ranges aren't updated. So we
             //will do that here so that subsequent drawings will have the correct ranges
@@ -87,11 +78,8 @@ namespace Sipper.Model
             {
                 _run = value;
                 Workflow.Run = _run;
-
             }
         }
-
-
 
         public string CurrentDatasetName
         {
@@ -103,12 +91,8 @@ namespace Sipper.Model
                 }
 
                 return Run.DatasetName;
-
             }
         }
-
-
-
 
         private SipperTargetedWorkflowParameters _workflowParameters;
         public SipperTargetedWorkflowParameters WorkflowParameters
@@ -117,8 +101,6 @@ namespace Sipper.Model
             set { _workflowParameters = value; }
         }
 
-
-
         private SipperTargetedWorkflow _workflow;
         public SipperTargetedWorkflow Workflow
         {
@@ -126,7 +108,6 @@ namespace Sipper.Model
             set
             {
                 _workflow = value;
-
             }
         }
 
@@ -135,12 +116,9 @@ namespace Sipper.Model
         /// </summary>
         public int NumResultsPerFolder { get; set; }   //
 
-
-
         #endregion
 
         #region Public Methods
-
 
         public void Execute()
         {
@@ -149,7 +127,6 @@ namespace Sipper.Model
             var importer = new SipperResultFromTextImporter(_fileInputs.TargetsFilePath);
             _resultRepositorySource = importer.Import();
 
-
             //Load Parameters
             WorkflowParameters.LoadParameters(_fileInputs.ParameterFilePath);
 
@@ -157,7 +134,6 @@ namespace Sipper.Model
             var sortedDatasets = (from n in _resultRepositorySource.Results orderby n.DatasetName select n);
 
             //Set output folder
-
 
             //iterate over results
 
@@ -168,7 +144,6 @@ namespace Sipper.Model
                 resultCounter++;
                 CurrentResult = result;
 
-
                 if (result.DatasetName != CurrentDatasetName)
                 {
                     if (Run != null)
@@ -176,10 +151,8 @@ namespace Sipper.Model
                         Run.Close();
                     }
 
-
                     InitializeRun(result.DatasetName);
                 }
-
 
                 SetCurrentWorkflowTarget(result);
 
@@ -197,19 +170,13 @@ namespace Sipper.Model
 
                 TheorProfileXYData = TheorXYDataCalculationUtilities.GetTheoreticalIsotopicProfileXYData(Workflow.Result.Target.IsotopicProfile, fwhm);
 
-
                 if (resultCounter % NumResultsPerFolder == 0)
                 {
                     _subFolderCounter++;
                 }
 
                 OutputImages();
-
             }
-
-
-
-
         }
 
         protected SipperLcmsFeatureTargetedResultDTO CurrentResult { get; set; }
@@ -219,7 +186,6 @@ namespace Sipper.Model
 
             if (string.IsNullOrEmpty(_fileInputs.ResultImagesFolderPath))
             {
-
             }
 
             if (!Directory.Exists(_fileInputs.ResultImagesFolderPath))
@@ -229,7 +195,6 @@ namespace Sipper.Model
                                    _subFolderCounter.ToString().PadLeft(2, '0');
 
             if (!Directory.Exists(subfolderPath)) Directory.CreateDirectory(subfolderPath);
-
 
             var baseFilename = subfolderPath + Path.DirectorySeparatorChar + CurrentResult.DatasetName + "_ID" + CurrentResult.TargetID;
 
@@ -244,8 +209,6 @@ namespace Sipper.Model
 
             var chromTitleText = "XIC m/z " + (CurrentResult == null ? "" : CurrentResult.MonoMZ.ToString("0.000"));
             //_chromGraph.AddAnnotationRelativeAxis(chromTitleText, 0.5, 0, 8f);
-
-
 
             _msGraph.zedGraphControl1.GraphPane.GraphObjList.Clear();
             _msGraph.GenerateGraph(MassSpecXYData.Xvalues, MassSpecXYData.Yvalues, MSGraphMinX, MSGraphMaxX);
@@ -263,7 +226,6 @@ namespace Sipper.Model
             var graphTitle = "Scan " + (CurrentResult == null ? "" : CurrentResult.ScanLC.ToString("0"));
             _msGraph.AddAnnotationRelativeAxis(graphTitle, 0.3, 0, 8f);
 
-
             _theorMSGraph.zedGraphControl1.GraphPane.GraphObjList.Clear();
             _theorMSGraph.GenerateGraph(TheorProfileXYData.Xvalues, TheorProfileXYData.Yvalues, MSGraphMinX, MSGraphMaxX);
 
@@ -277,14 +239,12 @@ namespace Sipper.Model
                 }
             }
 
-
             var theorGraphTitle = "Formula " + (CurrentResult == null ? "" : CurrentResult.EmpiricalFormula);
             _theorMSGraph.AddAnnotationRelativeAxis(theorGraphTitle, 0.3, 0, 8);
 
             _msGraph.SaveGraph(msfilename);
             _chromGraph.SaveGraph(chromFilename);
             _theorMSGraph.SaveGraph(theorMSFilename);
-
         }
 
         protected XYData TheorProfileXYData { get; set; }
@@ -295,12 +255,9 @@ namespace Sipper.Model
 
         public double ChromGraphXWindowWidth { get; set; }
 
-
-
         public double MSGraphMaxX { get; set; }
 
         public double MSGraphMinX { get; set; }
-
 
         private void UpdateGraphRelatedProperties()
         {
@@ -311,8 +268,6 @@ namespace Sipper.Model
             MassSpecXYData = new XYData();
             MassSpecXYData.Xvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Xvalues;
             MassSpecXYData.Yvalues = Workflow.MassSpectrumXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.MassSpectrumXYData.Yvalues;
-
-
 
             if (CurrentResult != null)
             {
@@ -325,7 +280,6 @@ namespace Sipper.Model
                 MSGraphMaxX = MassSpecXYData.Xvalues.Max();
             }
 
-
             if (CurrentResult != null)
             {
                 ChromGraphMinX = CurrentResult.ScanLC - ChromGraphXWindowWidth / 2;
@@ -336,15 +290,11 @@ namespace Sipper.Model
                 ChromGraphMinX = ChromXYData.Xvalues.Min();
                 ChromGraphMaxX = ChromXYData.Xvalues.Max();
             }
-
-
-
         }
 
         protected XYData MassSpecXYData { get; set; }
 
         protected XYData ChromXYData { get; set; }
-
 
         private void SetCurrentWorkflowTarget(SipperLcmsFeatureTargetedResultDTO result)
         {
@@ -355,7 +305,6 @@ namespace Sipper.Model
             target.EmpiricalFormula = result.EmpiricalFormula;
             target.ID = (int)result.TargetID;
 
-
             target.IsotopicProfile = null;   //workflow will determine this
 
             target.MZ = result.MonoMZ;
@@ -363,11 +312,7 @@ namespace Sipper.Model
             target.ScanLCTarget = result.ScanLC;
 
             Run.CurrentMassTag = target;
-
-
-
         }
-
 
         private void InitializeRun(string datasetName)
         {
@@ -376,9 +321,7 @@ namespace Sipper.Model
             //currently works for datasets that have a File reference as
             //opposed to datasets having a Folder reference (Agilent/Bruker)
 
-
             var dirInfo = new DirectoryInfo(_fileInputs.DatasetDirectory);
-
 
             var fileInfo = dirInfo.GetFiles(datasetName + ".*");
 
@@ -399,7 +342,6 @@ namespace Sipper.Model
                 ReportGeneralProgress("Done creating XIC source data.");
             }
 
-
             string baseFileName;
             baseFileName = this.Run.DatasetDirectoryPath + "\\" + this.Run.DatasetName;
 
@@ -418,12 +360,8 @@ namespace Sipper.Model
                 return;
             }
 
-
             ReportGeneralProgress(DateTime.Now + "\tPeak Loading complete.");
             return;
-
-
-
         }
 
         #endregion
@@ -441,10 +379,7 @@ namespace Sipper.Model
                 _progressInfo.IsGeneralProgress = true;
                 _backgroundWorker.ReportProgress(progressPercent, _progressInfo);
             }
-
-
         }
-
 
         private bool checkForPeaksFile()
         {
@@ -463,7 +398,6 @@ namespace Sipper.Model
             }
         }
 
-
         private void CreatePeaksForChromSourceData()
         {
             var parameters = new PeakDetectAndExportWorkflowParameters();
@@ -476,6 +410,5 @@ namespace Sipper.Model
             peakCreator.Execute();
         }
         #endregion
-
     }
 }

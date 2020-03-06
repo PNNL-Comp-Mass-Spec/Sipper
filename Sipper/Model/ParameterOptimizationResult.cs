@@ -7,11 +7,9 @@ namespace Sipper.Model
 
         #region Constructors
 
-
         #endregion
 
         #region Properties
-
 
         public double FitScoreLabeled { get; set; }
         public double SumOfRatios { get; set; }
@@ -35,8 +33,6 @@ namespace Sipper.Model
             }
         }
 
-
-
         public string ToStringWithDetails(char delimiter = '\t')
         {
             var sb = new StringBuilder();
@@ -59,9 +55,7 @@ namespace Sipper.Model
             sb.Append(double.IsNaN(FalsePositiveRate) ? "1.0" : FalsePositiveRate.ToString("0.###"));
 
             return sb.ToString();
-
         }
-
 
         #endregion
 
@@ -72,6 +66,5 @@ namespace Sipper.Model
         #region Private Methods
 
         #endregion
-
     }
 }

@@ -20,7 +20,6 @@ namespace Sipper.Model
             FileInputs = fileInputsInfo;
         }
 
-
         #endregion
 
         #region Properties
@@ -34,8 +33,5 @@ namespace Sipper.Model
         public ParameterOptimizationResult SelectedFilterSettings { get; set; }
 
         #endregion
-
-
-
     }
 }

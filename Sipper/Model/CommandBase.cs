@@ -14,19 +14,16 @@ namespace Sipper.Model
 
         #region Public Methods
 
-
         public static RoutedCommand SetAnnotationToYes = new RoutedCommand();
 
         public static RoutedCommand SetAnnotationToNo = new RoutedCommand();
 
         public static RoutedCommand SetAnnotationToMaybe = new RoutedCommand();
 
-
         #endregion
 
         #region Private Methods
 
         #endregion
-
     }
 }

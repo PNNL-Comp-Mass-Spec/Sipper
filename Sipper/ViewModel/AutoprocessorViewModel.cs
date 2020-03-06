@@ -11,6 +11,7 @@ using DeconTools.Workflows.Backend.Core;
 using DeconTools.Workflows.Backend.Results;
 using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Series;
 using Sipper.Model;
 using Globals = DeconTools.Workflows.Backend.Globals;
 
@@ -29,7 +30,6 @@ namespace Sipper.ViewModel
 
         private readonly TargetedResultRepository _resultRepository;
 
-
         #region Constructors
 
         public AutoprocessorViewModel()
@@ -46,20 +46,17 @@ namespace Sipper.ViewModel
             FileInputs = new FileInputsViewModel(null);
         }
 
-
         public AutoprocessorViewModel(FileInputsInfo fileInputs) : this()
         {
 
             FileInputs = new FileInputsViewModel(fileInputs);
         }
 
-
         public AutoprocessorViewModel(TargetedResultRepository resultRepository, FileInputsInfo fileInputs = null)
             : this(fileInputs)
         {
             _resultRepository = resultRepository;
         }
-
 
         #endregion
 
@@ -98,7 +95,6 @@ namespace Sipper.ViewModel
 
         public ObservableCollection<TargetedWorkflowExecutorProgressInfo> ProgressInfos { get; set; }
 
-
         private string _statusMessageGeneral;
         public string StatusMessageGeneral
         {
@@ -109,7 +105,6 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("StatusMessageGeneral");
             }
         }
-
 
         public bool CanExecutorBeExecuted
         {
@@ -125,7 +120,6 @@ namespace Sipper.ViewModel
             }
         }
 
-
         private int _percentProgress;
         public int PercentProgress
         {
@@ -134,14 +128,10 @@ namespace Sipper.ViewModel
             {
                 _percentProgress = value;
                 OnPropertyChanged("PercentProgress");
-
             }
         }
 
         private TargetedWorkflowExecutorProgressInfo _currentResultInfo;
-
-
-
 
         public TargetedWorkflowExecutorProgressInfo CurrentResultInfo
         {
@@ -151,7 +141,6 @@ namespace Sipper.ViewModel
                 _currentResultInfo = value;
                 GetMassSpectrumForCurrentResult();
                 OnPropertyChanged("CurrentResultInfo");
-
             }
         }
 
@@ -184,7 +173,6 @@ namespace Sipper.ViewModel
                 xyData = xyDataSource.TrimData(CurrentResultInfo.Result.Target.MZ - 2, CurrentResultInfo.Result.Target.MZ + 8);
             }
 
-
             double msGraphMaxY;
             if (CurrentResultInfo.Result.IsotopicProfile != null)
             {
@@ -202,7 +190,7 @@ namespace Sipper.ViewModel
 
             ObservedIsoPlot.Series.Clear();
 
-            var series = new OxyPlot.Series.LineSeries
+            var series = new LineSeries
             {
                 MarkerSize = 1,
                 Color = OxyColors.Black
@@ -215,8 +203,6 @@ namespace Sipper.ViewModel
 
             ObservedIsoPlot.Axes[1].Maximum = msGraphMaxY + msGraphMaxY * 0.05;
             ObservedIsoPlot.Series.Add(series);
-
-
         }
 
         private PlotModel CreateObservedIsoPlot()
@@ -228,8 +214,6 @@ namespace Sipper.ViewModel
                 PlotMargins = new OxyThickness(0),
                 PlotAreaBorderThickness = new OxyThickness(0)
             };
-
-
 
             var xAxis = new LinearAxis
             {
@@ -252,13 +236,10 @@ namespace Sipper.ViewModel
             plotModel.Axes.Add(xAxis);
             plotModel.Axes.Add(yAxis);
 
-
             return plotModel;
-
         }
 
         #endregion
-
 
         public event CurrentResultChangedHandler CurrentResultUpdated;
 
@@ -284,7 +265,6 @@ namespace Sipper.ViewModel
                 return;
             }
 
-
             ProgressInfos.Clear();
 
             ExecutorParameters.TargetsFilePath = FileInputs.TargetsFilePath;
@@ -308,7 +288,6 @@ namespace Sipper.ViewModel
             if (!string.IsNullOrEmpty(FileInputs.DatasetPath))
             {
                 return RunUtilities.GetDatasetParentDirectory(FileInputs.DatasetPath);
-
             }
 
             return string.Empty;
@@ -328,16 +307,13 @@ namespace Sipper.ViewModel
             _resultRepository.Results.Clear();
             _resultRepository.Results.AddRange(_workflowExecutor.GetResults());
 
-
             if (worker.CancellationPending)
             {
                 e.Cancel = true;
             }
 
             Run = _workflowExecutor.Run;
-
         }
-
 
         void _backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -378,9 +354,6 @@ namespace Sipper.ViewModel
                                 StatusMessageGeneral = infoString;
                             }
                         }
-
-
-
                     }
                     else
                     {
@@ -393,9 +366,7 @@ namespace Sipper.ViewModel
                         {
                             ProgressInfos.Add(info);
                         }
-
                     }
-
                 }
                 else
                 {
@@ -403,7 +374,6 @@ namespace Sipper.ViewModel
                 }
             }
         }
-
 
         public string GetInfoStringOnCurrentResult()
         {
@@ -422,7 +392,6 @@ namespace Sipper.ViewModel
             stringBuilder.Append("; massTag= ");
             stringBuilder.Append(((LcmsFeatureTarget)sipperResult.Target).FeatureToMassTagID);
 
-
             stringBuilder.Append("; m/z= ");
             stringBuilder.Append(sipperResult.IsotopicProfile == null
                                      ? "-.---"
@@ -439,9 +408,6 @@ namespace Sipper.ViewModel
         #endregion
 
         #region Private Methods
-
-
-
 
         #endregion
 

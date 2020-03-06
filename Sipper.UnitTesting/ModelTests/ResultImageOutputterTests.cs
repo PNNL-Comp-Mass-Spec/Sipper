@@ -19,12 +19,9 @@ namespace Sipper.UnitTesting.ModelTests
             fileInputs.ParameterFilePath =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
 
-
             var imageOutputter = new ResultImageOutputter(fileInputs);
             imageOutputter.Execute();
         }
-
-
 
         [Test]
         public void OutputResultsForLaurey()
@@ -39,11 +36,9 @@ namespace Sipper.UnitTesting.ModelTests
             fileInputs.ParameterFilePath =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
 
-
             var imageOutputter = new ResultImageOutputter(fileInputs);
             imageOutputter.Execute();
         }
-
 
         [Test]
         public void OutputResultsForSelected300MassTags_C12()
@@ -58,12 +53,9 @@ namespace Sipper.UnitTesting.ModelTests
             fileInputs.ParameterFilePath =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
 
-
             var imageOutputter = new ResultImageOutputter(fileInputs);
             imageOutputter.Execute();
         }
-
-
 
         [Test]
         public void OutputResultsForSelected300MassTags_C13()
@@ -78,11 +70,9 @@ namespace Sipper.UnitTesting.ModelTests
             fileInputs.ParameterFilePath =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
 
-
             var imageOutputter = new ResultImageOutputter(fileInputs);
             imageOutputter.Execute();
         }
-
 
         [Test]
         public void OutputResultsForASMS_1()
@@ -97,11 +87,9 @@ namespace Sipper.UnitTesting.ModelTests
             fileInputs.ParameterFilePath =
                 @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\SipperTargetedWorkflowParameters_Sum5.xml";
 
-
             var imageOutputter = new ResultImageOutputter(fileInputs);
             imageOutputter.Execute();
         }
-
 
         [Test]
         public void ViewProteinResultsAcrossAllDatasets()
@@ -116,11 +104,8 @@ namespace Sipper.UnitTesting.ModelTests
             fileInputs.ParameterFilePath =
                 @"\\protoapps\UserData\Slysz\Data\Yellowstone\SIPPER\SipperTargetedWorkflowParameters_Sum5.xml";
 
-
             var imageOutputter = new ResultImageOutputter(fileInputs);
             imageOutputter.Execute();
         }
-
-
     }
 }

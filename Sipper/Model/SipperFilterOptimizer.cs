@@ -65,7 +65,6 @@ namespace Sipper.Model
             return numCombos;
         }
 
-
         public List<ParameterOptimizationResult>GetOptimizedFiltersByFalsePositiveRate(List<ParameterOptimizationResult>allOptimizationResults, double maxAllowedFalsePositiveRate = 0.1d)
         {
             var filteredParameters = (from n in allOptimizationResults
@@ -74,9 +73,7 @@ namespace Sipper.Model
                                       select n).ToList();
 
             return filteredParameters;
-
         }
-
 
         public XYData GetRocCurve (List<ParameterOptimizationResult> allOptimizationResults)
         {
@@ -108,14 +105,11 @@ namespace Sipper.Model
             return rocCurve;
         }
 
-
         public void LoadLabeledResults(string filePath)
         {
             var importer = new SipperResultFromTextImporter(filePath);
             LabeledResults = (from SipperLcmsFeatureTargetedResultDTO n in importer.Import().Results select n).ToList();
-
         }
-
 
         public void LoadUnlabeledResults(string filePath)
         {
@@ -125,7 +119,6 @@ namespace Sipper.Model
 
         public List<SipperLcmsFeatureTargetedResultDTO> UnlabeledResults { get; set; }
         public List<SipperLcmsFeatureTargetedResultDTO> LabeledResults { get; set; }
-
 
         public List<ParameterOptimizationResult> DoCalculationsOnAllFilterCombinations(string outputFileName = null)
         {
@@ -163,7 +156,6 @@ namespace Sipper.Model
                                              where n.AreaUnderRatioCurveRevised >= area
                                              select n).ToList();
 
-
                     for (var interferenceScore = IscoreLower; interferenceScore < IscoreUpper; interferenceScore = interferenceScore + IscoreStep)
                     {
 
@@ -193,7 +185,6 @@ namespace Sipper.Model
                                                              && n.PercentPeptideLabeled >= peptidePop
                                                               select n).ToList();
 
-
                                     var optimizationResult = new ParameterOptimizationResult
                                     {
                                         FitScoreLabeled = fitScoreLabeled,
@@ -206,18 +197,14 @@ namespace Sipper.Model
                                         NumUnlabeledPassingFilter = c12filteredResults.Count
                                     };
 
-
                                     sb.Append(optimizationResult.ToStringWithDetails());
                                     sb.Append(Environment.NewLine);
 
                                     parameterOptimizationResults.Add(optimizationResult);
 
                                     comboCounter++;
-
                                 }
                             }
-
-
                         }
                     }
                 }
@@ -232,12 +219,10 @@ namespace Sipper.Model
                         writer.Write(sb.ToString());
                     }
                 }
-
             }
 
             return parameterOptimizationResults;
         }
-
 
         #endregion
 
@@ -293,7 +278,5 @@ namespace Sipper.Model
         public double PercentPeptidePopulationUpper { get; set; }
 
         public double PercentPeptidePopulationStep { get; set; }
-
-
     }
 }

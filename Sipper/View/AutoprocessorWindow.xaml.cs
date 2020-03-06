@@ -19,7 +19,6 @@ namespace Sipper.View
                 sipperProject = new Project();
             }
 
-
             ViewModel = new AutoprocessorViewModel(sipperProject.ResultRepository, sipperProject.FileInputs);
 
             ViewModel.CurrentResultUpdated += ViewModel_CurrentResultUpdated;
@@ -90,7 +89,6 @@ namespace Sipper.View
                 dropEnabled = false;
             }
 
-
             if (!dropEnabled)
             {
                 e.Effects = DragDropEffects.None;
@@ -102,9 +100,6 @@ namespace Sipper.View
         {
             e.Handled = true;
         }
-
-
-
 
         private void ExecuteProcessing()
         {
@@ -120,10 +115,7 @@ namespace Sipper.View
             ViewModel.FileInputs.CreateFileLinkage(txtWorkflowParameterFilepath.Text);
 
             ViewModel.Execute();
-
         }
-
-
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {

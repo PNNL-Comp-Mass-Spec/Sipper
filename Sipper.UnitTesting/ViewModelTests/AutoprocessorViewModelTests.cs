@@ -33,7 +33,6 @@ namespace Sipper.UnitTesting.ViewModelTests
             Assert.IsTrue(viewModel.FileInputs.TargetsFilePath == testTargetFile1);
         }
 
-
         [Test]
         public void createFileLinkageMultiple_XMLFile_Test1()
         {
@@ -48,7 +47,6 @@ namespace Sipper.UnitTesting.ViewModelTests
             inputFiles.Add(testWorkflowFile);
             inputFiles.Add(testWorkflowFile2);
             inputFiles.Add(testTargetFile1);
-
 
             viewModel.FileInputs.CreateFileLinkages(inputFiles);
 
@@ -77,12 +75,10 @@ namespace Sipper.UnitTesting.ViewModelTests
             var testRawDataFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
 
-
             var expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\Results\\" +
                                          RunUtilities.GetDatasetName(testRawDataFile) + "_results.txt";
 
             if (File.Exists(expectedResultsFile)) File.Delete(expectedResultsFile);
-
 
             // Parameter file
             var testWorkflowFile =
@@ -96,11 +92,9 @@ namespace Sipper.UnitTesting.ViewModelTests
             viewModel.FileInputs.CreateFileLinkage(testTargetFile1);
             viewModel.FileInputs.CreateFileLinkage(testWorkflowFile);
 
-
             viewModel.Execute();
 
             Thread.Sleep(12000);   // the viewModel has a background worker and we need to pause to let the processing complete in the background
-
 
             Assert.That(File.Exists(expectedResultsFile));
             var importer = new SipperResultFromTextImporter(expectedResultsFile);
@@ -122,7 +116,6 @@ namespace Sipper.UnitTesting.ViewModelTests
 
             var testRawDataFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
-
 
             var expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\" +
                                          RunUtilities.GetDatasetName(testRawDataFile) + "_results.txt";
@@ -152,10 +145,7 @@ namespace Sipper.UnitTesting.ViewModelTests
             Assert.AreEqual(10091, testResult.TargetID);
             Assert.AreEqual(6185, testResult.ScanLC);
             Assert.AreEqual("C74H117N20O22S", testResult.EmpiricalFormula);
-
-
         }
-
 
         [Test]
         public void process_unidentifiedFeatures_test2()
@@ -164,7 +154,6 @@ namespace Sipper.UnitTesting.ViewModelTests
 
             var testRawDataFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
-
 
             var expectedResultsFile = Path.GetDirectoryName(testRawDataFile) + "\\" +
                                          RunUtilities.GetDatasetName(testRawDataFile) + "_results.txt";
@@ -194,9 +183,6 @@ namespace Sipper.UnitTesting.ViewModelTests
             Assert.AreEqual(10091, testResult.TargetID);
             Assert.AreEqual(6185, testResult.ScanLC);
             Assert.AreEqual("C74H117N20O22S", testResult.EmpiricalFormula);
-
-
         }
-
     }
 }

@@ -28,24 +28,20 @@ namespace Sipper.View
                 project = new Project();
             }
 
-
             ViewModel = new ViewAndAnnotateViewModel(project.ResultRepository, project.FileInputs);
 
             LoadSettings();
 
             ViewModel.AllDataLoadedAndReadyEvent += ViewModel_AllDataLoadedAndReadyEvent;
 
-
             DataContext = ViewModel;
             ViewModel.Run = project.Run;
         }
-
 
         private void ViewModel_AllDataLoadedAndReadyEvent(object sender, EventArgs e)
         {
             resultsTab.Focus();
             resultsListView.SelectedItem = resultsListView.Items[0];
-
         }
 
         public ViewAndAnnotateViewModel ViewModel { get; set; }
@@ -67,7 +63,6 @@ namespace Sipper.View
 
         private void txtWorkflowParameterFilepath_TextChanged(object sender, TextChangedEventArgs e)
         {
-
         }
 
         private void txtResultsFilePath_DragOver(object sender, DragEventArgs e)
@@ -162,11 +157,8 @@ namespace Sipper.View
                             yMax = currentVal + currentVal * 0.10;
                         }
                     }
-
                 }
-
             }
-
         }
 
         private void btnSaveResultsClick(object sender, RoutedEventArgs e)
@@ -193,29 +185,22 @@ namespace Sipper.View
         {
             if (ViewModel.CurrentResult == null) return;
 
-
             if (e.Key == Key.Y)
             {
                 ViewModel.CurrentResultValidationCode = ValidationCode.Yes;
-
-
             }
             else if (e.Key == Key.N)
             {
                 ViewModel.CurrentResultValidationCode = ValidationCode.No;
-
             }
             else if (e.Key == Key.M)
             {
                 ViewModel.CurrentResultValidationCode = ValidationCode.Maybe;
-
             }
             else if (e.Key == Key.O)
             {
                 ViewModel.CurrentResultValidationCode = ValidationCode.None;
-
             }
-
         }
 
         private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -260,7 +245,6 @@ namespace Sipper.View
 
             var binding = BindingOperations.GetBindingExpression(tBox, prop);
             binding?.UpdateSource();
-
         }
 
         private void btnClearTargetFilterClick(object sender, RoutedEventArgs e)
@@ -293,7 +277,6 @@ namespace Sipper.View
             }
 
             ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
-
         }
 
         private void TextBox_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -319,7 +302,6 @@ namespace Sipper.View
             if (ViewModel.CurrentLcScan == sliderScan) return;
             ViewModel.CurrentLcScan = (int)e.NewValue;
             ViewModel.NavigateToNextMs1MassSpectrum(Globals.ScanSelectionMode.CLOSEST);
-
         }
 
         private void MsGraphMinMouseWheelEvent(object sender, MouseWheelEventArgs e)
@@ -348,9 +330,6 @@ namespace Sipper.View
             {
                 ViewModel.MsGraphMaxX -= 1;
             }
-
         }
-
-
     }
 }

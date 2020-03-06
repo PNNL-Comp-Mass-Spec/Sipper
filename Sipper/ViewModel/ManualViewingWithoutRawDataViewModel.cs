@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using DeconTools.Workflows.Backend;
@@ -29,7 +30,6 @@ namespace Sipper.ViewModel
 
             FileInputs.PropertyChanged += FileInputsPropertyChanged;
             _resultRepositorySource = new TargetedResultRepository();
-
         }
 
         public ManualViewingWithoutRawDataViewModel(TargetedResultRepository resultRepository, FileInputsInfo fileInputs = null)
@@ -38,12 +38,9 @@ namespace Sipper.ViewModel
             _resultRepositorySource = resultRepository;
             GetImageFileReferences(FileInputs.ResultImagesFolderPath);
             SetResults();
-
         }
 
-
         #endregion
-
 
         void FileInputsPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -56,15 +53,11 @@ namespace Sipper.ViewModel
                     GetImageFileReferences(FileInputs.ResultImagesFolderPath);
                     SetResults();
                     break;
-
-
             }
         }
 
-
         #region Properties
         public ObservableCollection<ResultWithImageInfo> Results { get; set; }
-
 
         private string _targetsFileStatusText;
         public string TargetsFileStatusText
@@ -78,7 +71,6 @@ namespace Sipper.ViewModel
             }
         }
 
-
         private string _generalStatusMessage;
         public string GeneralStatusMessage
         {
@@ -87,7 +79,6 @@ namespace Sipper.ViewModel
             {
                 _generalStatusMessage = value;
                 { OnPropertyChanged("GeneralStatusMessage"); }
-
             }
         }
 
@@ -103,12 +94,7 @@ namespace Sipper.ViewModel
             }
         }
 
-
         public FileInputsViewModel FileInputs { get; private set; }
-
-
-
-
 
         private ResultWithImageInfo _currentResult;
         public ResultWithImageInfo CurrentResult
@@ -143,21 +129,12 @@ namespace Sipper.ViewModel
                     {
                         IsImageFilesLoaded = true;
                     }
-
                 }
                 else
                 {
                     ResultImagesStatusText = "0 images loaded";
                 }
-
             }
-
-
-
-
-
-
-
         }
 
         protected bool IsImageFilesLoaded { get; set; }
@@ -176,10 +153,8 @@ namespace Sipper.ViewModel
 
             var imageOutputter = new ResultImageOutputter(_fileInputsInfo);
 
-
             imageOutputter.Execute();
         }
-
 
         public void OpenHTMLReport()
         {
@@ -192,20 +167,15 @@ namespace Sipper.ViewModel
                 {
                     try
                     {
-                        System.Diagnostics.Process.Start(expectedHtmlFilepath);
+                        Process.Start(expectedHtmlFilepath);
                     }
                     catch (Exception ex)
                     {
                         GeneralStatusMessage = ex.Message;
                     }
-
                 }
-
             }
-
-
         }
-
 
         public void GenerateHTMLReport()
         {
@@ -218,21 +188,17 @@ namespace Sipper.ViewModel
                 {
                     reportGenerator.GenerateHTMLReport();
                     GeneralStatusMessage = "HTML report was generated! See output folder.";
-
                 }
                 catch (Exception ex)
                 {
                     GeneralStatusMessage = ex.Message;
-
                 }
-
             }
             else
             {
                 GeneralStatusMessage=  "Results not ready yet. Check results and file/folder paths.";
             }
         }
-
 
         //TODO: code duplication here
         public void LoadResults(string resultFile)
@@ -252,7 +218,6 @@ namespace Sipper.ViewModel
             }
 
             SetResults();
-
         }
 
         public void SetResults()
@@ -268,8 +233,6 @@ namespace Sipper.ViewModel
             {
                 var resultWithImageInfo = new ResultWithImageInfo(resultDto);
 
-
-
                 Results.Add(resultWithImageInfo);
             }
 
@@ -278,10 +241,6 @@ namespace Sipper.ViewModel
             MapResultsToImages();
 
             GenerateHTMLReport();
-
-
-
-
         }
 
         private void MapResultsToImages()
@@ -293,24 +252,18 @@ namespace Sipper.ViewModel
                 //string baseFileName = FileInputs.ResultImagesFolderPath + Path.DirectorySeparatorChar +
                 //                 result.Result.DatasetName + "_ID" + result.Result.TargetID;
 
-
                 var baseFileName = result.Result.DatasetName + "_ID" + result.Result.TargetID;
 
-
                 var targetImages = (from n in _imageFilePaths where n.Contains(baseFileName) select n).ToList();
-
 
                 var expectedMSImage = targetImages.FirstOrDefault(p => p.Contains("_MS.png"));
                 var expectedChromImageFilename = targetImages.FirstOrDefault(p => p.Contains("_chrom.png"));
                 var expectedTheorMSImageFilename = targetImages.FirstOrDefault(p => p.Contains("_theorMS.png"));
 
-
                 result.MSImageFilePath = expectedMSImage??"";
                 result.ChromImageFilePath = expectedChromImageFilename??"";
                 result.TheorMSImageFilePath = expectedTheorMSImageFilename??"";
             }
-
-
         }
 
         public void SaveResults()
@@ -330,10 +283,7 @@ namespace Sipper.ViewModel
             }
 
             GeneralStatusMessage = "Results saved to: " + Path.GetFileName(FileInputs.ResultsSaveFilePath);
-
-
         }
-
 
         public void UpdateAnnotationsUsingAutomaticFilter()
         {
@@ -350,15 +300,10 @@ namespace Sipper.ViewModel
             }
         }
 
-
-
-
         #endregion
 
         #region Private Methods
 
         #endregion
-
-
     }
 }

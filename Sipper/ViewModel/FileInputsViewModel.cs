@@ -21,14 +21,12 @@ namespace Sipper.ViewModel
         public FileInputsViewModel(FileInputsInfo fileInputsInfo) : this()
         {
             _fileInputsInfo = fileInputsInfo ?? new FileInputsInfo();
-
         }
         #endregion
 
         #region Properties
 
         public ObservableCollection<string> DatasetPathCollection => _fileInputsInfo.DatasetPathsList as ObservableCollection<string>;
-
 
         public string DatasetParentFolder
         {
@@ -41,7 +39,6 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("DatasetParentFolder");
             }
         }
-
 
         public string DatasetPath
         {
@@ -56,7 +53,6 @@ namespace Sipper.ViewModel
                 OnPropertyChanged("DatasetPath");
             }
         }
-
 
         public string TargetsFilePath
         {
@@ -87,7 +83,6 @@ namespace Sipper.ViewModel
             }
         }
 
-
         public string ResultsSaveFilePath
         {
             get => _fileInputsInfo.ResultsSaveFilePath;
@@ -98,14 +93,9 @@ namespace Sipper.ViewModel
 
                 _fileInputsInfo.ResultsSaveFilePath = value;
 
-
-
                 OnPropertyChanged("ResultsSaveFilePath");
             }
         }
-
-
-
 
         public string ParameterFilePath
         {
@@ -123,8 +113,6 @@ namespace Sipper.ViewModel
         #endregion
 
         #region Public Methods
-        public void CreateFileLinkages(IEnumerable<string> fileNames)
-        {
 
 
             if (fileNames == null || !fileNames.Any())
@@ -213,19 +201,17 @@ namespace Sipper.ViewModel
 
             }
 
-
         }
-
 
         public bool PathsAreValid()
         {
 
-            var datasetPathIsOK = false;
-            if (System.IO.Directory.Exists(DatasetPath))
+            bool datasetPathIsOK;
+            if (Directory.Exists(DatasetPath))
             {
                 datasetPathIsOK = true;
             }
-            else if (System.IO.File.Exists(DatasetPath))
+            else if (File.Exists(DatasetPath))
             {
                 datasetPathIsOK = true;
             }
@@ -238,31 +224,18 @@ namespace Sipper.ViewModel
 
             var targetsFilePathIsOK = File.Exists(TargetsFilePath);
 
-
             if (datasetPathIsOK && parameterFilePathIsOK && targetsFilePathIsOK)
             {
                 return true;
             }
 
             return false;
-
-
-
-
         }
-
-
-
-        public void SaveResults()
-        {
-
-
-        }
-
 
         #endregion
 
         #region Private Methods
+
         private void SetSaveFilePath()
         {
             if (string.IsNullOrEmpty(_fileInputsInfo.TargetsFilePath)) return;
@@ -272,9 +245,8 @@ namespace Sipper.ViewModel
 
             var resultsSaveFileName = path + Path.DirectorySeparatorChar + sourceResultsFileName + "_validated.txt";
             ResultsSaveFilePath = resultsSaveFileName;
-
         }
-        #endregion
 
+        #endregion
     }
 }

@@ -16,11 +16,7 @@
             IScoreMax = 0.15;
             RSquaredValForRatioCurveMin = 0.925;
             RSquaredValForRatioCurveMax = 1.1;  //above 1.0
-
-
-
         }
-
 
         public static ResultFilterCriteria GetFilterScheme1()
         {
@@ -38,7 +34,6 @@
 
             return criteria;
         }
-
 
         #endregion
 
@@ -60,8 +55,5 @@
         public double RSquaredValForRatioCurveMax { get; set; }
 
         #endregion
-
-
-
     }
 }

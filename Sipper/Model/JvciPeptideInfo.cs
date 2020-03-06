@@ -11,7 +11,6 @@ namespace Sipper.Model
 
         public JvciPeptideInfo()
         {
-
         }
 
         #endregion
@@ -33,7 +32,6 @@ namespace Sipper.Model
         public string Organism { get; set; }
 
         public string FibroNum { get; set; }
-
 
         public static JvciPeptideInfo Parse(string stringContainingInfo)
         {
@@ -65,11 +63,7 @@ namespace Sipper.Model
             {
                 return null;
             }
-
-
-
         }
-
 
         #endregion
 
@@ -80,6 +74,5 @@ namespace Sipper.Model
         #region Private Methods
 
         #endregion
-
     }
 }
