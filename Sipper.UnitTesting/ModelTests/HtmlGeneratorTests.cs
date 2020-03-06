@@ -8,11 +8,13 @@ namespace Sipper.UnitTesting.ModelTests
     {
 
         [Test]
+        [Ignore("Local file paths")]
         public void generateHtmlReportTest1()
         {
 
-            var fileInputs = new FileInputsInfo();
-            fileInputs.ResultImagesFolderPath = @"D:\Data\Temp\Results\Visuals";
+            var fileInputs = new FileInputsInfo {
+                ResultImagesFolderPath = @"C:\Data\Temp\Results\Visuals"
+            };
 
             var resultFile =  @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt";
 
