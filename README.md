@@ -13,7 +13,7 @@ J Proteome Res. 2014 Mar 7;13(3):1200-10. \
 
 Uses ThermoFisher.CommonCore.RawFileReader.dll to read Thermo .raw files.
 
-Use Proteowizard to read .mzML files
+Uses Proteowizard to read .mzML files
 * Download the Windows 64-bit installer from http://proteowizard.sourceforge.net/
 
 ## Analysis Steps
@@ -39,11 +39,11 @@ the observed scan numbers to a range of 0 to 1.
 5) Click AutoProcess
 6) Define the paths to the input files
 
-| Description    | Filename |
-|----------------|----------|
+| Description    | Filename                                    |
+|----------------|---------------------------------------------|
 | Raw data file  | Yellow_C13_070_23Mar10_Griffin_10-01-28.raw |
-| Parameter file | SipperTargetedWorkflowParameters1.xml |
-| Targets:       |  Yellow_C13_070_targets.txt |
+| Parameter file | SipperTargetedWorkflowParameters1.xml       |
+| Targets:       | Yellow_C13_070_targets.txt                  |
 
 7) Click Go
 8) Once processing is complete, click the X on the upper right of the Autoprocessor Window
