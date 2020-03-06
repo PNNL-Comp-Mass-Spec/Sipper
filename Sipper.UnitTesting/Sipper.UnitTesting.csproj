@@ -70,6 +70,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SipperLibrary\SipperLibrary.csproj">
+      <Project>{c43b6e7a-416e-4456-b835-6a133b8b0de0}</Project>
+      <Name>SipperLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sipper\Sipper.csproj">
       <Project>{E9434349-AFE0-4A13-B3D0-1453B6C50978}</Project>
       <Name>Sipper</Name>

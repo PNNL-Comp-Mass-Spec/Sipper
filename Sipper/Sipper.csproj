@@ -98,16 +98,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\CommandBase.cs" />
-    <Compile Include="Model\FileInputsInfo.cs" />
-    <Compile Include="Model\HTMLReportGenerator.cs" />
-    <Compile Include="Model\JvciPeptideInfo.cs" />
-    <Compile Include="Model\ParameterOptimizationResult.cs" />
-    <Compile Include="Model\Project.cs" />
-    <Compile Include="Model\ResultFilteringUtilities.cs" />
-    <Compile Include="Model\ResultImageOutputter.cs" />
-    <Compile Include="Model\ResultWithImageInfo.cs" />
-    <Compile Include="Model\SipperFilterOptimizer.cs" />
-    <Compile Include="Model\SipperFilters.cs" />
     <Compile Include="ViewModel\FileInputsViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\ManualViewingWithoutRawDataViewModel.cs" />
@@ -145,7 +135,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\ResultFilterCriteria.cs" />
     <Compile Include="ViewModel\AutoprocessorViewModel.cs" />
     <Compile Include="ViewModel\ViewAndAnnotateViewModel.cs" />
     <Compile Include="ViewModel\SipperWorkflowParameterViewModel.cs" />
@@ -248,6 +237,12 @@
     <PackageReference Include="UIMFLibrary">
       <Version>3.7.3</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SipperLibrary\SipperLibrary.csproj">
+      <Project>{c43b6e7a-416e-4456-b835-6a133b8b0de0}</Project>
+      <Name>SipperLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
