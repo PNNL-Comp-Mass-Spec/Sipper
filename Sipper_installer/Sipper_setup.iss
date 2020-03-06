@@ -12,7 +12,7 @@ WelcomeLabel2=This will install [name/ver] on your computer.
 ; WelcomeLabel2=Welcome message%n%nAdditional sentence
 
 [Files]
-Source: ..\Sipper\bin\x64\Debug\Sipper.exe                   ; DestDir: {app}
+Source: ..\Sipper\bin\x64\Debug\Sipper.exe                 ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\Sipper.exe.config          ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\alglibnet2.dll             ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\BrukerDataReader.dll       ; DestDir: {app}
@@ -32,6 +32,7 @@ Source: ..\Sipper\bin\x64\Debug\PRISM.dll                  ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\ProteowizardWrapper.dll    ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\Scinet.ChartControl.dll    ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\Scinet.dll                 ; DestDir: {app}
+Source: ..\Sipper\bin\x64\Debug\SQLite.Interop.dll         ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\System.Data.SQLite.dll     ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\ThermoFisher.CommonCore.BackgroundSubtraction.dll  ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\ThermoFisher.CommonCore.Data.dll                   ; DestDir: {app}
