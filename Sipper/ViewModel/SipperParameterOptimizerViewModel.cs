@@ -6,6 +6,7 @@ using System.Text;
 using DeconTools.Backend;
 using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Series;
 using PRISM.Logging;
 using Sipper.Model;
 
@@ -207,10 +208,10 @@ namespace Sipper.ViewModel
                 TitleFontSize = 11,
                 Padding = new OxyThickness(0),
                 PlotMargins = new OxyThickness(0),
-                PlotAreaBorderThickness = new OxyThickness(0),
+                PlotAreaBorderThickness = new OxyThickness(0)
             };
 
-            var series = new OxyPlot.Series.LineSeries {
+            var series = new LineSeries {
                 MarkerSize = 1, Color = OxyColors.Black
             };
 

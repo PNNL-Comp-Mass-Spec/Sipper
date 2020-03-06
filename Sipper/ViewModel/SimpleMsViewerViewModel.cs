@@ -13,6 +13,7 @@ using DeconTools.Backend.Runs;
 using DeconTools.Backend.Workflows;
 using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Series;
 
 namespace Sipper.ViewModel
 {
@@ -321,7 +322,7 @@ namespace Sipper.ViewModel
 
         #region Public Methods
 
-        public void LoadRun(string fileOrFolderPath)
+        public void LoadRun(string fileOrDirectoryPath)
         {
             if (Run != null)
             {
@@ -332,7 +333,7 @@ namespace Sipper.ViewModel
 
             try
             {
-                Run = new RunFactory().CreateRun(fileOrFolderPath);
+                Run = new RunFactory().CreateRun(fileOrDirectoryPath);
             }
             catch (Exception ex)
             {
@@ -498,7 +499,7 @@ namespace Sipper.ViewModel
                 PlotAreaBorderThickness = new OxyThickness(0)
             };
 
-            var series = new OxyPlot.Series.LineSeries {
+            var series = new LineSeries {
                 MarkerSize = 1, Color = OxyColors.Black
             };
 
@@ -564,7 +565,7 @@ namespace Sipper.ViewModel
 
             plotModel.MouseDown += MouseButtonDown;
 
-            var series = new OxyPlot.Series.LineSeries {
+            var series = new LineSeries {
                 MarkerSize = 1, Color = OxyColors.Black
             };
 
@@ -612,11 +613,11 @@ namespace Sipper.ViewModel
         {
             try
             {
-                _peaksFilename = Path.Combine(this.Run.DatasetDirectoryPath, this.Run.DatasetName + "_peaks.txt");
+                _peaksFilename = Path.Combine(Run.DatasetDirectoryPath, Run.DatasetName + "_peaks.txt");
                 var fiPeaksFile = new FileInfo(_peaksFilename);
                 if (!fiPeaksFile.Exists)
                 {
-                    var alternatePeaksFilePath = Path.Combine(System.IO.Path.GetTempPath(), this.Run.DatasetName + "_peaks.txt");
+                    var alternatePeaksFilePath = Path.Combine(Path.GetTempPath(), Run.DatasetName + "_peaks.txt");
                     if (File.Exists(alternatePeaksFilePath))
                     {
                         _peaksFilename = alternatePeaksFilePath;
@@ -639,7 +640,7 @@ namespace Sipper.ViewModel
                     catch (UnauthorizedAccessException)
                     {
                         // Create the _peaks.txt file in the user's temporary folder
-                        _peaksFilename = Path.Combine(System.IO.Path.GetTempPath(), this.Run.DatasetName + "_peaks.txt");
+                        _peaksFilename = Path.Combine(Path.GetTempPath(), Run.DatasetName + "_peaks.txt");
                         fiPeaksFile = new FileInfo(_peaksFilename);
                     }
 
@@ -649,7 +650,6 @@ namespace Sipper.ViewModel
 
                     GeneralStatusMessage =
                         "Creating chromatogram data (_peaks.txt file); this is only done once. It takes 1 - 5 min .......";
-
 
                     var peakCreationParameters = new PeakDetectAndExportWorkflowParameters
                     {
@@ -673,7 +673,7 @@ namespace Sipper.ViewModel
             try
             {
                 var peakImporter = new PeakImporterFromText(_peaksFilename, _backgroundWorker);
-                peakImporter.ImportPeaks(this.Run.ResultCollection.MSPeakResultList);
+                peakImporter.ImportPeaks(Run.ResultCollection.MSPeakResultList);
             }
             catch (Exception ex)
             {

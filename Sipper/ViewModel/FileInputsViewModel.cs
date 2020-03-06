@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -114,93 +113,91 @@ namespace Sipper.ViewModel
 
         #region Public Methods
 
-
-            if (fileNames == null || !fileNames.Any())
+        /// <summary>
+        /// Define the input files
+        /// </summary>
+        /// <param name="filePaths">List of input files</param>
+        /// <remarks>
+        /// Input files are typically:
+        /// - a parameter file (.xml)
+        /// - the targets file (.txt)
+        /// - the dataset file (whatever is not .xml or .txt)
+        /// </remarks>
+        public void CreateFileLinkages(List<string> filePaths)
+        {
+            if (filePaths == null || !filePaths.Any())
             {
                 return;
             }
 
             //pull out .xml file first
-            var xmlFileNames = (from n in fileNames where Path.GetExtension(n) != null && Path.GetExtension(n).ToLower() == ".xml" select n);
+            var xmlFileNames = (from n in filePaths
+                                where Path.GetExtension(n) != null && Path.GetExtension(n).ToLower() == ".xml"
+                                select n).ToList();
 
             if (xmlFileNames.Any())
             {
-
                 CreateFileLinkage(xmlFileNames.First());
 
                 //remove all xml files from inputs
-                if (fileNames != null) fileNames = fileNames.Except(xmlFileNames);
-
-
+                filePaths = filePaths.Except(xmlFileNames).ToList();
             }
 
-            var txtFileNames = (from n in fileNames where Path.GetExtension(n) != null && Path.GetExtension(n) == ".txt" select n);
+            var txtFileNames = (from n in filePaths
+                                where Path.GetExtension(n) != null && Path.GetExtension(n) == ".txt"
+                                select n).ToList();
 
             if (txtFileNames.Any())
             {
                 CreateFileLinkage(txtFileNames.First());
 
                 //remove all text files from inputs
-                if (fileNames != null) fileNames = fileNames.Except(txtFileNames);
-
-
+                filePaths = filePaths.Except(txtFileNames).ToList();
             }
 
-
-            if (fileNames.Any())
+            if (filePaths.Any())
             {
-                CreateFileLinkage(fileNames.First());
-
+                CreateFileLinkage(filePaths.First());
             }
-
         }
 
-        public void CreateFileLinkage(string fileOrFolderPath)
+        /// <summary>
+        /// Define an input file (based on the file extension)
+        /// </summary>
+        /// <param name="fileOrDirectoryPath"></param>
+        /// <remarks>
+        /// Parameter file extension: .xml
+        /// Targets file extension:   .txt
+        /// Dataset file:             anything else (can also be a directory)
+
+        /// </remarks>
+        public void CreateFileLinkage(string fileOrDirectoryPath)
         {
 
-            bool isDir;
-            try
-            {
-
-                isDir = (File.GetAttributes(fileOrFolderPath) & FileAttributes.Directory)
-                        == FileAttributes.Directory;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var isDir = (File.GetAttributes(fileOrDirectoryPath) & FileAttributes.Directory)
+                         == FileAttributes.Directory;
 
             if (isDir)
             {
-                DatasetPath = fileOrFolderPath;
+                DatasetPath = fileOrDirectoryPath;
             }
             else
             {
-                var fileExtension = Path.GetExtension(fileOrFolderPath);
+                var fileExtension = Path.GetExtension(fileOrDirectoryPath).ToLower();
 
-                if (fileExtension != null)
+                if (fileExtension == ".xml")
                 {
-                    fileExtension = fileExtension.ToLower();
-
-                    if (fileExtension == ".xml")
-                    {
-                        ParameterFilePath = fileOrFolderPath;
-                    }
-                    else if (fileExtension == ".txt")
-                    {
-                        TargetsFilePath = fileOrFolderPath;
-                    }
-                    else
-                    {
-                        DatasetPath = fileOrFolderPath;
-                    }
-
-
+                    ParameterFilePath = fileOrDirectoryPath;
                 }
-
-
+                else if (fileExtension == ".txt")
+                {
+                    TargetsFilePath = fileOrDirectoryPath;
+                }
+                else
+                {
+                    DatasetPath = fileOrDirectoryPath;
+                }
             }
-
         }
 
         public bool PathsAreValid()

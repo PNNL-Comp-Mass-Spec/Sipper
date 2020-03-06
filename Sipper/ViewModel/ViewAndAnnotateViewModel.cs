@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using DeconTools.Backend;
 using DeconTools.Backend.Core;
@@ -20,6 +21,7 @@ using DeconTools.Workflows.Backend.FileIO;
 using DeconTools.Workflows.Backend.Results;
 using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Series;
 using Sipper.Model;
 using Globals = DeconTools.Backend.Globals;
 
@@ -588,7 +590,7 @@ namespace Sipper.ViewModel
                 };
         }
 
-        public void LoadRun(string fileOrFolderPath)
+        public void LoadRun(string fileOrDirectoryPath)
         {
             if (Run != null)
             {
@@ -599,7 +601,7 @@ namespace Sipper.ViewModel
 
             try
             {
-                Run = new RunFactory().CreateRun(fileOrFolderPath);
+                Run = new RunFactory().CreateRun(fileOrDirectoryPath);
             }
             catch (Exception ex)
             {
@@ -642,7 +644,7 @@ namespace Sipper.ViewModel
         {
             try
             {
-                _peaksFilename = this.Run.DatasetDirectoryPath + "\\" + this.Run.DatasetName + "_peaks.txt";
+                _peaksFilename = Run.DatasetDirectoryPath + "\\" + Run.DatasetName + "_peaks.txt";
 
                 if (!File.Exists(_peaksFilename))
                 {
@@ -671,7 +673,7 @@ namespace Sipper.ViewModel
             try
             {
                 var peakImporter = new PeakImporterFromText(_peaksFilename, _backgroundWorker);
-                peakImporter.ImportPeaks(this.Run.ResultCollection.MSPeakResultList);
+                peakImporter.ImportPeaks(Run.ResultCollection.MSPeakResultList);
             }
             catch (Exception ex)
             {
@@ -842,7 +844,7 @@ namespace Sipper.ViewModel
                 PlotAreaBorderThickness = new OxyThickness(0)
             };
 
-            var series = new OxyPlot.Series.LineSeries
+            var series = new LineSeries
             {
                 MarkerSize = 1,
                 Color = OxyColors.Black
@@ -906,8 +908,7 @@ namespace Sipper.ViewModel
                 PlotAreaBorderThickness = new OxyThickness(0)
             };
 
-
-            var series = new OxyPlot.Series.LineSeries
+            var series = new LineSeries
             {
                 MarkerSize = 1,
                 Color = OxyColors.Black
@@ -932,7 +933,7 @@ namespace Sipper.ViewModel
                 Title = "Intensity",
                 Minimum = 0,
                 AbsoluteMinimum = 0,
-                Maximum = MsGraphMaxY + MsGraphMaxY * 0.05,
+                Maximum = MsGraphMaxY + MsGraphMaxY * 0.05
             };
 
             //yAxis.Maximum = maxIntensity + (maxIntensity * .05);
@@ -998,7 +999,7 @@ namespace Sipper.ViewModel
                 PlotAreaBorderThickness = new OxyThickness(0)
             };
 
-            var series = new OxyPlot.Series.LineSeries
+            var series = new LineSeries
             {
                 MarkerSize = 1,
                 Color = OxyColors.Black
@@ -1096,10 +1097,10 @@ namespace Sipper.ViewModel
                 TitleFontSize = 11,
                 Padding = new OxyThickness(0),
                 PlotMargins = new OxyThickness(50, 0, 0, 0),
-                PlotAreaBorderThickness = new OxyThickness(0),
+                PlotAreaBorderThickness = new OxyThickness(0)
             };
 
-            var series = new OxyPlot.Series.LineSeries
+            var series = new LineSeries
             {
                 MarkerSize = 1,
                 Color = OxyColors.Black
@@ -1170,7 +1171,7 @@ namespace Sipper.ViewModel
                 PlotAreaBorderThickness = new OxyThickness(0)
             };
 
-            var series = new OxyPlot.Series.LineSeries
+            var series = new LineSeries
             {
                 MarkerSize = 3,
                 MarkerType = MarkerType.Square,
@@ -1225,8 +1226,8 @@ namespace Sipper.ViewModel
         {
             ChromXyData = new XYData
             {
-                Xvalues = Workflow.ChromatogramXYData == null ? new double[] {0, 1, 2, 3, 4} : Workflow.ChromatogramXYData.Xvalues,
-                Yvalues = Workflow.ChromatogramXYData == null ? new double[] {0, 1, 2, 3, 4} : Workflow.ChromatogramXYData.Yvalues
+                Xvalues = Workflow.ChromatogramXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.ChromatogramXYData.Xvalues,
+                Yvalues = Workflow.ChromatogramXYData == null ? new double[] { 0, 1, 2, 3, 4 } : Workflow.ChromatogramXYData.Yvalues
             };
 
             //MassSpecXYData = new XYData();
@@ -1293,7 +1294,7 @@ namespace Sipper.ViewModel
 
         private void CopyXyDataToClipboard(IReadOnlyList<double> xValues, IReadOnlyList<double> yValues)
         {
-            var stringBuilder = new System.Text.StringBuilder();
+            var stringBuilder = new StringBuilder();
 
             if (xValues.Count == 0 || yValues.Count == 0)
                 return;
