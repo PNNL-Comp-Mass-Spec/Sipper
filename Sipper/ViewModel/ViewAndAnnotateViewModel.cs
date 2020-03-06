@@ -160,10 +160,8 @@ namespace Sipper.ViewModel
                 {
                     return "Not loaded.";
                 }
-                else
-                {
-                    return "LOADED.";
-                }
+
+                return "LOADED.";
             }
         }
 
@@ -179,7 +177,7 @@ namespace Sipper.ViewModel
             }
         }
 
-        public FileInputsViewModel FileInputs { get; private set; }
+        public FileInputsViewModel FileInputs { get; }
 
         public ValidationCode CurrentResultValidationCode
         {
@@ -189,10 +187,8 @@ namespace Sipper.ViewModel
                 {
                     return ValidationCode.None;
                 }
-                else
-                {
-                    return _currentResult.ValidationCode;
-                }
+
+                return _currentResult.ValidationCode;
             }
             set
             {
@@ -394,19 +390,9 @@ namespace Sipper.ViewModel
         }
 
 
-        private XYData _subtractedMassSpecXyData;
-        public XYData SubtractedMassSpecXYData
-        {
-            get => _subtractedMassSpecXyData;
-            set => _subtractedMassSpecXyData = value;
-        }
+        public XYData SubtractedMassSpecXYData { get; set; }
 
-        private XYData _chromCorrXyData;
-        public XYData ChromCorrXYData
-        {
-            get => _chromCorrXyData;
-            set => _chromCorrXyData = value;
-        }
+        public XYData ChromCorrXYData { get; set; }
 
         public XYData RatioLogsXyData { get; set; }
 
@@ -504,15 +490,16 @@ namespace Sipper.ViewModel
         public bool ShowFileAndResultsList
         {
             get => _showFileAndResultsList;
-            set { _showFileAndResultsList = value;
-            OnPropertyChanged("ShowFileAndResultsList");
+            set
+            {
+                _showFileAndResultsList = value;
+                OnPropertyChanged("ShowFileAndResultsList");
             }
         }
 
         protected bool IsParametersLoaded { get; set; }
-        protected bool IsRunLoaded =>
-            Run != null
-            && Run.PeakList != null && Run.PeakList.Count > 0;
+
+        protected bool IsRunLoaded => Run?.PeakList != null && Run.PeakList.Count > 0;
 
         protected bool IsResultsLoaded => Results != null && Results.Count > 0;
 

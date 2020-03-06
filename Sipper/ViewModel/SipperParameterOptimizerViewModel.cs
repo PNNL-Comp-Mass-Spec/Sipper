@@ -91,12 +91,7 @@ namespace Sipper.ViewModel
         }
 
 
-        private XYData _rocCurve;
-        public XYData RocCurve
-        {
-            get => _rocCurve;
-            set => _rocCurve = value;
-        }
+        public XYData RocCurve { get; set; }
 
 
         private void UpdateOutputFileName()
