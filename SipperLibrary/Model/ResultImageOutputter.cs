@@ -349,8 +349,7 @@ namespace Sipper.Model
                 ReportGeneralProgress("Done creating XIC source data.");
             }
 
-            string baseFileName;
-            baseFileName = this.Run.DatasetDirectoryPath + "\\" + this.Run.DatasetName;
+            var baseFileName = this.Run.DatasetDirectoryPath + "\\" + this.Run.DatasetName;
 
             var expectedPeaksFilename = baseFileName + "_peaks.txt";
 
@@ -368,7 +367,6 @@ namespace Sipper.Model
             }
 
             ReportGeneralProgress(DateTime.Now + "\tPeak Loading complete.");
-            return;
         }
 
         #endregion
