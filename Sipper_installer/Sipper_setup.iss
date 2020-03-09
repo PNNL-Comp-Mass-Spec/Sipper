@@ -13,7 +13,19 @@ WelcomeLabel2=This will install [name/ver] on your computer.
 
 [Files]
 Source: ..\Sipper\bin\x64\Debug\Sipper.exe                 ; DestDir: {app}
+Source: ..\Sipper\bin\x64\Debug\Sipper.pdb                 ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\Sipper.exe.config          ; DestDir: {app}
+Source: ..\Sipper_Console\bin\Sipper_Console.exe           ; DestDir: {app}
+Source: ..\Sipper_Console\bin\Sipper_Console.exe.config    ; DestDir: {app}
+Source: ..\Sipper_Console\bin\Sipper_Console.pdb           ; DestDir: {app}
+
+Source: ..\Sipper\bin\x64\Debug\BaseDataAccess.dll         ; DestDir: {app}
+Source: ..\Sipper\bin\x64\Debug\BaseError.dll              ; DestDir: {app}
+Source: ..\Sipper\bin\x64\Debug\BaseTof.dll                ; DestDir: {app}
+Source: ..\Sipper\bin\x64\Debug\MassSpecDataReader.dll     ; DestDir: {app}
+Source: ..\Sipper\bin\x64\Debug\agtsampleinforw.dll        ; DestDir: {app}
+Source: ..\Sipper\bin\x64\Debug\BaseCommon.dll             ; DestDir: {app}
+
 Source: ..\Sipper\bin\x64\Debug\alglibnet2.dll             ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\BrukerDataReader.dll       ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\DeconTools.Backend.dll     ; DestDir: {app}
@@ -32,6 +44,7 @@ Source: ..\Sipper\bin\x64\Debug\PRISM.dll                  ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\ProteowizardWrapper.dll    ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\Scinet.ChartControl.dll    ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\Scinet.dll                 ; DestDir: {app}
+Source: ..\Sipper\bin\x64\Debug\SipperLib.dll              ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\SQLite.Interop.dll         ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\System.Data.SQLite.dll     ; DestDir: {app}
 Source: ..\Sipper\bin\x64\Debug\ThermoFisher.CommonCore.BackgroundSubtraction.dll  ; DestDir: {app}
