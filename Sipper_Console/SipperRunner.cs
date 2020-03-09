@@ -35,9 +35,6 @@ namespace Sipper_Console
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         private Run Run { get; set; }
 
-
-        private string StatusMessage { get; set; } = string.Empty;
-
         #endregion
 
         /// <summary>
@@ -149,6 +146,7 @@ namespace Sipper_Console
 
         }
 
+        // ReSharper disable once UnusedMember.Local
         private bool RunSipperThreaded()
         {
             try
@@ -215,15 +213,15 @@ namespace Sipper_Console
         {
             if (e.Cancelled)
             {
-                StatusMessage = "Cancelled";
+                OnStatusEvent("Cancelled");
             }
             else if (e.Error != null)
             {
-                StatusMessage = "Error - check log file or results output";
+                OnStatusEvent("Error - check log file or results output");
             }
             else
             {
-                StatusMessage = "Processing COMPLETE. #chromatograms extracted=?";
+                OnStatusEvent("Processing COMPLETE. #chromatograms extracted=?");
                 PercentProgress = 100;
             }
         }
@@ -247,7 +245,6 @@ namespace Sipper_Console
                             if (!string.IsNullOrEmpty(infoString))
                             {
                                 OnStatusEvent(infoString);
-                                StatusMessage = infoString;
                             }
                         }
                     }
