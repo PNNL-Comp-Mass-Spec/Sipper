@@ -53,7 +53,7 @@ namespace Sipper.UnitTesting.ViewModelTests
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28.raw";
 
             var testResultFile =
-                @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Results\Yellow_C13_070_23Mar10_Griffin_10-01-28_temp_results.txt";
+                @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\Yellow_C13_070_23Mar10_Griffin_10-01-28_testing_results.txt";
 
             var testParameterFile =
                 @"\\protoapps\UserData\Slysz\Standard_Testing\Targeted_FeatureFinding\SIPPER_standard_testing\SipperTargetedWorkflowParameters1.xml";
@@ -67,10 +67,12 @@ namespace Sipper.UnitTesting.ViewModelTests
             viewModel.LoadRun(testDatafile);
 
             //need to do this to ensure that _peaks file loads completely. Or else, no chromData error occurs
-            Thread.Sleep(5000);
+            Thread.Sleep(2000);
 
             viewModel.LoadResults(testResultFile);
-            viewModel.CurrentResult = viewModel.Results.First(p => p.TargetID == 5555);
+            Console.WriteLine("Loaded {0} results", viewModel.Results.Count);
+
+            viewModel.CurrentResult = viewModel.Results.First(p => p.TargetID == 7700);
 
             viewModel.ExecuteWorkflow();
 
