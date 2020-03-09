@@ -4,6 +4,7 @@ SIPPER can be used to automatically detect and quantify partially labeled C13 pe
 in a single dataset.  It includes a GUI for manual visualization and annotation of 
 detected LC-MS features. It also includes a Simple MS Viewer for exploring mass 
 spectral data. Supports Thermo .Raw files, plus also mzXML, mzML, and mz5.
+In addition, there is a console version available for batch processing.
 
 For algorithm details, see manuscript "Automated data extraction from in situ protein-stable isotope probing studies.",
 J Proteome Res. 2014 Mar 7;13(3):1200-10. \
@@ -50,9 +51,50 @@ the observed scan numbers to a range of 0 to 1.
 9) Now click "View and Annotate"
 * The program should have automatically loaded the results
 
+## Console Version
+
+Program `Sipper_Console.exe` can be used on the command line to batch process files with SIPPER.
+This program works on both Windows and Linux, though on Linux you invoke it with 
+[Mono](https://www.mono-project.com/)
+
+### Sipper_Console syntax
+
+```
+Sipper_Console.exe
+ -I:DatasetFileOrDirectoryPath
+ -P:ParameterFilePath
+ -T:TargetsFilePath
+ [-O:OutputDirectoryPath]
+ [-ParamFile:ParamFileName.conf] [-CreateParamFile]
+```
+
+Use `-I` to specify the dataset file path
+
+Use `-P` to specify the SIPPER parameter file path
+
+Use `-T` to specify the targets file path
+* As described above, the file must have columns TargetID, EmpiricalFormula, ChargeState, and Scan
+* It can optionally have columns Dataset and MassTagID
+
+Optionally use `-O` to specify the directory for saving results
+* SIPPER will write results to a subdirectory named Results, below the path specified by -O
+  * Filename: DatasetName_results.txt
+* SIPPER will create a log ifle in a subdirectory named Logs, below the path specified by -O
+  * Filename: DatasetName_log.txt
+* If `-O` is not provided, results will be saved in subdirectories below the directory with the dataset file
+
+The processing options can be specified in a parameter file using `-ParamFile:Options.conf`
+* Define options using the format `ArgumentName=Value`
+* Lines starting with `#` or `;` will be treated as comments
+* Additional arguments on the command line can supplement or override the arguments in the parameter file
+
+Use `-CreateParamFile` to create an example parameter file
+* By default, the example parameter file content is shown at the console
+* To create a file named Options.conf, use `-CreataParamFile:Options.conf`
+
 ## Contacts
 
-Written by Gordon Slysz for the Department of Energy (PNNL, Richland, WA) \
+Written by Gordon Slysz and Matthew Monroe for the Department of Energy (PNNL, Richland, WA) \
 E-mail: proteomics@pnnl.gov \
 Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/
 
