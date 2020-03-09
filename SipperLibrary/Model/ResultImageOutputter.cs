@@ -317,9 +317,9 @@ namespace Sipper.Model
         private void InitializeRun(string datasetName)
         {
 
-            //Datasets have to all be in the same folder
-            //currently works for datasets that have a File reference as
-            //opposed to datasets having a Folder reference (Agilent/Bruker)
+            // Datasets have to all be in the same directory
+            // Currently works for datasets that have a file reference as
+            // opposed to datasets having a directory reference (Agilent/Bruker)
 
             var dirInfo = new DirectoryInfo(_fileInputs.DatasetDirectory);
 
@@ -327,7 +327,10 @@ namespace Sipper.Model
 
             if (!fileInfo.Any())
             {
-                throw new FileNotFoundException("Run could not be initialized. File not found");
+                var errorMessage = string.Format(
+                    "Run could not be initialized. Did not find files matching {0} in directory {1}",
+                    datasetName + ".*", dirInfo.FullName);
+                throw new FileNotFoundException(errorMessage);
             }
 
             var rf = new RunFactory();

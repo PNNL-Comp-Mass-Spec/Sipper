@@ -19,7 +19,7 @@ namespace Sipper_Console
     /// -------------------------------------------------------------------------------
     class Program
     {
-        public const string PROGRAM_DATE = "March 5, 2020";
+        public const string PROGRAM_DATE = "March 6, 2020";
 
         private static DateTime mLastProgressTime;
 
@@ -33,11 +33,14 @@ namespace Sipper_Console
         {
             var exeName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name;
             var exePath = PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath();
-            var cmdLineParser = new CommandLineParser<SipperOptions>(exeName, GetAppVersion());
+            var cmdLineParser = new CommandLineParser<SipperOptions>(exeName, GetAppVersion())
+            {
+                ProgramInfo = "This program runs SIPPER",
+                ContactInfo = "Program written by Gordon Slysz and Matthew Monroe for PNNL (Richland, WA)" + Environment.NewLine +
+                              "E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov" + Environment.NewLine +
+                              "Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/"
+            };
 
-            cmdLineParser.ProgramInfo = "This program runs SIPPER";
-            cmdLineParser.ContactInfo = "Program written by Gordon Slysz and Matthew Monroe for PNNL (Richland, WA)" + Environment.NewLine +
-                                        "E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov" + Environment.NewLine + "Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/";
 
             cmdLineParser.UsageExamples.Add("Program syntax:" + Environment.NewLine + Path.GetFileName(exePath) +
                                             " /I:DatasetFileOrDirectoryPath /P:ParameterFilePath /T:TargetsFilePath");

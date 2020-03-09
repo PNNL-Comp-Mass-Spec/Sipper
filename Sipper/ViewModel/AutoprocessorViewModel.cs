@@ -183,6 +183,7 @@ namespace Sipper.ViewModel
                 msGraphMaxY = (float)xyData.GetMaxY();
             }
 
+            // ReSharper disable once UnusedVariable
             var msGraphTitle = "TargetID= " + CurrentResultInfo.Result.Target.ID +
                                "; m/z " + CurrentResultInfo.Result.Target.MZ.ToString("0.0000") +
                                "; z=" + CurrentResultInfo.Result.Target.ChargeState +

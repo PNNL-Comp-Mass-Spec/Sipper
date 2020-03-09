@@ -36,6 +36,7 @@ namespace Sipper_Console
 
         private SipperOptions Options { get; }
 
+        // ReSharper disable once UnusedAutoPropertyAccessor.Local
         private Run Run { get; set; }
 
         private SipperTargetedWorkflowParameters SipperWorkflowParameters { get; }
