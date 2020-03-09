@@ -322,6 +322,10 @@ namespace Sipper.Model
             // opposed to datasets having a directory reference (Agilent/Bruker)
 
             var dirInfo = new DirectoryInfo(_fileInputs.DatasetDirectory);
+            if (!dirInfo.Exists)
+            {
+                dirInfo.Create();
+            }
 
             var fileInfo = dirInfo.GetFiles(datasetName + ".*");
 
