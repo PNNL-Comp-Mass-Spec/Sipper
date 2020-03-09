@@ -18,17 +18,17 @@ namespace Sipper.Model
 {
     public class ResultImageOutputter
     {
-        private FileInputsInfo _fileInputs;
-        private BackgroundWorker _backgroundWorker;
+        private readonly FileInputsInfo _fileInputs;
+        private readonly BackgroundWorker _backgroundWorker;
         private TargetedResultRepository _resultRepositorySource;
-        private TargetedWorkflowExecutorProgressInfo _progressInfo = new TargetedWorkflowExecutorProgressInfo();
+        private readonly TargetedWorkflowExecutorProgressInfo _progressInfo = new TargetedWorkflowExecutorProgressInfo();
         private const double DefaultMSPeakWidth = 0.01;
 
         private int _subFolderCounter;   //keeps track of which folder images are being written to
 
-        private MSGraphControl _msGraph = new MSGraphControl();
-        private ChromGraphControl _chromGraph = new ChromGraphControl();
-        private MSGraphControl _theorMSGraph = new MSGraphControl();
+        private readonly MSGraphControl _msGraph = new MSGraphControl();
+        private readonly ChromGraphControl _chromGraph = new ChromGraphControl();
+        private readonly MSGraphControl _theorMSGraph = new MSGraphControl();
 
         #region Constructors
         public ResultImageOutputter(FileInputsInfo fileInputs, BackgroundWorker worker = null)
