@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PRISM;
 
 namespace Sipper_Console
@@ -85,11 +81,6 @@ namespace Sipper_Console
         private static string GetAppVersion()
         {
             return PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE);
-        }
-
-        private static string CollapseList(IEnumerable<string> itemList)
-        {
-            return string.Join(", ", itemList);
         }
 
         private static void ShowErrorMessage(string message, Exception ex = null)

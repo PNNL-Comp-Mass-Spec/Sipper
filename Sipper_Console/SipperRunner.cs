@@ -6,10 +6,6 @@ using DeconTools.Backend.Utilities;
 using DeconTools.Workflows.Backend;
 using DeconTools.Workflows.Backend.Core;
 using DeconTools.Workflows.Backend.Results;
-using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Series;
-using PRISM;
 using Sipper.Model;
 using Globals = DeconTools.Workflows.Backend.Globals;
 
@@ -39,7 +35,6 @@ namespace Sipper_Console
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         private Run Run { get; set; }
 
-        private SipperTargetedWorkflowParameters SipperWorkflowParameters { get; }
 
         private string StatusMessage { get; set; } = string.Empty;
 
@@ -62,8 +57,6 @@ namespace Sipper_Console
             {
                 TargetType = Globals.TargetType.LcmsFeature
             };
-
-            SipperWorkflowParameters = new SipperTargetedWorkflowParameters();
 
             ProgressInfos = new List<TargetedWorkflowExecutorProgressInfo>();
 
