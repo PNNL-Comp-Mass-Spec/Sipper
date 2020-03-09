@@ -87,17 +87,16 @@ namespace Sipper_Console
         {
             try
             {
-
                 ExecutorParameters.TargetsFilePath = Options.TargetsFilePath;
                 ExecutorParameters.WorkflowParameterFile = Options.ParameterFilePath;
 
-                if (!string.IsNullOrEmpty(Options.DatasetFilePath))
+                if (!string.IsNullOrEmpty(Options.OutputDirectoryPath))
                 {
-                    ExecutorParameters.OutputDirectoryBase = RunUtilities.GetDatasetParentDirectory(Options.DatasetFilePath);
+                    ExecutorParameters.OutputDirectoryBase = Options.OutputDirectoryPath;
                 }
                 else
                 {
-                    ExecutorParameters.OutputDirectoryBase = string.Empty;
+                    ExecutorParameters.OutputDirectoryBase = RunUtilities.GetDatasetParentDirectory(Options.DatasetFilePath);
                 }
 
                 PercentProgress = 0;

@@ -5,25 +5,21 @@ namespace Sipper_Console
 {
     public class SipperOptions
     {
-        [Option("I", "Input", ArgPosition = 1, Required = true, HelpShowsDefault = false, IsInputFilePath = true,
+        [Option("Input", "Dataset", "I", ArgPosition = 1, Required = true, HelpShowsDefault = false, IsInputFilePath = true,
             HelpText = "Dataset file (or directory) path")]
         public string DatasetFilePath { get; set; }
 
-        [Option("P", "Param", ArgPosition = 2, Required = true, HelpShowsDefault = false, IsInputFilePath = true,
-            HelpText = "Parameter file path")]
+        [Option("Param", "P", ArgPosition = 2, Required = true, HelpShowsDefault = false, IsInputFilePath = true,
+            HelpText = "SIPPER parameter file path")]
         public string ParameterFilePath { get; set; }
 
-        [Option("T", "Targets", ArgPosition = 3, Required = true, HelpShowsDefault = false, IsInputFilePath = true,
+        [Option("Targets", "T", ArgPosition = 3, Required = true, HelpShowsDefault = false, IsInputFilePath = true,
             HelpText = "Targets file path")]
         public string TargetsFilePath { get; set; }
 
-        [Option("O", "Output", Required = false, HelpShowsDefault = false,
-            HelpText = "Output file path for saving results")]
-        public string ResultsFilePath { get; set; }
-
-        [Option("Plots", Required = false, HelpShowsDefault = false,
-            HelpText = "Output directory for result images")]
-        public string PlotDirectoryPath { get; set; }
+        [Option("Output", "O", Required = false, HelpShowsDefault = false,
+            HelpText = "Output directory for saving results")]
+        public string OutputDirectoryPath { get; set; }
 
         /// <summary>
         /// Constructor
@@ -33,25 +29,20 @@ namespace Sipper_Console
             DatasetFilePath = string.Empty;
             ParameterFilePath = string.Empty;
             TargetsFilePath = string.Empty;
-            ResultsFilePath = string.Empty;
-            PlotDirectoryPath = string.Empty;
+            OutputDirectoryPath = string.Empty;
         }
 
-        private void AutoDefineResultsFilePath()
+        private void AutoDefineBaseOutputDirectory()
         {
             if (string.IsNullOrWhiteSpace(TargetsFilePath))
                 return;
 
-            if (!string.IsNullOrWhiteSpace(ResultsFilePath))
+            if (!string.IsNullOrWhiteSpace(OutputDirectoryPath))
                 return;
 
             var targetsFile = new FileInfo(TargetsFilePath);
 
-            var baseFileName = Path.GetFileNameWithoutExtension(targetsFile.Name);
-
-            var workingDirectoryPath = targetsFile.Directory != null ? targetsFile.Directory.FullName : string.Empty;
-
-            ResultsFilePath = Path.Combine(workingDirectoryPath, baseFileName + "_validated.txt");
+            OutputDirectoryPath = targetsFile.Directory != null ? targetsFile.Directory.FullName : string.Empty;
         }
 
         public bool Validate()
@@ -71,7 +62,7 @@ namespace Sipper_Console
                 return false;
             }
 
-            AutoDefineResultsFilePath();
+            AutoDefineBaseOutputDirectory();
 
             return true;
         }
