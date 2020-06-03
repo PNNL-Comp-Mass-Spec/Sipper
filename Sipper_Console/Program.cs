@@ -15,7 +15,7 @@ namespace Sipper_Console
     /// -------------------------------------------------------------------------------
     class Program
     {
-        public const string PROGRAM_DATE = "March 6, 2020";
+        public const string PROGRAM_DATE = "June 2, 2020";
 
         private static DateTime mLastProgressTime;
 
