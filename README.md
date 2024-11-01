@@ -15,7 +15,7 @@ J Proteome Res. 2014 Mar 7;13(3):1200-10. \
 Uses ThermoFisher.CommonCore.RawFileReader.dll to read Thermo .raw files.
 
 Uses Proteowizard to read .mzML files
-* Download the Windows 64-bit installer from http://proteowizard.sourceforge.net/
+* Download the Windows 64-bit installer from https://proteowizard.sourceforge.io/
 
 ## Analysis Steps
 
@@ -96,7 +96,7 @@ Use `-CreateParamFile` to create an example parameter file
 
 Written by Gordon Slysz and Matthew Monroe for the Department of Energy (PNNL, Richland, WA) \
 E-mail: proteomics@pnnl.gov \
-Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/
+Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://www.pnnl.gov/integrative-omics
 
 ## License
 

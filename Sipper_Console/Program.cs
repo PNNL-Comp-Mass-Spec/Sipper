@@ -11,7 +11,7 @@ namespace Sipper_Console
     /// Copyright 2020, Battelle Memorial Institute.  All Rights Reserved.
     ///
     /// E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov
-    /// Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/
+    /// Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics
     /// -------------------------------------------------------------------------------
     class Program
     {
@@ -34,7 +34,7 @@ namespace Sipper_Console
                 ProgramInfo = "This program runs SIPPER",
                 ContactInfo = "Program written by Gordon Slysz and Matthew Monroe for PNNL (Richland, WA)" + Environment.NewLine +
                               "E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov" + Environment.NewLine +
-                              "Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/"
+                              "Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics"
             };
 
 
